@@ -8,7 +8,7 @@ import { siteConfig, socialLinks } from '../../config/site';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Contact Pinstack  Questions, Listing Help & Partnerships',
+  title: 'Contact Pinstack — Questions, Listing Help & Partnerships',
   description:
     'Get in touch with the Pinstack team about your listing, a partnership, or general questions. We read every message.',
   path: '/contact',
@@ -43,9 +43,9 @@ export default function ContactPage({ searchParams }: Props) {
   const topic = searchParams.topic?.toLowerCase();
 
   return (
-    <>
+    <div className="flex flex-col flex-1 min-h-dvh">
       <Header />
-      <main className="overflow-x-hidden">
+      <main className="flex-1 flex flex-col overflow-x-hidden">
         <section className="bg-[linear-gradient(180deg,#f0fdf4_0%,#ffffff_100%)] border-b border-borderC">
           <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
             <ScrollReveal>
@@ -53,14 +53,14 @@ export default function ContactPage({ searchParams }: Props) {
                 Get in touch
               </h1>
               <p className="text-sm sm:text-base text-muted max-w-2xl leading-relaxed">
-                Questions about your listing, partnerships, or anything else  we read every
+                Questions about your listing, partnerships, or anything else — we read every
                 message.
               </p>
             </ScrollReveal>
           </div>
         </section>
 
-        <section className="max-w-[1100px] mx-auto px-4 sm:px-6 py-10 sm:py-14">
+        <section className="flex-1 max-w-[1100px] w-full mx-auto px-4 sm:px-6 py-10 sm:py-14">
           <ScrollReveal stagger className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12 sm:mb-14">
             {contactTopics.map((item) => (
               <div
@@ -149,6 +149,6 @@ export default function ContactPage({ searchParams }: Props) {
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

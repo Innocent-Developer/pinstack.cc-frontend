@@ -127,15 +127,63 @@ body {
   box-shadow: 0 12px 28px -12px rgba(15, 23, 42, 0.18);
 }
 
+@keyframes empty-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes empty-glow {
+  0%,
+  100% {
+    opacity: 0.45;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.85;
+    transform: scale(1.12);
+  }
+}
+
+@keyframes empty-fade {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-empty-float {
+  animation: empty-float 2.8s ease-in-out infinite;
+}
+
+.animate-empty-glow {
+  animation: empty-glow 2.8s ease-in-out infinite;
+}
+
+.animate-empty-fade {
+  animation: empty-fade 0.45s ease-out both;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
   }
-  .auth-orb {
+  .auth-orb,
+  .animate-empty-float,
+  .animate-empty-glow {
     animation: none;
   }
   .modal-fade-in,
-  .modal-sheet-in {
+  .modal-sheet-in,
+  .animate-empty-fade {
     animation: none !important;
   }
   *,

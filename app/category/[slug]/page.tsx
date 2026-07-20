@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
-import Header from '../../../components/Header';
-import Footer from '../../../components/Footer';
+import PageShell from '../../../components/PageShell';
 import ProductCard from '../../../components/ProductCard';
+import EmptyState from '../../../components/EmptyState';
 import { api } from '../../../lib/api';
 import { buildBreadcrumbSchema, pageMetadata } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
@@ -18,7 +18,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const name = category?.name || params.slug;
 
   return pageMetadata({
-    title: `Best ${name} Tools  Pinstack Directory`,
+    title: `Best ${name} Tools — Pinstack Directory`,
     description: `Discover the top ${name.toLowerCase()} tools and products on Pinstack. Browse SaaS and AI products ranked by community upvotes, with new listings added weekly.`,
     path: `/category/${params.slug}`,
   });
@@ -45,22 +45,26 @@ export default async function CategoryPage({ params }: Props) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
-      <Header />
-      <main className="max-w-[1100px] mx-auto px-4 sm:px-6 py-10 sm:py-14">
-        <h1 className="text-2xl font-extrabold text-heading mb-2">
-          Best {categoryName}
-        </h1>
-        <p className="text-sm text-body mb-2 max-w-2xl leading-relaxed">
-          Browse {categoryName.toLowerCase()} tools and products on {siteConfig.name}. Listings are
-          ranked by community upvotes so you see what founders and builders actually recommend  not
-          paid placement.
-        </p>
-        <p className="text-sm text-muted mb-8">
-          {category?.productCount || 0} tools, ranked by community upvotes.
-        </p>
+      <PageShell>
+        <div className="shrink-0 mb-8">
+          <h1 className="text-2xl font-extrabold text-heading mb-2">Best {categoryName}</h1>
+          <p className="text-sm text-body mb-2 max-w-2xl leading-relaxed">
+            Browse {categoryName.toLowerCase()} tools and products on {siteConfig.name}. Listings are
+            ranked by community upvotes so you see what founders and builders actually recommend — not
+            paid placement.
+          </p>
+          <p className="text-sm text-muted">
+            {category?.productCount || 0} tools, ranked by community upvotes.
+          </p>
+        </div>
 
         {productsRes.data.length === 0 ? (
-          <p className="text-muted text-sm">No products in this category yet.</p>
+          <EmptyState
+            title="No products in this category yet"
+            description="Be the first to list a product here — free submissions are reviewed within a few days."
+            actionHref="/login?next=/dashboard/add-product"
+            actionLabel="Add your product"
+          />
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {productsRes.data.map((p) => (
@@ -68,8 +72,7 @@ export default async function CategoryPage({ params }: Props) {
             ))}
           </div>
         )}
-      </main>
-      <Footer />
+      </PageShell>
     </>
   );
 }

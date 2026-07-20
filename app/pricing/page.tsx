@@ -1,7 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import Header from '../../components/Header';
-import Footer from '../../components/Footer';
+import PageShell from '../../components/PageShell';
 import ScrollReveal from '../../components/ScrollReveal';
 import FaqAccordion from '../../components/FaqAccordion';
 import { buildFaqSchema, pageMetadata, pricingFaqItems } from '../../lib/seo';
@@ -63,8 +62,7 @@ export default function PricingPage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
-      <Header />
-      <main className="max-w-[1100px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+      <PageShell className="py-12 sm:py-16">
         <ScrollReveal className="text-center mb-12">
           <h1 className="text-3xl font-extrabold text-heading mb-2">Simple, transparent pricing</h1>
           <p className="text-body text-sm">
@@ -103,14 +101,13 @@ export default function PricingPage() {
           ))}
         </ScrollReveal>
 
-        <ScrollReveal className="max-w-[700px] mx-auto">
+        <ScrollReveal className="max-w-[700px] mx-auto mt-auto">
           <h2 className="text-xl font-extrabold text-heading mb-5 text-center">
             Frequently asked questions
           </h2>
           <FaqAccordion items={[...pricingFaqItems]} />
         </ScrollReveal>
-      </main>
-      <Footer />
+      </PageShell>
     </>
   );
 }

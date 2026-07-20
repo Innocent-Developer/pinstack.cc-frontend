@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { api } from '../lib/api';
 import { Product, Category } from '../types';
 import ProductCard from './ProductCard';
+import EmptyState from './EmptyState';
 
 interface ExploreResultsProps {
   categories: Category[];
@@ -141,15 +142,12 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
       </div>
 
       {products.length === 0 && !loading ? (
-        <div className="text-center py-16">
-          <p className="text-body mb-3">No products match this search yet.</p>
-          <p className="text-sm text-muted">
-            Try a different category, or{' '}
-            <Link href="/login?next=/dashboard/add-product" className="text-primary font-semibold hover:underline">
-              submit your own product →
-            </Link>
-          </p>
-        </div>
+        <EmptyState
+          title="No products match this search yet"
+          description="Try a different category or keyword — or submit your own product to the directory."
+          actionHref="/login?next=/dashboard/add-product"
+          actionLabel="Submit your product"
+        />
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {products.map((p) => (
