@@ -33,8 +33,8 @@ function LoginFormInner() {
         throw new Error(res.message || 'Login failed');
       }
       setAuth(res.token, res.user);
-      router.push(next.startsWith('/') ? next : '/dashboard');
-      router.refresh();
+      // Navigate immediately — don't wait on a full refresh
+      router.replace(next.startsWith('/') ? next : '/dashboard');
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Login failed';
       setError(message);

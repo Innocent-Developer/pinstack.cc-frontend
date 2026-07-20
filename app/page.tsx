@@ -11,16 +11,17 @@ import AddProductButton from '../components/AddProductButton';
 import { api } from '../lib/api';
 import { siteConfig } from '../config/site';
 import { buildOrganizationSchema, buildWebsiteSchema } from '../lib/seo';
+import { withTimeout } from '../lib/withTimeout';
 import type { Category, Product, Stats } from '../types';
 
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: { absolute: 'Pinstack  Discover and Launch SaaS Tools, AI Products & APIs' },
+  title: { absolute: 'Pinstack — Discover and Launch SaaS Tools, AI Products & APIs' },
   description: siteConfig.description,
   alternates: { canonical: siteConfig.url },
   openGraph: {
-    title: 'Pinstack  Discover and Launch SaaS Tools, AI Products & APIs',
+    title: 'Pinstack — Discover and Launch SaaS Tools, AI Products & APIs',
     description: siteConfig.description,
     url: siteConfig.url,
   },
@@ -57,16 +58,23 @@ const whyItems = [
 ];
 
 export default async function HomePage() {
+  // Soft timeout so a slow API never blocks the whole homepage from opening
+  const emptyCats = { success: false, data: [] as Category[] };
+  const emptyProducts = {
+    success: false,
+    data: [] as Product[],
+    pagination: { total: 0, page: 1, pages: 1 },
+  };
+  const emptyStats = { success: false, data: null as Stats | null };
+
   const [categoriesRes, trendingRes, statsRes] = await Promise.all([
-    api.getCategories().catch(() => ({ success: false, data: [] as Category[] })),
-    api
-      .getProducts({ sort: 'upvoted', limit: '6' })
-      .catch(() => ({
-        success: false,
-        data: [] as Product[],
-        pagination: { total: 0, page: 1, pages: 1 },
-      })),
-    api.getStats().catch(() => ({ success: false, data: null as Stats | null })),
+    withTimeout(api.getCategories().catch(() => emptyCats), 8000, emptyCats),
+    withTimeout(
+      api.getProducts({ sort: 'upvoted', limit: '6' }).catch(() => emptyProducts),
+      8000,
+      emptyProducts
+    ),
+    withTimeout(api.getStats().catch(() => emptyStats), 8000, emptyStats),
   ]);
 
   const categories = categoriesRes.data.slice(0, 8);
