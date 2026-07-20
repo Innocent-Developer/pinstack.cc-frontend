@@ -8,6 +8,7 @@ const WEB3FORMS_ACCESS_KEY =
 const REASON_MAP: Record<string, string> = {
   featured: 'featured_placement',
   verified: 'verified_badge',
+  growth: 'growth_plan',
   listing: 'listing_issue',
   partnership: 'partnership',
 };
@@ -15,8 +16,9 @@ const REASON_MAP: Record<string, string> = {
 const REASON_LABELS: Record<string, string> = {
   general: 'General question',
   listing_issue: 'Listing issue or edit request',
-  featured_placement: 'Featured placement',
-  verified_badge: 'Verified badge',
+  featured_placement: 'Featured placement ($5/mo)',
+  verified_badge: 'Verified badge ($9 one-time)',
+  growth_plan: 'Growth plan ($20/mo)',
   partnership: 'Partnership',
   report_problem: 'Report a problem',
 };
@@ -142,8 +144,9 @@ export default function ContactForm({ initialReason }: ContactFormProps) {
         >
           <option value="general">General question</option>
           <option value="listing_issue">Listing issue or edit request</option>
-          <option value="featured_placement">Featured placement</option>
-          <option value="verified_badge">Verified badge</option>
+          <option value="featured_placement">Featured placement ($5/mo)</option>
+          <option value="verified_badge">Verified badge ($9 one-time)</option>
+          <option value="growth_plan">Growth plan ($20/mo)</option>
           <option value="partnership">Partnership</option>
           <option value="report_problem">Report a problem</option>
         </select>

@@ -12,23 +12,27 @@ export const defaultKeywords = [
 export const pricingFaqItems = [
   {
     q: 'Is the free listing really free forever?',
-    a: 'Yes. A free Pinstack listing does not expire and has no hidden fees.',
+    a: 'Yes. A free Pinstack listing does not expire and has no hidden fees. It is always free.',
   },
   {
-    q: 'Does paying for a featured or verified badge improve my search ranking?',
-    a: 'No. Featured placement gives temporary top position in your category page, but organic ranking is based only on community upvotes, not payment.',
+    q: 'Does paying for Featured, Verified, or Growth improve my search ranking?',
+    a: 'No. Featured placement gives temporary top position in your category page while active, but organic ranking is based only on community upvotes, not payment. Verified badges also do not affect ranking.',
   },
   {
-    q: 'Can I cancel featured placement?',
-    a: 'Featured placement runs for a fixed period (for example, 7 days) and does not auto-renew unless you choose to extend it.',
+    q: 'What is the difference between Verified and Featured?',
+    a: 'Verified is a $9 one-time purchase for a verified badge and an embeddable badge for your site. Featured is $5/month for top placement in your category during the active period.',
+  },
+  {
+    q: 'What does Growth include?',
+    a: 'Growth is $20/month and bundles Featured + Verified. At signup, our team also does a one-time review and optimization of your listing copy — a fixed deliverable, not ongoing strategy work.',
+  },
+  {
+    q: 'Can I cancel Featured or Growth?',
+    a: 'Yes. Featured and Growth stay active for the paid period. They do not auto-renew unless you choose to continue. Cancel anytime via the Contact page.',
   },
   {
     q: 'How long does listing review take?',
-    a: 'Free listings are typically reviewed within a few days. Featured listings get priority review within 24–48 hours.',
-  },
-  {
-    q: 'Can I edit my listing after it\'s approved?',
-    a: 'Yes, contact the team through the Contact page to request changes to a live listing.',
+    a: 'Free listings are typically reviewed within a few days. Paid Featured and Growth plans get priority review within 24–48 hours.',
   },
 ] as const;
 

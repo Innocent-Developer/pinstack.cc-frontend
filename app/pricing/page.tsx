@@ -6,12 +6,12 @@ import FaqAccordion from '../../components/FaqAccordion';
 import { buildFaqSchema, pageMetadata, pricingFaqItems } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Pinstack Pricing  Free Listings, Paid Featured Placement',
+  title: 'Pinstack Pricing — Free Listings, Verified, Featured & Growth',
   description:
-    'List your SaaS or AI tool on Pinstack for free. Optional paid plans for featured placement and verified badges. No hidden fees.',
+    'List your SaaS or AI tool on Pinstack for free. Optional Verified ($9 one-time), Featured ($5/mo), and Growth ($20/mo) plans. No hidden fees.',
   path: '/pricing',
   openGraphDescription:
-    'Free listings always available. Optional paid featured placement and verified badges.',
+    'Free listings always available. Verified $9 one-time, Featured $5/month, Growth $20/month.',
 });
 
 const faqSchema = buildFaqSchema(pricingFaqItems);
@@ -19,38 +19,62 @@ const faqSchema = buildFaqSchema(pricingFaqItems);
 const plans = [
   {
     name: 'Free',
-    price: 'Free',
+    price: '$0',
+    period: 'always free',
+    blurb: 'Basic listing — forever free.',
     features: [
       'Basic listing, live on the directory',
       'Appears in search and category browse',
       'Standard review (a few days)',
+      'Shareable product page',
     ],
     cta: 'Add Your Product',
     href: '/login?next=/dashboard/add-product',
     highlight: false,
   },
   {
-    name: 'Featured',
-    price: 'Contact us',
+    name: 'Verified',
+    price: '$9',
+    period: 'one-time',
+    blurb: 'Show trust with a verified badge.',
     features: [
       'Everything in Free',
-      'Top placement in your category for 7 days',
-      'Priority review (24–48 hours)',
+      'Verified badge on your listing',
+      'Embeddable badge for your own site',
+      'Does not affect organic ranking',
+    ],
+    cta: 'Get Verified',
+    href: '/contact?topic=verified',
+    highlight: false,
+  },
+  {
+    name: 'Featured',
+    price: '$5',
+    period: '/month',
+    blurb: 'Top placement while your plan is active.',
+    features: [
+      'Everything in Free',
+      'Top placement in your category',
+      'Clearly marked as featured',
+      'Cancel anytime — stays active for the paid period',
     ],
     cta: 'Get Featured',
     href: '/contact?topic=featured',
     highlight: true,
   },
   {
-    name: 'Verified',
-    price: 'Contact us',
+    name: 'Growth',
+    price: '$20',
+    period: '/month',
+    blurb: 'Featured + Verified, plus a one-time copy review.',
     features: [
-      'Everything in Free',
-      'Verified badge shown on your listing',
-      'Embeddable "Verified on Pinstack" badge for your own site',
+      'Everything in Featured & Verified',
+      'Verified badge + embeddable badge',
+      'Top category placement while active',
+      'One-time listing copy review & optimize at signup',
     ],
-    cta: 'Get Verified',
-    href: '/contact?topic=verified',
+    cta: 'Get Growth',
+    href: '/contact?topic=growth',
     highlight: false,
   },
 ];
@@ -65,34 +89,47 @@ export default function PricingPage() {
       <PageShell className="py-12 sm:py-16">
         <ScrollReveal className="text-center mb-12">
           <h1 className="text-3xl font-extrabold text-heading mb-2">Simple, transparent pricing</h1>
-          <p className="text-body text-sm">
-            A free listing is always available. Pay only if you want extra visibility.
+          <p className="text-body text-sm max-w-lg mx-auto">
+            A free listing is always available. Upgrade only if you want a verified badge, featured
+            placement, or a one-time copy review.
           </p>
         </ScrollReveal>
 
-        <ScrollReveal stagger className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-16">
+        <ScrollReveal stagger className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-5 mb-16">
           {plans.map((plan) => (
             <div
               key={plan.name}
-              className={`rounded-card border p-6 ${
-                plan.highlight ? 'border-primary bg-bgAlt' : 'border-borderC bg-white'
+              className={`rounded-2xl border p-6 flex flex-col ${
+                plan.highlight
+                  ? 'border-primary bg-bgAlt shadow-[0_0_0_1px_rgba(5,150,105,0.15)]'
+                  : 'border-borderC bg-white'
               }`}
             >
-              <h3 className="font-extrabold text-heading text-lg mb-1">{plan.name}</h3>
-              <div className="text-2xl font-extrabold text-heading mb-4">{plan.price}</div>
-              <ul className="space-y-2 mb-6 text-sm text-body">
+              {plan.highlight && (
+                <p className="text-[10px] font-bold uppercase tracking-wide text-primary mb-2">
+                  Popular
+                </p>
+              )}
+              <h3 className="font-extrabold text-heading text-lg mb-0.5">{plan.name}</h3>
+              <p className="text-xs text-muted mb-4">{plan.blurb}</p>
+              <div className="flex items-baseline gap-1 mb-5">
+                <span className="text-3xl font-extrabold text-heading tabular-nums">{plan.price}</span>
+                <span className="text-sm text-muted font-medium">{plan.period}</span>
+              </div>
+              <ul className="space-y-2.5 mb-6 text-sm text-body flex-1">
                 {plan.features.map((f) => (
                   <li key={f} className="flex gap-2">
-                    <span className="text-primary">✓</span> {f}
+                    <span className="text-primary shrink-0 font-bold">✓</span>
+                    <span>{f}</span>
                   </li>
                 ))}
               </ul>
               <Link
                 href={plan.href}
-                className={`block text-center py-2.5 rounded-btn text-sm font-semibold ${
+                className={`block text-center py-2.5 rounded-btn text-sm font-semibold transition ${
                   plan.highlight
                     ? 'bg-primary text-white hover:bg-primary-hover'
-                    : 'border border-borderC text-heading hover:bg-bgAlt'
+                    : 'border border-borderC text-heading hover:bg-bgAlt hover:border-primary/40'
                 }`}
               >
                 {plan.cta}

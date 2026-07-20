@@ -17,21 +17,27 @@ export const metadata: Metadata = pageMetadata({
 const contactTopics = [
   {
     title: 'List your product',
-    body: 'Sign in and submit from your dashboard. Free listings are reviewed within a few days.',
+    body: 'Free forever. Sign in and submit from your dashboard — reviewed within a few days.',
     href: '/login?next=/dashboard/add-product',
     cta: 'Add a product',
   },
   {
-    title: 'Featured placement',
-    body: 'Get top placement in your category for 7 days with priority review.',
+    title: 'Verified — $9',
+    body: 'One-time verified badge on your listing, plus an embeddable badge for your site.',
+    href: '/contact?topic=verified',
+    cta: 'Ask about verified',
+  },
+  {
+    title: 'Featured — $5/mo',
+    body: 'Top placement in your category for the active paid period. Cancel anytime.',
     href: '/contact?topic=featured',
     cta: 'Ask about featured',
   },
   {
-    title: 'Verified badge',
-    body: 'Show extra trust on your listing and embed a verified badge on your site.',
-    href: '/contact?topic=verified',
-    cta: 'Ask about verified',
+    title: 'Growth — $20/mo',
+    body: 'Featured + Verified bundled, plus a one-time listing copy review at signup.',
+    href: '/contact?topic=growth',
+    cta: 'Ask about growth',
   },
 ];
 
@@ -61,7 +67,7 @@ export default function ContactPage({ searchParams }: Props) {
         </section>
 
         <section className="flex-1 max-w-[1100px] w-full mx-auto px-4 sm:px-6 py-10 sm:py-14">
-          <ScrollReveal stagger className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-12 sm:mb-14">
+          <ScrollReveal stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-12 sm:mb-14">
             {contactTopics.map((item) => (
               <div
                 key={item.title}
