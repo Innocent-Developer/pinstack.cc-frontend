@@ -1,65 +1,313 @@
-import Image from "next/image";
+import Link from 'next/link';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import ScrollReveal from '../components/ScrollReveal';
+import ProductCard from '../components/ProductCard';
+import HomeHero from '../components/HomeHero';
+import StatsBar from '../components/StatsBar';
+import BadgeSection from '../components/BadgeSection';
+import AddProductButton from '../components/AddProductButton';
+import { api } from '../lib/api';
+import { siteConfig } from '../config/site';
+import type { Category, Product, Stats } from '../types';
 
-export default function Home() {
+export const revalidate = 60;
+
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: siteConfig.name,
+  url: siteConfig.url,
+  logo: `${siteConfig.url}${siteConfig.iconPath}`,
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: siteConfig.name,
+  url: siteConfig.url,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${siteConfig.url}/explore?search={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+const whyItems = [
+  {
+    title: 'Discover',
+    body: 'Browse SaaS, AI tools, and APIs by category  curated for founders who ship.',
+    tone: 'bg-emerald-50 text-primary',
+    icon: '◎',
+  },
+  {
+    title: 'Submit free',
+    body: 'List your product in minutes. Auto-fill from your URL or enter details manually.',
+    tone: 'bg-teal-50 text-teal-700',
+    icon: '✦',
+  },
+  {
+    title: 'Upvote & rank',
+    body: 'Transparent community ranking. Featured placement stays clearly marked as paid.',
+    tone: 'bg-lime-50 text-lime-800',
+    icon: '▲',
+  },
+  {
+    title: 'Get found',
+    body: 'Shareable listing pages and embeddable badges that send traffic back to you.',
+    tone: 'bg-cyan-50 text-cyan-800',
+    icon: '↗',
+  },
+];
+
+export default async function HomePage() {
+  const [categoriesRes, trendingRes, statsRes] = await Promise.all([
+    api.getCategories().catch(() => ({ success: false, data: [] as Category[] })),
+    api
+      .getProducts({ sort: 'upvoted', limit: '6' })
+      .catch(() => ({
+        success: false,
+        data: [] as Product[],
+        pagination: { total: 0, page: 1, pages: 1 },
+      })),
+    api.getStats().catch(() => ({ success: false, data: null as Stats | null })),
+  ]);
+
+  const categories = categoriesRes.data.slice(0, 8);
+  const trending = trendingRes.data;
+  const stats = statsRes.data;
+  const previewProducts = trending.slice(0, 3);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
+    <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(orgSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteSchema) }}
+      />
+      <Header />
+
+      <main className="overflow-x-hidden">
+        <HomeHero />
+        <StatsBar stats={stats} />
+
+        {/* Why Pinstack */}
+        <section className="py-12 sm:py-16 max-w-[1160px] mx-auto px-4 sm:px-6" aria-labelledby="why-heading">
+          <ScrollReveal className="text-center mb-10">
+            <h2 id="why-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2">
+              Why Pinstack?
+            </h2>
+            <p className="text-sm text-muted max-w-lg mx-auto">
+              More than a list  a launchpad built for founders and the people who discover them.
+            </p>
+          </ScrollReveal>
+          <ScrollReveal stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            {whyItems.map((item) => (
+              <div key={item.title} className="lift-card border border-borderC rounded-2xl p-5 bg-white">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-3 ${item.tone}`}>
+                  {item.icon}
+                </div>
+                <h3 className="font-bold text-heading text-[15px] mb-1.5">{item.title}</h3>
+                <p className="text-[13px] text-muted leading-relaxed">{item.body}</p>
+              </div>
+            ))}
+          </ScrollReveal>
+        </section>
+
+        {/* Categories */}
+        <section id="categories" className="py-16 bg-bgAlt scroll-mt-24" aria-labelledby="categories-heading">
+          <div className="max-w-[1160px] mx-auto px-4 sm:px-6">
+            <ScrollReveal className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-9">
+              <div>
+                <h2 id="categories-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2">
+                  Explore by category
+                </h2>
+                <p className="text-sm text-muted">Pick a lane and browse tools ranked by the community.</p>
+              </div>
+              <Link href="/categories" className="text-sm font-semibold text-primary hover:underline">
+                View all categories →
+              </Link>
+            </ScrollReveal>
+
+            {categories.length === 0 ? (
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3.5" aria-busy>
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div key={i} className="border border-borderC rounded-2xl h-[120px] animate-pulse bg-white" />
+                ))}
+              </div>
+            ) : (
+              <ScrollReveal stagger className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+                {categories.map((cat) => (
+                  <Link
+                    key={cat._id}
+                    href={`/category/${cat.slug}`}
+                    className="lift-card border border-borderC bg-white rounded-2xl p-5 text-center hover:border-primary"
+                  >
+                    <div className="text-2xl mb-2" aria-hidden>
+                      {cat.icon}
+                    </div>
+                    <div className="text-sm font-bold text-heading">{cat.name}</div>
+                    <div className="text-xs text-muted mt-1">{cat.productCount} products</div>
+                  </Link>
+                ))}
+              </ScrollReveal>
+            )}
+          </div>
+        </section>
+
+        {/* Trending */}
+        <section id="trending" className="py-16 scroll-mt-24" aria-labelledby="trending-heading">
+          <div className="max-w-[1160px] mx-auto px-4 sm:px-6">
+            <ScrollReveal className="text-center mb-9">
+              <h2 id="trending-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2">
+                Trending this week
+              </h2>
+              <p className="text-sm text-muted">Ranked by community upvotes, refreshed hourly.</p>
+            </ScrollReveal>
+
+            {trending.length === 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4" aria-busy>
+                {Array.from({ length: 6 }).map((_, i) => (
+                  <div key={i} className="border border-borderC rounded-2xl h-[180px] animate-pulse bg-bgAlt" />
+                ))}
+              </div>
+            ) : (
+              <ScrollReveal stagger className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {trending.map((p) => (
+                  <ProductCard key={p._id} product={p} />
+                ))}
+              </ScrollReveal>
+            )}
+          </div>
+        </section>
+
+        {/* Intelligence-style split */}
+        <section className="py-12 sm:py-16 bg-bgAlt overflow-x-hidden" aria-labelledby="intel-heading">
+          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 grid lg:grid-cols-2 gap-8 sm:gap-12 items-start lg:items-center">
+            <ScrollReveal>
+              <h2 id="intel-heading" className="text-xl sm:text-2xl md:text-[28px] font-extrabold text-heading mb-4">
+                More than a directory. Real discovery.
+              </h2>
+              <p className="text-sm text-body mb-6 leading-relaxed">
+                Every listing is reviewed before it goes live. Ranking reflects community upvotes 
+                not who paid the most. Featured placement stays clearly marked.
+              </p>
+              <ul className="space-y-3 text-sm text-body mb-8">
+                {[
+                  'Human review before listings go public',
+                  'Transparent upvote-based ranking',
+                  'Category pages built for SEO & discovery',
+                  'Embeddable “Featured on Pinstack” badge',
+                ].map((line) => (
+                  <li key={line} className="flex gap-2">
+                    <span className="text-primary font-bold" aria-hidden>
+                      ✓
+                    </span>
+                    {line}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/about"
+                className="inline-flex text-sm font-semibold text-primary hover:underline"
+              >
+                Learn how Pinstack works →
+              </Link>
+            </ScrollReveal>
+
+            <ScrollReveal>
+              <div className="w-full min-w-0 max-w-full bg-white border border-borderC rounded-2xl p-4 sm:p-6 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.3)]">
+                <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-3 sm:mb-4">
+                  Snapshot
+                </p>
+                <div className="grid grid-cols-3 gap-1.5 sm:gap-3 mb-4 sm:mb-5 min-w-0">
+                  {[
+                    { k: 'Products', v: stats?.products ?? 0 },
+                    { k: 'Founders', v: stats?.founders ?? 0 },
+                    { k: 'Categories', v: stats?.categories ?? 0 },
+                  ].map((s) => (
+                    <div key={s.k} className="min-w-0 rounded-xl bg-bgAlt p-2 sm:p-3 text-center">
+                      <div className="text-base sm:text-lg font-extrabold text-heading tabular-nums">{s.v}</div>
+                      <div className="text-[9px] sm:text-[11px] text-muted leading-tight">{s.k}</div>
+                    </div>
+                  ))}
+                </div>
+                <div className="space-y-2 sm:space-y-3 min-w-0">
+                  {previewProducts.length === 0 ? (
+                    <p className="text-sm text-muted">Trending products will appear here once listed.</p>
+                  ) : (
+                    previewProducts.map((p) => (
+                      <Link
+                        key={p._id}
+                        href={`/product/${p.slug}`}
+                        className="flex items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-borderC hover:border-primary transition w-full min-w-0"
+                      >
+                        <div className="min-w-0 flex-1">
+                          <p className="text-sm font-bold text-heading truncate">{p.name}</p>
+                          <p className="text-xs text-muted line-clamp-2 sm:line-clamp-1 sm:truncate">{p.tagline}</p>
+                        </div>
+                        <span className="text-xs font-bold text-success bg-successBg px-2 py-1 rounded-full shrink-0 tabular-nums">
+                          {p.score}
+                        </span>
+                      </Link>
+                    ))
+                  )}
+                </div>
+              </div>
+            </ScrollReveal>
+          </div>
+        </section>
+
+        {/* Compare / social proof bar */}
+        <section className="bg-heading text-white py-8">
+          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <p className="text-lg font-extrabold mb-1">Compare before you choose</p>
+              <p className="text-sm text-slate-400">
+                Browse categories side by side and upvote what actually helps.
+              </p>
+            </div>
+            <Link
+              href="/categories"
+              className="px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover shrink-0"
             >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+              Browse categories →
+            </Link>
+          </div>
+        </section>
+
+        <BadgeSection />
+
+        {/* Final CTA */}
+        <section className="py-16 bg-white" aria-labelledby="cta-heading">
+          <div className="max-w-[900px] mx-auto px-4 sm:px-6 text-center">
+            <ScrollReveal>
+              <h2 id="cta-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-3">
+                Built something great? Get discovered.
+              </h2>
+              <p className="text-sm text-muted mb-6 max-w-md mx-auto">
+                Free listing. Optional featured placement. Verified badge when you want extra trust.
+              </p>
+              <ul className="flex flex-wrap justify-center gap-4 text-xs text-body mb-8">
+                {['Free forever listing', 'Priority review options', 'Shareable product page'].map((t) => (
+                  <li key={t} className="flex items-center gap-1.5">
+                    <span className="text-primary" aria-hidden>
+                      ✓
+                    </span>
+                    {t}
+                  </li>
+                ))}
+              </ul>
+              <AddProductButton className="inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20" />
+            </ScrollReveal>
+          </div>
+        </section>
       </main>
-    </div>
+
+      <Footer />
+    </>
   );
 }

@@ -1,0 +1,71 @@
+import type { Metadata } from 'next';
+import Link from 'next/link';
+import Header from '../../components/Header';
+import Footer from '../../components/Footer';
+import ScrollReveal from '../../components/ScrollReveal';
+
+export const metadata: Metadata = {
+  title: 'About Pinstack  A Directory Built for Founders and Builders',
+  description:
+    'Pinstack is a community-run directory for SaaS, AI, and developer tools. Learn how listings work, how ranking works, and what Pinstack is not.',
+  alternates: { canonical: 'https://pinstack.cc/about' },
+};
+
+export default function AboutPage() {
+  return (
+    <>
+      <Header />
+      <main className="max-w-[760px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+        <ScrollReveal>
+          <h1 className="text-3xl font-extrabold text-heading mb-4">Why Pinstack exists</h1>
+          <p className="text-body mb-10">
+            Pinstack helps people discover useful software  SaaS products, AI tools, APIs, and
+            developer tools  and helps the founders who build them get found. Listings are
+            reviewed by a small team before going live, and rank based on real community upvotes.
+          </p>
+        </ScrollReveal>
+
+        <ScrollReveal className="mb-10">
+          <h2 className="text-xl font-extrabold text-heading mb-5">How it works</h2>
+          <div className="space-y-5">
+            {[
+              { n: 1, t: 'Founders submit their product', b: 'Paste a website URL for auto-fill, or fill the form manually.' },
+              { n: 2, t: 'The team reviews the listing', b: 'Every submission is checked before it goes live, to keep the directory free of spam.' },
+              { n: 3, t: 'The community discovers and votes', b: 'Ranking reflects real usage, not just who paid the most.' },
+            ].map((step) => (
+              <div key={step.n} className="flex gap-4">
+                <div className="w-8 h-8 shrink-0 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
+                  {step.n}
+                </div>
+                <div>
+                  <h3 className="font-bold text-heading text-[15px]">{step.t}</h3>
+                  <p className="text-sm text-muted">{step.b}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </ScrollReveal>
+
+        <ScrollReveal className="mb-10">
+          <h2 className="text-xl font-extrabold text-heading mb-4">What Pinstack is not</h2>
+          <ul className="space-y-2 text-sm text-body list-disc pl-5">
+            <li>Not a pay-to-win ranking system  featured placement is clearly marked as paid and kept separate from organic ranking.</li>
+            <li>A free listing is always available and never expires.</li>
+            <li>Verified badges are optional and paid, but do not affect search ranking.</li>
+          </ul>
+        </ScrollReveal>
+
+        <ScrollReveal>
+          <h2 className="text-xl font-extrabold text-heading mb-2">Contact</h2>
+          <p className="text-sm text-body">
+            Have a question, a listing issue, or a partnership idea?{' '}
+            <Link href="/contact" className="text-primary font-semibold hover:underline">
+              Visit the Contact page →
+            </Link>
+          </p>
+        </ScrollReveal>
+      </main>
+      <Footer />
+    </>
+  );
+}
