@@ -4,8 +4,8 @@
 export const siteConfig = {
   name: 'Pinstack',
   domain: 'pinstack.cc',
-  /** Canonical public site URL (www) */
-  url: 'https://www.pinstack.cc',
+  /** Canonical public site URL (apex — www has no DNS record unless you add it) */
+  url: 'https://pinstack.cc',
   /** Production API base */
   apiUrl: 'https://api.pinstack.cc/api',
   tagline: 'Discover, launch, and grow.',
