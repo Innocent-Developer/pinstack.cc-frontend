@@ -143,7 +143,12 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
       {products.length === 0 && !loading ? (
         <div className="text-center py-16">
           <p className="text-body mb-3">No products match this search yet.</p>
-          <p className="text-sm text-muted">Try a different category, or submit your own product below.</p>
+          <p className="text-sm text-muted">
+            Try a different category, or{' '}
+            <Link href="/login?next=/dashboard/add-product" className="text-primary font-semibold hover:underline">
+              submit your own product →
+            </Link>
+          </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

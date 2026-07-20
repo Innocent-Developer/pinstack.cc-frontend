@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { api } from '../lib/api';
+import { useToast } from './ToastProvider';
 
 interface Props {
   productId: string;
@@ -25,6 +26,7 @@ export default function ProductVoteButtons({
   const [downvotes, setDownvotes] = useState(initialDownvotes);
   const [voting, setVoting] = useState(false);
   const [bounce, setBounce] = useState(false);
+  const { error: toastError } = useToast();
 
   const handleVote = async (direction: 'up' | 'down') => {
     if (voting) return;
@@ -49,6 +51,7 @@ export default function ProductVoteButtons({
       setScore(prev.score);
       setUpvotes(prev.upvotes);
       setDownvotes(prev.downvotes);
+      toastError('Vote failed  please try again');
     } finally {
       setVoting(false);
     }

@@ -3,13 +3,15 @@ import Link from 'next/link';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ScrollReveal from '../../components/ScrollReveal';
+import { pageMetadata } from '../../lib/seo';
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: 'About Pinstack  A Directory Built for Founders and Builders',
   description:
     'Pinstack is a community-run directory for SaaS, AI, and developer tools. Learn how listings work, how ranking works, and what Pinstack is not.',
-  alternates: { canonical: 'https://pinstack.cc/about' },
-};
+  path: '/about',
+  openGraphTitle: 'About Pinstack  A Directory Built for Founders and Builders',
+});
 
 export default function AboutPage() {
   return (
@@ -29,9 +31,21 @@ export default function AboutPage() {
           <h2 className="text-xl font-extrabold text-heading mb-5">How it works</h2>
           <div className="space-y-5">
             {[
-              { n: 1, t: 'Founders submit their product', b: 'Paste a website URL for auto-fill, or fill the form manually.' },
-              { n: 2, t: 'The team reviews the listing', b: 'Every submission is checked before it goes live, to keep the directory free of spam.' },
-              { n: 3, t: 'The community discovers and votes', b: 'Ranking reflects real usage, not just who paid the most.' },
+              {
+                n: 1,
+                t: 'Founders submit their product',
+                b: "A founder submits their product's name, description, logo, and category  either by pasting their website URL for auto-fill, or filling the form manually.",
+              },
+              {
+                n: 2,
+                t: 'The team reviews the listing',
+                b: 'Every submission is checked before it goes live, to keep the directory free of spam and low-quality listings.',
+              },
+              {
+                n: 3,
+                t: 'The community discovers and votes',
+                b: 'Once live, anyone can browse, search, and upvote or downvote the listing. Ranking reflects real usage, not just who paid the most.',
+              },
             ].map((step) => (
               <div key={step.n} className="flex gap-4">
                 <div className="w-8 h-8 shrink-0 rounded-full bg-primary text-white flex items-center justify-center font-bold text-sm">
@@ -49,7 +63,10 @@ export default function AboutPage() {
         <ScrollReveal className="mb-10">
           <h2 className="text-xl font-extrabold text-heading mb-4">What Pinstack is not</h2>
           <ul className="space-y-2 text-sm text-body list-disc pl-5">
-            <li>Not a pay-to-win ranking system  featured placement is clearly marked as paid and kept separate from organic ranking.</li>
+            <li>
+              Pinstack is not a pay-to-win ranking system. Featured placement is clearly marked as
+              paid and kept separate from organic ranking.
+            </li>
             <li>A free listing is always available and never expires.</li>
             <li>Verified badges are optional and paid, but do not affect search ranking.</li>
           </ul>

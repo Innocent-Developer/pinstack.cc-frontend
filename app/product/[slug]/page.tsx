@@ -12,9 +12,11 @@ import VerifiedBadge from '../../../components/VerifiedBadge';
 import ProductSocialLinks from '../../../components/ProductSocialLinks';
 import { api } from '../../../lib/api';
 import { productCategories } from '../../../lib/categories';
+import { buildBreadcrumbSchema, buildProductSchema } from '../../../lib/seo';
+import { siteConfig } from '../../../config/site';
 import type { Product } from '../../../types';
 
-// Always fetch fresh — isVerified / isFeatured change without a redeploy
+// Always fetch fresh  isVerified / isFeatured change without a redeploy
 export const revalidate = 0;
 
 interface Props {
@@ -38,21 +40,38 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const res = await api.getProductBySlug(params.slug);
     const product = res.data;
+    const description =
+      product.aiDescription ||
+      product.description?.slice(0, 155) ||
+      (product.tagline.length > 155 ? product.tagline.slice(0, 155) : product.tagline);
+
     return {
-      title: `${product.name} ${product.tagline}`,
-      description:
-        product.description?.slice(0, 155) ||
-        (product.tagline.length > 155 ? product.tagline.slice(0, 155) : product.tagline),
-      alternates: { canonical: `https://pinstack.cc/product/${params.slug}` },
+      title: { absolute: `${product.name}  ${product.tagline}` },
+      description,
+      alternates: { canonical: `${siteConfig.url}/product/${product.slug}` },
       openGraph: {
+        title: `${product.name} on Pinstack`,
+        description: product.tagline,
+        url: `${siteConfig.url}/product/${product.slug}`,
+        images: [
+          {
+            url: product.logoUrl,
+            width: 512,
+            height: 512,
+            alt: `${product.name} logo`,
+          },
+        ],
+        type: 'website',
+      },
+      twitter: {
+        card: 'summary',
         title: product.name,
         description: product.tagline,
-        url: `https://pinstack.cc/product/${params.slug}`,
-        images: [{ url: product.logoUrl }],
+        images: [product.logoUrl],
       },
     };
   } catch {
-    return { title: 'Product not found | Pinstack' };
+    return { title: { absolute: 'Product Not Found' } };
   }
 }
 
@@ -89,30 +108,35 @@ export default async function ProductDetailPage({ params }: Props) {
 
   const directoryCategories = (categoriesRes.data || []).slice(0, 8);
   const listedOn = formatDate(product.createdAt);
+  const primaryCat = cats[0];
 
-  const schema = {
-    '@context': 'https://schema.org',
-    '@type': 'SoftwareApplication',
+  const productSchema = buildProductSchema({
     name: product.name,
-    description: product.description || product.tagline,
-    applicationCategory: cats.map((c) => c.name).join(', ') || product.category?.name,
-    url: product.websiteUrl,
-    image: product.logoUrl,
-    aggregateRating:
-      product.upvoteCount > 0
-        ? {
-            '@type': 'AggregateRating',
-            ratingValue: Math.min(5, Math.max(1, 3 + (product.score || 0) / 10)),
-            ratingCount: Math.max(1, (product.upvoteCount || 0) + (product.downvoteCount || 0)),
-          }
-        : undefined,
-  };
+    description: product.description,
+    tagline: product.tagline,
+    websiteUrl: product.websiteUrl,
+    logoUrl: product.logoUrl,
+    category: product.category,
+    categories: cats,
+  });
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: 'Home', path: '/' },
+    ...(primaryCat
+      ? [{ name: primaryCat.name, path: `/category/${primaryCat.slug}` }]
+      : []),
+    { name: product.name, path: `/product/${product.slug}` },
+  ]);
 
   return (
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <Header />
       <main className="bg-[linear-gradient(180deg,#f8fafc_0%,#ffffff_220px)]">
@@ -319,23 +343,34 @@ export default async function ProductDetailPage({ params }: Props) {
               <div className="rounded-2xl border border-borderC bg-white p-5 sm:p-6">
                 <p className="text-xs font-bold text-muted uppercase tracking-wide mb-3">Details</p>
                 <dl className="space-y-3 text-sm">
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-muted">Website</dt>
-                    <dd className="text-right min-w-0">
+                  <div className="flex justify-between items-start gap-3">
+                    <dt className="text-muted shrink-0">Website</dt>
+                    <dd className="min-w-0">
                       <a
                         href={product.websiteUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-primary font-medium hover:underline break-all"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-borderC bg-white hover:border-primary hover:bg-bgAlt text-xs font-semibold text-heading transition group max-w-[180px]"
                       >
-                        {product.websiteUrl.replace(/^https?:\/\//, '')}
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={`https://www.google.com/s2/favicons?domain=${product.websiteUrl}&sz=16`}
+                          alt=""
+                          width={14}
+                          height={14}
+                          className="rounded-sm shrink-0"
+                        />
+                        <span className="truncate text-primary group-hover:underline">
+                          {product.websiteUrl.replace(/^https?:\/\/(www\.)?/, '').replace(/\/$/, '')}
+                        </span>
+                        <svg className="w-3 h-3 text-muted shrink-0" viewBox="0 0 12 12" fill="none"><path d="M2.5 9.5L9.5 2.5M9.5 2.5H4M9.5 2.5V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
                       </a>
                     </dd>
                   </div>
                   <div className="flex justify-between gap-3">
                     <dt className="text-muted">Categories</dt>
                     <dd className="text-heading font-medium text-right">
-                      {cats.map((c) => c.name).join(', ') || '—'}
+                      {cats.map((c) => c.name).join(', ') || ''}
                     </dd>
                   </div>
                   {listedOn && (

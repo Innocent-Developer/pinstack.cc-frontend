@@ -7,7 +7,9 @@ export const siteConfig = {
   url: 'https://pinstack.cc',
   tagline: 'Discover, launch, and grow.',
   description:
-    'A free directory for SaaS products, AI tools, and developer APIs submitted by founders, ranked by the community.',
+    'Pinstack is a free directory where founders list SaaS products, AI tools, and developer APIs, and users discover and upvote them. Submit your product free.',
+  /** Social share image  replace with /og-default.png (1200×630) before launch if available */
+  ogImage: '/icon.png',
   email: 'team@pinstack.cc',
 
   /** Stacked-P mark used for logo, favicon, and all brand marks */

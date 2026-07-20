@@ -62,7 +62,7 @@ export default function ContactForm({ initialReason }: ContactFormProps) {
       formData.append('name', form.name.trim());
       formData.append('email', form.email.trim());
       formData.append('message', form.message.trim());
-      formData.append('subject', `Pinstack contact — ${reasonLabel}`);
+      formData.append('subject', `Pinstack contact  ${reasonLabel}`);
       formData.append('reason', reasonLabel);
       formData.append('from_name', form.name.trim());
 
@@ -95,7 +95,7 @@ export default function ContactForm({ initialReason }: ContactFormProps) {
     return (
       <div className="border border-borderC rounded-card p-8 text-center bg-bgAlt">
         <h3 className="font-bold text-heading text-lg mb-2">Message sent</h3>
-        <p className="text-sm text-muted">Thanks — we typically reply within a few days.</p>
+          <p className="text-sm text-muted">Thanks  your message has been sent. We typically reply within a few days.</p>
       </div>
     );
   }

@@ -4,14 +4,15 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ScrollReveal from '../../components/ScrollReveal';
 import ContactForm from '../../components/ContactForm';
-import { siteConfig } from '../../config/site';
+import { siteConfig, socialLinks } from '../../config/site';
+import { pageMetadata } from '../../lib/seo';
 
-export const metadata: Metadata = {
-  title: 'Contact Us  Pinstack Support & Listings',
+export const metadata: Metadata = pageMetadata({
+  title: 'Contact Pinstack  Questions, Listing Help & Partnerships',
   description:
-    'Contact the Pinstack team about your listing, featured placement, verified badges, partnerships, or general questions.',
-  alternates: { canonical: 'https://pinstack.cc/contact' },
-};
+    'Get in touch with the Pinstack team about your listing, a partnership, or general questions. We read every message.',
+  path: '/contact',
+});
 
 const contactTopics = [
   {
@@ -48,13 +49,12 @@ export default function ContactPage({ searchParams }: Props) {
         <section className="bg-[linear-gradient(180deg,#f0fdf4_0%,#ffffff_100%)] border-b border-borderC">
           <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
             <ScrollReveal>
-              <p className="text-sm font-semibold text-primary mb-2">Contact us</p>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-heading tracking-tight mb-3">
-                We are here to help
+                Get in touch
               </h1>
               <p className="text-sm sm:text-base text-muted max-w-2xl leading-relaxed">
-                Questions about your listing, featured placement, verified badges, or partnerships — send us a
-                message and we will reply within a few business days.
+                Questions about your listing, partnerships, or anything else  we read every
+                message.
               </p>
             </ScrollReveal>
           </div>
@@ -93,18 +93,42 @@ export default function ContactPage({ searchParams }: Props) {
             <ScrollReveal>
               <div className="rounded-2xl border border-borderC bg-bgAlt p-5 sm:p-6 space-y-6 lg:sticky lg:top-24">
                 <div>
-                  <h2 className="text-sm font-bold text-heading mb-1">Email us directly</h2>
-                  <a
-                    href={`mailto:${siteConfig.email}`}
-                    className="text-sm text-primary font-semibold hover:underline break-all"
-                  >
-                    {siteConfig.email}
-                  </a>
+                  <h2 className="text-sm font-bold text-heading mb-1">Prefer email?</h2>
+                  <p className="text-sm text-muted mb-2">
+                    Reach us directly at{' '}
+                    <a
+                      href={`mailto:${siteConfig.email}`}
+                      className="text-primary font-semibold hover:underline break-all"
+                    >
+                      {siteConfig.email}
+                    </a>
+                    {socialLinks.length > 0 && (
+                      <>
+                        {' '}
+                        or find us on{' '}
+                        {socialLinks.map((s, i) => (
+                          <span key={s.key}>
+                            {i > 0 && (i === socialLinks.length - 1 ? ', and ' : ', ')}
+                            <a
+                              href={s.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-primary font-semibold hover:underline"
+                            >
+                              {s.label}
+                            </a>
+                          </span>
+                        ))}
+                        .
+                      </>
+                    )}
+                  </p>
                 </div>
                 <div>
                   <h2 className="text-sm font-bold text-heading mb-1">Response time</h2>
                   <p className="text-sm text-muted leading-relaxed">
-                    We typically reply within 2–3 business days. Featured and verified inquiries are prioritized.
+                    We typically reply within a few days. Featured and verified inquiries are
+                    prioritized.
                   </p>
                 </div>
                 <div>

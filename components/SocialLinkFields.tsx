@@ -15,7 +15,7 @@ export default function SocialLinkFields({ values, onChange }: Props) {
       <div>
         <p className="text-xs font-semibold text-heading">Social links</p>
         <p className="text-[11px] text-muted mt-0.5">
-          Optional. Paste a full URL or @handle — shown as icons on your listing page.
+          Optional. Paste a full URL or @handle  shown as icons on your listing page.
         </p>
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

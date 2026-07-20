@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -9,52 +10,47 @@ import BadgeSection from '../components/BadgeSection';
 import AddProductButton from '../components/AddProductButton';
 import { api } from '../lib/api';
 import { siteConfig } from '../config/site';
+import { buildOrganizationSchema, buildWebsiteSchema } from '../lib/seo';
 import type { Category, Product, Stats } from '../types';
 
 export const revalidate = 60;
 
-const orgSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'Organization',
-  name: siteConfig.name,
-  url: siteConfig.url,
-  logo: `${siteConfig.url}${siteConfig.iconPath}`,
-};
-
-const websiteSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'WebSite',
-  name: siteConfig.name,
-  url: siteConfig.url,
-  potentialAction: {
-    '@type': 'SearchAction',
-    target: `${siteConfig.url}/explore?search={search_term_string}`,
-    'query-input': 'required name=search_term_string',
+export const metadata: Metadata = {
+  title: { absolute: 'Pinstack  Discover and Launch SaaS Tools, AI Products & APIs' },
+  description: siteConfig.description,
+  alternates: { canonical: siteConfig.url },
+  openGraph: {
+    title: 'Pinstack  Discover and Launch SaaS Tools, AI Products & APIs',
+    description: siteConfig.description,
+    url: siteConfig.url,
   },
 };
+
+const orgSchema = buildOrganizationSchema();
+const websiteSchema = buildWebsiteSchema();
 
 const whyItems = [
   {
     title: 'Discover',
-    body: 'Browse SaaS, AI tools, and APIs by category  curated for founders who ship.',
+    body: 'Browse thousands of SaaS products, AI tools, and developer tools by category.',
     tone: 'bg-emerald-50 text-primary',
     icon: '◎',
   },
   {
-    title: 'Submit free',
-    body: 'List your product in minutes. Auto-fill from your URL or enter details manually.',
+    title: 'Submit Free',
+    body: 'List your product in minutes. No cost for a basic listing.',
     tone: 'bg-teal-50 text-teal-700',
     icon: '✦',
   },
   {
-    title: 'Upvote & rank',
-    body: 'Transparent community ranking. Featured placement stays clearly marked as paid.',
+    title: 'Upvote & Rank',
+    body: "The community votes on what's genuinely useful, not what paid the most.",
     tone: 'bg-lime-50 text-lime-800',
     icon: '▲',
   },
   {
-    title: 'Get found',
-    body: 'Shareable listing pages and embeddable badges that send traffic back to you.',
+    title: 'Get Discovered',
+    body: 'Founders get a shareable listing page and an embeddable badge for their own site.',
     tone: 'bg-cyan-50 text-cyan-800',
     icon: '↗',
   },
@@ -98,11 +94,8 @@ export default async function HomePage() {
         <section className="py-12 sm:py-16 max-w-[1160px] mx-auto px-4 sm:px-6" aria-labelledby="why-heading">
           <ScrollReveal className="text-center mb-10">
             <h2 id="why-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2">
-              Why Pinstack?
+              Why Pinstack
             </h2>
-            <p className="text-sm text-muted max-w-lg mx-auto">
-              More than a list  a launchpad built for founders and the people who discover them.
-            </p>
           </ScrollReveal>
           <ScrollReveal stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {whyItems.map((item) => (
@@ -165,7 +158,7 @@ export default async function HomePage() {
               <h2 id="trending-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2">
                 Trending this week
               </h2>
-              <p className="text-sm text-muted">Ranked by community upvotes, refreshed hourly.</p>
+              <p className="text-sm text-muted">Ranked by community upvotes, updated hourly.</p>
             </ScrollReveal>
 
             {trending.length === 0 ? (
@@ -286,21 +279,11 @@ export default async function HomePage() {
           <div className="max-w-[900px] mx-auto px-4 sm:px-6 text-center">
             <ScrollReveal>
               <h2 id="cta-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-3">
-                Built something great? Get discovered.
+                Built something worth sharing?
               </h2>
               <p className="text-sm text-muted mb-6 max-w-md mx-auto">
-                Free listing. Optional featured placement. Verified badge when you want extra trust.
+                List it free. Upgrade later if you want featured placement.
               </p>
-              <ul className="flex flex-wrap justify-center gap-4 text-xs text-body mb-8">
-                {['Free forever listing', 'Priority review options', 'Shareable product page'].map((t) => (
-                  <li key={t} className="flex items-center gap-1.5">
-                    <span className="text-primary" aria-hidden>
-                      ✓
-                    </span>
-                    {t}
-                  </li>
-                ))}
-              </ul>
               <AddProductButton className="inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20" />
             </ScrollReveal>
           </div>

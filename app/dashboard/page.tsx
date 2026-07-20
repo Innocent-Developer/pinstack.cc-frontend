@@ -61,22 +61,22 @@ export default function DashboardPage() {
 
   if (checking || !user) {
     return (
-      <>
+      <div className="flex flex-col flex-1 min-h-dvh">
         <Header />
-        <main className="max-w-[1100px] mx-auto px-4 sm:px-6 py-20">
+        <main className="flex-1 max-w-[1100px] w-full mx-auto px-4 sm:px-6 py-20">
           <div className="h-48 rounded-2xl bg-bgAlt animate-pulse" />
         </main>
         <Footer />
-      </>
+      </div>
     );
   }
 
   const firstName = user.name.split(' ')[0];
 
   return (
-    <>
+    <div className="flex flex-col flex-1 min-h-dvh">
       <Header />
-      <main className="min-h-[70vh] bg-[linear-gradient(180deg,#f8fafc_0%,#ffffff_280px)]">
+      <main className="flex-1 bg-[linear-gradient(180deg,#f8fafc_0%,#ffffff_280px)]">
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-8 sm:py-10">
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
             <div>
@@ -202,6 +202,6 @@ export default function DashboardPage() {
         </div>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

@@ -21,5 +21,5 @@ export default function PageTransition({ children }: { children: ReactNode }) {
     return () => ctx.revert();
   }, []);
 
-  return <div ref={ref} className="min-w-0 overflow-x-hidden">{children}</div>;
+  return <div ref={ref} className="min-w-0 overflow-x-hidden min-h-dvh flex flex-col">{children}</div>;
 }

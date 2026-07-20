@@ -10,12 +10,14 @@ import { productCategories } from '../lib/categories';
 import type { Product } from '../types';
 import EditProductForm from './EditProductForm';
 import ProductSocialLinks from './ProductSocialLinks';
+import { useToast } from './ToastProvider';
+import BadgeCopyWidget from './BadgeCopyWidget';
 
 type StatusFilter = 'all' | 'pending' | 'approved' | 'rejected';
 type ModalMode = 'view' | 'edit';
 
 function formatDate(iso?: string) {
-  if (!iso) return '—';
+  if (!iso) return '';
   try {
     return new Date(iso).toLocaleDateString(undefined, {
       month: 'short',
@@ -23,7 +25,7 @@ function formatDate(iso?: string) {
       year: 'numeric',
     });
   } catch {
-    return '—';
+    return '';
   }
 }
 
@@ -48,7 +50,7 @@ export default function SubmissionsManager({ products, loading, onChanged }: Pro
   const [modalMode, setModalMode] = useState<ModalMode>('view');
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [busy, setBusy] = useState(false);
-  const [toast, setToast] = useState<string | null>(null);
+  const { success: toastSuccess, error: toastError } = useToast();
 
   const selected = useMemo(
     () => products.find((p) => p._id === selectedId) || null,
@@ -87,12 +89,6 @@ export default function SubmissionsManager({ products, loading, onChanged }: Pro
     setModalMode('view');
   };
 
-  useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(null), 3200);
-    return () => clearTimeout(t);
-  }, [toast]);
-
   const counts = useMemo(() => {
     return {
       all: products.length,
@@ -127,9 +123,9 @@ export default function SubmissionsManager({ products, loading, onChanged }: Pro
       await api.deleteMyProduct(token, selected._id);
       onChanged(products.filter((p) => p._id !== selected._id));
       closeModal();
-      setToast('Listing deleted');
+      toastSuccess('Listing deleted');
     } catch (err) {
-      setToast(err instanceof Error ? err.message : 'Could not delete');
+      toastError(err instanceof Error ? err.message : 'Could not delete');
     } finally {
       setBusy(false);
     }
@@ -144,11 +140,6 @@ export default function SubmissionsManager({ products, loading, onChanged }: Pro
 
   return (
     <div className="relative">
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-full bg-heading text-white text-sm font-medium shadow-lg max-w-[calc(100vw-2rem)] text-center">
-          {toast}
-        </div>
-      )}
 
       <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-4">
         <div className="relative flex-1">
@@ -278,7 +269,7 @@ export default function SubmissionsManager({ products, loading, onChanged }: Pro
         </ul>
       )}
 
-      {/* Centered popup — sticky footer so actions always show */}
+      {/* Centered popup  sticky footer so actions always show */}
       {selected && (
         <div
           className="fixed inset-0 z-[100] flex items-end sm:items-center justify-center sm:p-4 md:p-6 modal-fade-in"
@@ -298,7 +289,7 @@ export default function SubmissionsManager({ products, loading, onChanged }: Pro
               modalMode === 'edit' ? 'sm:max-w-3xl' : 'sm:max-w-2xl'
             }`}
           >
-            {/* Header — always visible */}
+            {/* Header  always visible */}
             <div className="flex items-center justify-between gap-3 px-4 sm:px-6 py-3.5 sm:py-4 border-b border-borderC shrink-0 bg-[linear-gradient(180deg,#ffffff_0%,#f8fafc_100%)]">
               <div className="min-w-0 flex-1">
                 <p className="text-[11px] font-bold uppercase tracking-wide text-primary">
@@ -365,7 +356,7 @@ export default function SubmissionsManager({ products, loading, onChanged }: Pro
                     onChanged(products.map((p) => (p._id === updated._id ? updated : p)));
                     setModalMode('view');
                     setConfirmDelete(false);
-                    setToast('Changes saved');
+                    toastSuccess('Changes saved');
                   }}
                 />
               </div>
@@ -438,7 +429,7 @@ export default function SubmissionsManager({ products, loading, onChanged }: Pro
                                 {c.icon} {c.name}
                               </span>
                             ))
-                          : '—'}
+                          : ''}
                       </dd>
                     </div>
                     <div className="min-w-0">
@@ -533,9 +524,13 @@ export default function SubmissionsManager({ products, loading, onChanged }: Pro
                       </div>
                     </div>
                   )}
+
+                  {selected.status === 'approved' && (
+                    <BadgeCopyWidget slug={selected.slug} name={selected.name} upvotes={selected.upvoteCount ?? selected.score ?? 0} />
+                  )}
                 </div>
 
-                {/* Sticky footer — actions always visible */}
+                {/* Sticky footer  actions always visible */}
                 <div className="shrink-0 border-t border-borderC bg-white px-4 sm:px-6 py-3 sm:py-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] shadow-[0_-8px_24px_-12px_rgba(15,23,42,0.12)]">
                   {!confirmDelete ? (
                     <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">

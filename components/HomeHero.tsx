@@ -54,12 +54,12 @@ export default function HomeHero() {
             className="text-[2rem] sm:text-4xl md:text-[2.75rem] font-extrabold text-heading leading-[1.15] tracking-tight mb-5"
           >
             Find the tools founders{' '}
-            <span className="text-primary">actually use</span>. Get discovered{' '}
-            <span className="text-primary">faster</span>.
+            <span className="text-primary">actually use</span>.
           </h1>
           <p data-hero-left className="text-base text-body max-w-lg mb-8 leading-relaxed">
-            Pinstack is a free directory for SaaS, AI tools, and APIs  submitted by founders,
-            ranked by real community upvotes.
+            Pinstack is a directory for discovering SaaS products, AI tools, APIs, and developer
+            tools. Founders submit their products for free, and the community browses, searches, and
+            upvotes what&apos;s useful.
           </p>
 
           <form
@@ -80,7 +80,7 @@ export default function HomeHero() {
                 id="home-search"
                 type="search"
                 name="search"
-                placeholder="Search products, categories..."
+                placeholder="Search products, categories, or use cases..."
                 className="flex-1 py-3 text-sm outline-none bg-transparent"
               />
             </div>

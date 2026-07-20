@@ -86,6 +86,19 @@ export const api = {
     }
     return (data as { data: { logoUrl?: string; screenshotUrls: string[] } }).data;
   },
+  uploadFromUrl: (
+    token: string,
+    imageUrl: string,
+    folder: 'logos' | 'screenshots' = 'logos'
+  ) =>
+    apiFetch<{ success: boolean; data: { url: string; logoUrl?: string; screenshotUrl?: string } }>(
+      '/uploads/from-url',
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ imageUrl, folder }),
+      }
+    ),
   vote: (id: string, direction: 'up' | 'down') =>
     apiFetch<{ success: boolean; upvoteCount: number; downvoteCount: number; score: number }>(
       `/products/${id}/vote`,

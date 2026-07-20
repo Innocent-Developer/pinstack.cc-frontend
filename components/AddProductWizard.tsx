@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { api } from '../lib/api';
 import { getStoredUser, getToken, StoredUser } from '../lib/auth';
+import { useToast } from './ToastProvider';
 import type { Category } from '../types';
 import SocialLinkFields from './SocialLinkFields';
 import {
@@ -17,7 +18,7 @@ import {
 const MAX_BYTES = 1 * 1024 * 1024;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
-type Step = 1 | 2 | 3 | 4;
+type Step = 1 | 2 | 3 | 4 | 5;
 
 function validateImage(file: File): string | null {
   if (!ALLOWED.includes(file.type)) return 'Use JPEG, PNG, WebP, or GIF only';
@@ -31,6 +32,7 @@ export default function AddProductWizard() {
   const [categories, setCategories] = useState<Category[]>([]);
   const [step, setStep] = useState<Step>(1);
   const [error, setError] = useState<string | null>(null);
+  const { success: toastSuccess, error: toastError } = useToast();
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
 
@@ -42,6 +44,8 @@ export default function AddProductWizard() {
 
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
+  const [autofilledLogoUrl, setAutofilledLogoUrl] = useState<string | null>(null);
+  const [logoFetching, setLogoFetching] = useState(false);
   const [shotFiles, setShotFiles] = useState<File[]>([]);
   const [shotPreviews, setShotPreviews] = useState<string[]>([]);
 
@@ -70,15 +74,17 @@ export default function AddProductWizard() {
   const steps = useMemo(
     () => [
       { n: 1 as Step, label: 'Basics' },
-      { n: 2 as Step, label: 'Copy + AI' },
-      { n: 3 as Step, label: 'Images' },
-      { n: 4 as Step, label: 'Review' },
+      { n: 2 as Step, label: 'Social' },
+      { n: 3 as Step, label: 'Copy + AI' },
+      { n: 4 as Step, label: 'Images' },
+      { n: 5 as Step, label: 'Review' },
     ],
     []
   );
 
   const runAutofill = async () => {
     if (!autofillUrl.trim()) return;
+    const token = getToken();
     setBusy(true);
     setError(null);
     try {
@@ -91,12 +97,40 @@ export default function AddProductWizard() {
           websiteUrl: res.data!.websiteUrl || autofillUrl.trim(),
           submissionMethod: 'auto',
         }));
-        if (res.missingFields?.length) {
+
+        if (res.data.logoUrl && token) {
+          setLogoFetching(true);
+          let logoUploaded = false;
+          try {
+            const uploaded = await api.uploadFromUrl(token, res.data.logoUrl, 'logos');
+            const url = uploaded.data.logoUrl || uploaded.data.url;
+            setAutofilledLogoUrl(url);
+            setLogoPreview(url);
+            setLogoFile(null);
+            logoUploaded = true;
+            toastSuccess('Logo fetched from website');
+          } catch {
+            setError('Auto-fill worked, but we could not fetch the logo — upload it manually in Images.');
+          } finally {
+            setLogoFetching(false);
+          }
+
+          if (res.missingFields?.length) {
+            const fields = res.missingFields.filter((f) => !(f === 'logoUrl' && logoUploaded));
+            if (fields.length) {
+              setError(`Auto-filled what we could. Still needed: ${fields.join(', ')}`);
+            }
+          } else if (logoUploaded) {
+            toastSuccess('Auto-filled from website');
+          }
+        } else if (res.missingFields?.length) {
           setError(`Auto-filled what we could. Still needed: ${res.missingFields.join(', ')}`);
+        } else {
+          toastSuccess('Auto-filled from website');
         }
       } else {
         setForm((f) => ({ ...f, websiteUrl: autofillUrl.trim(), submissionMethod: 'manual' }));
-        setError(res.message || 'Could not auto-fill continue manually');
+        setError(res.message || 'Could not auto-fill — continue manually');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Autofill failed');
@@ -141,6 +175,7 @@ export default function AddProductWizard() {
     if (!file) {
       setLogoFile(null);
       setLogoPreview(null);
+      setAutofilledLogoUrl(null);
       return;
     }
     const err = validateImage(file);
@@ -150,8 +185,17 @@ export default function AddProductWizard() {
     }
     setError(null);
     setLogoFile(file);
+    setAutofilledLogoUrl(null);
     setLogoPreview(URL.createObjectURL(file));
   };
+
+  const clearLogo = () => {
+    setLogoFile(null);
+    setLogoPreview(null);
+    setAutofilledLogoUrl(null);
+  };
+
+  const hasLogo = !!(logoFile || autofilledLogoUrl);
 
   const onShots = (list: FileList | null) => {
     if (!list) return;
@@ -178,33 +222,41 @@ export default function AddProductWizard() {
 
   const canNext = () => {
     if (step === 1) return !!(form.name && form.websiteUrl && form.categories.length > 0);
-    if (step === 2) return !!(form.tagline && form.description);
-    if (step === 3) return !!logoFile;
+    if (step === 2) return true;
+    if (step === 3) return !!(form.tagline && form.description);
+    if (step === 4) return hasLogo;
     return true;
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const token = getToken();
-    if (!token || !user || !logoFile) return;
+    if (!token || !user || !hasLogo) return;
 
     setBusy(true);
     setError(null);
     try {
-      const uploaded = await api.uploadImages(token, {
-        logo: logoFile,
-        screenshots: shotFiles,
-      });
+      let logoUrl = autofilledLogoUrl || '';
 
-      if (!uploaded.logoUrl) throw new Error('Logo upload failed');
+      if (logoFile) {
+        const uploaded = await api.uploadImages(token, { logo: logoFile });
+        if (!uploaded.logoUrl) throw new Error('Logo upload failed');
+        logoUrl = uploaded.logoUrl;
+      }
+
+      let screenshotUrls: string[] = [];
+      if (shotFiles.length) {
+        const uploaded = await api.uploadImages(token, { screenshots: shotFiles });
+        screenshotUrls = uploaded.screenshotUrls || [];
+      }
 
       await api.submitProduct({
         name: form.name,
         tagline: form.tagline,
         description: form.description,
         websiteUrl: form.websiteUrl,
-        logoUrl: uploaded.logoUrl,
-        screenshotUrls: uploaded.screenshotUrls || [],
+        logoUrl,
+        screenshotUrls,
         category: form.categories[0],
         categories: form.categories,
         tags: form.tags
@@ -218,8 +270,11 @@ export default function AddProductWizard() {
       });
 
       setDone(true);
+      toastSuccess('Product submitted for review!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Submission failed');
+      const msg = err instanceof Error ? err.message : 'Submission failed';
+      setError(msg);
+      toastError(msg);
     } finally {
       setBusy(false);
     }
@@ -252,7 +307,7 @@ export default function AddProductWizard() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      <ol className="grid grid-cols-4 gap-2">
+      <ol className="grid grid-cols-2 sm:grid-cols-5 gap-2">
         {steps.map((s) => (
           <li
             key={s.n}
@@ -370,18 +425,25 @@ export default function AddProductWizard() {
             />
           </div>
 
-          <div className="pt-2 border-t border-borderC">
-            <SocialLinkFields
-              values={socialLinks}
-              onChange={(platform: SocialPlatform, value: string) =>
-                setSocialLinks((prev) => ({ ...prev, [platform]: value }))
-              }
-            />
-          </div>
         </div>
       )}
 
       {step === 2 && (
+        <div className="border border-borderC rounded-2xl p-6 bg-white space-y-4">
+          <h2 className="font-extrabold text-heading text-lg">Social links</h2>
+          <p className="text-xs text-muted">
+            Optional. Add your product&apos;s social profiles — shown as icons on your listing page.
+          </p>
+          <SocialLinkFields
+            values={socialLinks}
+            onChange={(platform: SocialPlatform, value: string) =>
+              setSocialLinks((prev) => ({ ...prev, [platform]: value }))
+            }
+          />
+        </div>
+      )}
+
+      {step === 3 && (
         <div className="grid lg:grid-cols-5 gap-4">
           <div className="lg:col-span-3 border border-borderC rounded-2xl p-6 bg-white space-y-4">
             <h2 className="font-extrabold text-heading text-lg">Listing copy</h2>
@@ -454,11 +516,19 @@ export default function AddProductWizard() {
         </div>
       )}
 
-      {step === 3 && (
+      {step === 4 && (
         <div className="border border-borderC rounded-2xl p-6 bg-white space-y-6">
           <div>
             <h2 className="font-extrabold text-heading text-lg mb-1">Images</h2>
             <p className="text-xs text-muted">1 logo required · up to 3 feature images · each under 1 MB</p>
+            {autofilledLogoUrl && !logoFile && (
+              <p className="text-xs text-primary mt-1 font-medium">
+                Logo auto-fetched from your website — replace below if needed.
+              </p>
+            )}
+            {logoFetching && (
+              <p className="text-xs text-muted mt-1">Fetching logo from website…</p>
+            )}
           </div>
 
           <div>
@@ -470,8 +540,17 @@ export default function AddProductWizard() {
               className="block w-full text-sm"
             />
             {logoPreview && (
-              <div className="mt-3 relative w-20 h-20 rounded-xl overflow-hidden border border-borderC bg-bgAlt">
-                <Image src={logoPreview} alt="Logo preview" fill className="object-cover" unoptimized />
+              <div className="mt-3 flex items-start gap-3">
+                <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-borderC bg-bgAlt">
+                  <Image src={logoPreview} alt="Logo preview" fill className="object-cover" unoptimized />
+                </div>
+                <button
+                  type="button"
+                  onClick={clearLogo}
+                  className="text-xs font-semibold text-red-600 hover:underline mt-1"
+                >
+                  Remove logo
+                </button>
               </div>
             )}
           </div>
@@ -512,7 +591,7 @@ export default function AddProductWizard() {
         </div>
       )}
 
-      {step === 4 && (
+      {step === 5 && (
         <div className="border border-borderC rounded-2xl p-6 bg-white space-y-3">
           <h2 className="font-extrabold text-heading text-lg">Review & submit</h2>
           <dl className="text-sm space-y-2">
@@ -531,7 +610,8 @@ export default function AddProductWizard() {
             <div className="flex gap-2">
               <dt className="text-muted w-28 shrink-0">Images</dt>
               <dd className="text-body">
-                1 logo{shotFiles.length ? ` + ${shotFiles.length} feature` : ''}
+                1 logo{autofilledLogoUrl && !logoFile ? ' (from website)' : ''}
+                {shotFiles.length ? ` + ${shotFiles.length} feature` : ''}
               </dd>
             </div>
             {Object.values(socialLinks).some((v) => v.trim()) && (
@@ -559,11 +639,11 @@ export default function AddProductWizard() {
           Back
         </button>
 
-        {step < 4 ? (
+        {step < 5 ? (
           <button
             type="button"
             disabled={!canNext() || busy}
-            onClick={() => setStep((s) => (s < 4 ? ((s + 1) as Step) : s))}
+            onClick={() => setStep((s) => (s < 5 ? ((s + 1) as Step) : s))}
             className="px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover disabled:opacity-50"
           >
             Continue
@@ -571,7 +651,7 @@ export default function AddProductWizard() {
         ) : (
           <button
             type="submit"
-            disabled={busy || !logoFile}
+            disabled={busy || !hasLogo}
             className="px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover disabled:opacity-50"
           >
             {busy ? 'Uploading & submitting…' : 'Submit for review'}

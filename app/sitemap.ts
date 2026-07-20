@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { api } from '../lib/api';
+import { siteConfig } from '../config/site';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [productsRes, categoriesRes] = await Promise.all([
@@ -8,32 +9,26 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ]);
 
   const staticPages: MetadataRoute.Sitemap = [
-    '',
-    '/about',
-    '/pricing',
-    '/explore',
-    '/categories',
-    '/contact',
-  ].map((path) => ({
-    url: `https://pinstack.cc${path}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: path === '' ? 1.0 : 0.7,
-  }));
+    { url: siteConfig.url, changeFrequency: 'daily', priority: 1 },
+    { url: `${siteConfig.url}/about`, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${siteConfig.url}/pricing`, changeFrequency: 'monthly', priority: 0.7 },
+    { url: `${siteConfig.url}/explore`, changeFrequency: 'daily', priority: 0.9 },
+    { url: `${siteConfig.url}/categories`, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${siteConfig.url}/contact`, changeFrequency: 'yearly', priority: 0.3 },
+  ];
 
   const productPages: MetadataRoute.Sitemap = productsRes.data.map((p) => ({
-    url: `https://pinstack.cc/product/${p.slug}`,
-    lastModified: new Date(p.createdAt),
+    url: `${siteConfig.url}/product/${p.slug}`,
+    lastModified: p.updatedAt || p.createdAt,
     changeFrequency: 'weekly' as const,
-    priority: 0.6,
-  }));
-
-  const categoryPages: MetadataRoute.Sitemap = categoriesRes.data.map((c) => ({
-    url: `https://pinstack.cc/category/${c.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'daily' as const,
     priority: 0.8,
   }));
 
-  return [...staticPages, ...categoryPages, ...productPages];
+  const categoryPages: MetadataRoute.Sitemap = categoriesRes.data.map((c) => ({
+    url: `${siteConfig.url}/category/${c.slug}`,
+    changeFrequency: 'daily' as const,
+    priority: 0.7,
+  }));
+
+  return [...staticPages, ...productPages, ...categoryPages];
 }
