@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans } from 'next/font/google';
 import './globals.css';
 import PageTransition from '../components/PageTransition';
 import ToastProvider from '../components/ToastProvider';
+import GoogleAnalytics from '../components/GoogleAnalytics';
 import { siteConfig } from '../config/site';
 import { defaultKeywords } from '../lib/seo';
 
@@ -77,6 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={jakarta.variable}>
       <body className="font-sans bg-white text-body antialiased">
+        <GoogleAnalytics />
         <ToastProvider>
           <PageTransition>{children}</PageTransition>
         </ToastProvider>
