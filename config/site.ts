@@ -13,7 +13,7 @@ export const siteConfig = {
     'Pinstack is a free directory where founders list SaaS products, AI tools, and developer APIs, and users discover and upvote them. Submit your product free.',
   /** Social share image — replace with /og-default.png (1200×630) before launch if available */
   ogImage: '/icon.png',
-  email: 'team@pinstack.cc',
+  email: 'hello@pinstack.cc',
 
   /** Stacked-P mark used for logo, favicon, and all brand marks */
   logoPath: '/icon.png',

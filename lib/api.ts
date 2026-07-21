@@ -184,10 +184,14 @@ export const api = {
         timeoutMs: 20_000,
       }
     ),
-  vote: (id: string, direction: 'up' | 'down') =>
+  vote: (token: string, id: string, direction: 'up' | 'down') =>
     apiFetch<{ success: boolean; upvoteCount: number; downvoteCount: number; score: number }>(
       `/products/${id}/vote`,
-      { method: 'POST', body: JSON.stringify({ direction }) }
+      {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body: JSON.stringify({ direction }),
+      }
     ),
   trackClick: (id: string) => apiFetch(`/products/${id}/click`, { method: 'POST' }),
   getProductReviews: (productId: string, page = 1) =>

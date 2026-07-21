@@ -1,7 +1,9 @@
 'use client';
 
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { api } from '../lib/api';
+import { getToken } from '../lib/auth';
 import { useToast } from './ToastProvider';
 
 interface Props {
@@ -26,10 +28,27 @@ export default function ProductVoteButtons({
   const [downvotes, setDownvotes] = useState(initialDownvotes);
   const [voting, setVoting] = useState(false);
   const [bounce, setBounce] = useState(false);
-  const { error: toastError } = useToast();
+  const { error: toastError, info: toastInfo } = useToast();
+  const router = useRouter();
+
+  const requireLogin = () => {
+    const next =
+      typeof window !== 'undefined'
+        ? window.location.pathname + window.location.search
+        : '/explore';
+    toastInfo('Log in to upvote or downvote');
+    router.push(`/login?next=${encodeURIComponent(next)}`);
+  };
 
   const handleVote = async (direction: 'up' | 'down') => {
     if (voting) return;
+
+    const token = getToken();
+    if (!token) {
+      requireLogin();
+      return;
+    }
+
     setVoting(true);
 
     const prev = { score, upvotes, downvotes };
@@ -43,15 +62,20 @@ export default function ProductVoteButtons({
     }
 
     try {
-      const result = await api.vote(productId, direction);
+      const result = await api.vote(token, productId, direction);
       setScore(result.score);
       setUpvotes(result.upvoteCount);
       setDownvotes(result.downvoteCount);
-    } catch {
+    } catch (err) {
       setScore(prev.score);
       setUpvotes(prev.upvotes);
       setDownvotes(prev.downvotes);
-      toastError('Vote failed  please try again');
+      const msg = err instanceof Error ? err.message : 'Vote failed — please try again';
+      if (/not authorized|log in|token/i.test(msg)) {
+        requireLogin();
+      } else {
+        toastError(msg);
+      }
     } finally {
       setVoting(false);
     }
