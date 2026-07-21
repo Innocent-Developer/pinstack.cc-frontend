@@ -154,20 +154,33 @@ export default function AddProductWizard() {
         description: form.description,
         websiteUrl: form.websiteUrl,
       });
-      setAiAnswer(res.data.answer);
+      const data = res.data;
+      setAiAnswer(data.answer);
+
+      // Auto-fill listing copy fields from AI response
+      setForm((f) => {
+        const next = { ...f };
+        if (data.name?.trim()) next.name = data.name.trim();
+        if (data.tagline?.trim()) next.tagline = data.tagline.trim().slice(0, 120);
+        if (data.description?.trim()) next.description = data.description.trim();
+        if (data.websiteUrl?.trim() && !f.websiteUrl.trim()) {
+          next.websiteUrl = data.websiteUrl.trim();
+        }
+        // Field-specific: if API only returned answer text, still apply
+        if (aiField === 'tagline' && !data.tagline && data.answer) {
+          next.tagline = data.answer.replace(/^["']|["']$/g, '').slice(0, 120);
+        }
+        if (aiField === 'description' && !data.description && data.answer) {
+          next.description = data.answer;
+        }
+        return next;
+      });
+
+      toastSuccess('Listing copy updated from AI');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'AI assist failed');
     } finally {
       setAiBusy(false);
-    }
-  };
-
-  const applyAi = () => {
-    if (!aiAnswer) return;
-    if (aiField === 'tagline') {
-      setForm((f) => ({ ...f, tagline: aiAnswer.slice(0, 120) }));
-    } else if (aiField === 'description') {
-      setForm((f) => ({ ...f, description: aiAnswer }));
     }
   };
 
@@ -472,22 +485,22 @@ export default function AddProductWizard() {
           <div className="lg:col-span-2 border border-borderC rounded-2xl p-5 bg-bgAlt space-y-3">
             <h3 className="font-bold text-heading text-sm">Ask AI</h3>
             <p className="text-xs text-muted">
-              Describe what you need rewrite tagline, expand description, or ask a question.
+              Generate or rewrite listing copy — results auto-fill Tagline and Description.
             </p>
             <select
               value={aiField}
               onChange={(e) => setAiField(e.target.value as typeof aiField)}
               className="w-full px-3 py-2 border border-borderC rounded-btn text-sm bg-white"
             >
-              <option value="general">General help</option>
-              <option value="tagline">Write tagline</option>
-              <option value="description">Write description</option>
+              <option value="general">Fill tagline + description</option>
+              <option value="tagline">Write tagline only</option>
+              <option value="description">Write description only</option>
             </select>
             <textarea
               rows={4}
               value={aiQuestion}
               onChange={(e) => setAiQuestion(e.target.value)}
-              placeholder="e.g. Make my tagline clearer for B2B founders"
+              placeholder="e.g. Write a clear tagline and description for this product"
               className="w-full px-3 py-2 border border-borderC rounded-btn text-sm bg-white"
             />
             <button
@@ -496,20 +509,14 @@ export default function AddProductWizard() {
               disabled={aiBusy || !aiQuestion.trim()}
               className="w-full py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover disabled:opacity-50"
             >
-              {aiBusy ? 'Thinking…' : 'Ask AI'}
+              {aiBusy ? 'Generating…' : 'Generate & fill'}
             </button>
             {aiAnswer && (
-              <div className="bg-white border border-borderC rounded-btn p-3 space-y-2">
+              <div className="bg-white border border-borderC rounded-btn p-3 space-y-1">
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-muted">
+                  Applied to form
+                </p>
                 <p className="text-xs text-body whitespace-pre-wrap">{aiAnswer}</p>
-                {(aiField === 'tagline' || aiField === 'description') && (
-                  <button
-                    type="button"
-                    onClick={applyAi}
-                    className="text-xs font-semibold text-primary hover:underline"
-                  >
-                    Apply to form
-                  </button>
-                )}
               </div>
             )}
           </div>

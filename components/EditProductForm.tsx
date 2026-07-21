@@ -209,8 +209,11 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
             Close
           </button>
         ) : (
-          <Link href="/dashboard" className="text-sm font-semibold text-primary hover:underline">
-            ← Back to dashboard
+          <Link
+            href={`/dashboard/products/${productId}`}
+            className="text-sm font-semibold text-primary hover:underline"
+          >
+            ← Back to listing
           </Link>
         )}
       </div>
@@ -230,10 +233,10 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
         </p>
         <div className="flex flex-wrap justify-center gap-3">
           <Link
-            href="/dashboard"
+            href={`/dashboard/products/${productId}`}
             className="px-5 py-2.5 rounded-full text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
           >
-            Back to dashboard
+            View listing
           </Link>
           <button
             type="button"
@@ -263,8 +266,11 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
             <p className="text-xs font-semibold text-primary mb-1">Edit listing</p>
             <h1 className="text-2xl font-extrabold text-heading">{product.name}</h1>
           </div>
-          <Link href="/dashboard" className="text-sm font-semibold text-muted hover:text-heading">
-            ← Dashboard
+          <Link
+            href={`/dashboard/products/${productId}`}
+            className="text-sm font-semibold text-muted hover:text-heading"
+          >
+            ← Back to listing
           </Link>
         </div>
       )}
@@ -477,7 +483,7 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
           </button>
         ) : (
           <Link
-            href="/dashboard"
+            href={`/dashboard/products/${productId}`}
             className="w-full sm:w-auto text-center px-5 py-3 sm:py-2.5 rounded-full text-sm font-semibold border border-borderC text-heading hover:bg-bgAlt order-2 sm:order-1"
           >
             Cancel

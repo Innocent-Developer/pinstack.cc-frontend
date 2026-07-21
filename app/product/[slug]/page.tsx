@@ -84,6 +84,11 @@ export default async function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
+  // Never render pending / rejected listings on the public site
+  if (!product || product.status === 'pending' || product.status === 'rejected') {
+    notFound();
+  }
+
   const cats = productCategories(product);
   const primaryCategoryId = cats[0]?._id || product.category?._id;
 

@@ -131,7 +131,16 @@ export const api = {
       websiteUrl?: string;
     }
   ) =>
-    apiFetch<{ success: boolean; data: { answer: string } }>('/products/ai-assist', {
+    apiFetch<{
+      success: boolean;
+      data: {
+        answer: string;
+        name?: string;
+        tagline?: string;
+        description?: string;
+        websiteUrl?: string;
+      };
+    }>('/products/ai-assist', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },
       body: JSON.stringify(payload),
