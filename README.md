@@ -19,6 +19,7 @@ Next.js (App Router) + TypeScript + Tailwind CSS. Connects to the Pinstack backe
 - `/product/[slug]`  dynamic product detail page with dynamic meta tags + SoftwareApplication schema
 - `/category/[slug]`  dynamic category browse page with dynamic meta tags
 - `/sitemap.xml` and `/robots.txt`  auto-generated from live product/category data
+-test
 
 ## Key implementation notes
 
