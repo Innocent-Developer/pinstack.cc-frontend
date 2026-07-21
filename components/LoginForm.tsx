@@ -122,6 +122,14 @@ function LoginFormInner() {
             {showPassword ? 'Hide' : 'Show'}
           </button>
         </div>
+        <div className="mt-1.5 text-right">
+          <Link
+            href="/forgot-password"
+            className="text-xs font-semibold text-muted hover:text-primary transition"
+          >
+            Forgot password?
+          </Link>
+        </div>
       </div>
 
       <button

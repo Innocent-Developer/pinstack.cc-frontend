@@ -272,6 +272,18 @@ export const api = {
       body: JSON.stringify({ email }),
       timeoutMs: AUTH_TIMEOUT_MS,
     }),
+  forgotPassword: (email: string) =>
+    apiFetch<{ success: boolean; message: string }>('/auth/forgot-password', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
+      timeoutMs: AUTH_TIMEOUT_MS,
+    }),
+  resetPassword: (token: string, password: string) =>
+    apiFetch<import('../types').AuthResponse>('/auth/reset-password', {
+      method: 'POST',
+      body: JSON.stringify({ token, password }),
+      timeoutMs: AUTH_TIMEOUT_MS,
+    }),
   getMe: (token: string) =>
     apiFetch<{ success: boolean; user: import('../types').AuthUser }>('/auth/me', {
       headers: { Authorization: `Bearer ${token}` },
