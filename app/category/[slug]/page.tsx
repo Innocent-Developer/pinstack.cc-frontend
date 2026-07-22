@@ -1,9 +1,10 @@
 import type { Metadata } from 'next';
+import Link from 'next/link';
 import PageShell from '../../../components/PageShell';
 import ProductCard from '../../../components/ProductCard';
 import EmptyState from '../../../components/EmptyState';
 import { api } from '../../../lib/api';
-import { categoryIntro } from '../../../lib/categoryIntros';
+import { categoryGuides, categoryIntro } from '../../../lib/categoryIntros';
 import { buildBreadcrumbSchema, pageMetadata } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
 
@@ -34,6 +35,7 @@ export default async function CategoryPage({ params }: Props) {
     : { data: [] as import('../../../types').Product[] };
 
   const categoryName = category?.name || params.slug;
+  const guides = categoryGuides(params.slug);
 
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: 'Home', path: '/' },
@@ -55,6 +57,22 @@ export default async function CategoryPage({ params }: Props) {
           <p className="text-sm text-muted">
             {category?.productCount || 0} tools on {siteConfig.name}, ranked by community upvotes.
           </p>
+          {guides.length > 0 && (
+            <p className="text-sm text-body mt-3 max-w-2xl">
+              Related guides:{' '}
+              {guides.map((g, i) => (
+                <span key={g.slug}>
+                  {i > 0 && ' · '}
+                  <Link
+                    href={`/blog/${g.slug}`}
+                    className="text-primary font-semibold hover:underline"
+                  >
+                    {g.label}
+                  </Link>
+                </span>
+              ))}
+            </p>
+          )}
         </div>
 
         {productsRes.data.length === 0 ? (

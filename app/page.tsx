@@ -7,6 +7,7 @@ import ProductCard from '../components/ProductCard';
 import HomeHero from '../components/HomeHero';
 import StatsBar from '../components/StatsBar';
 import BadgeSection from '../components/BadgeSection';
+import BlogTeaser from '../components/BlogTeaser';
 import AddProductButton from '../components/AddProductButton';
 import { api } from '../lib/api';
 import { siteConfig } from '../config/site';
@@ -281,6 +282,8 @@ export default async function HomePage() {
         </section>
 
         <BadgeSection />
+
+        <BlogTeaser />
 
         {/* Final CTA */}
         <section className="py-16 bg-white" aria-labelledby="cta-heading">

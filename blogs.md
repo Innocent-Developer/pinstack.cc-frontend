@@ -2,6 +2,12 @@
 
 Five complete posts. Written plainly and factually on purpose — this style is what both search engines and AI answer engines (AEO/GEO) tend to lift and quote accurately. Don't rewrite these into typical hype-y marketing copy; the plainness is intentional.
 
+Each post block supports optional fields used by the site for SEO and related reading:
+
+- **Date:** publish date (`YYYY-MM-DD`)
+- **Updated:** last substantive edit
+- **Related:** comma-separated slugs of other posts to link
+
 ---
 
 # POST 1
@@ -10,6 +16,9 @@ Five complete posts. Written plainly and factually on purpose — this style is 
 **Title:** Best Free API Testing Tools in 2026
 **Meta description:** A practical comparison of free API testing tools in 2026 — what each one does well, who it's for, and how to pick one.
 **Tags:** API testing, developer tools, comparison
+**Date:** `2026-07-15`
+**Updated:** `2026-07-22`
+**Related:** `free-vs-paid-api-monitoring-tools`, `how-to-get-your-saas-listed-on-directories`
 
 ---
 
@@ -26,7 +35,7 @@ At a basic level, API testing means confirming that an endpoint behaves the way 
 - **Collections** — saved groups of requests you can rerun, useful for regression checks
 - **Environment variables** — switching between staging and production without rewriting requests
 
-Not every tool does all of this, and that's fine — the right tool depends on what stage you're at.
+Not every tool does all of this, and that's fine — the right tool depends on what stage you're at. Monitoring is related but separate: see [Free vs Paid Tools for API Monitoring](/blog/free-vs-paid-api-monitoring-tools) when you need uptime alerts more than request builders.
 
 ### What to look for in a free tier
 
@@ -41,9 +50,13 @@ Most "free" API tools cap something — request volume, number of saved collecti
 
 **API Test Lab** is one option worth trying if you want load testing, monitoring, and real-time analytics without paying upfront — it's built specifically for developers who want to verify an API works correctly during development, without juggling multiple separate tools for testing versus monitoring. [See the full listing on Pinstack →](https://pinstack.cc/product/api-test-lab)
 
+You can also browse more options in the [APIs](https://pinstack.cc/category/apis) and [Developer tools](https://pinstack.cc/category/developer-tools) categories on Pinstack.
+
 ### Bottom line
 
 For most individual developers and small teams, a free tier is genuinely enough — you don't need enterprise load testing until you have enterprise-scale traffic. Start with whatever tool covers your actual current need (usually: send a request, check the response, save it for next time) and upgrade only when a specific limitation actually blocks you.
+
+If you build a testing or monitoring product yourself, [getting listed on directories](/blog/how-to-get-your-saas-listed-on-directories) is a low-cost way to start being found.
 
 ---
 ---
@@ -54,6 +67,9 @@ For most individual developers and small teams, a free tier is genuinely enough 
 **Title:** How to Get Your SaaS Listed on Startup Directories (Free & Paid)
 **Meta description:** A practical guide to submitting your SaaS to startup and product directories — which ones matter, what they ask for, and how to prepare your listing.
 **Tags:** startup marketing, SaaS growth, directories, launch strategy
+**Date:** `2026-07-16`
+**Updated:** `2026-07-22`
+**Related:** `saas-directory-vs-product-hunt`, `how-pinstack-ranking-works`
 
 ---
 
@@ -92,9 +108,11 @@ Most directory submission forms ask for a consistent set of things — having th
 
 If you're building a developer tool, SaaS product, or AI tool, [Pinstack](https://pinstack.cc) is a straightforward directory to start with — free listings, community-driven ranking (not pay-to-win), and a simple submission form that takes a few minutes once you have the above ready. [Submit your product →](https://pinstack.cc/explore#submit)
 
+Before you pay for Featured placement anywhere, read [how Pinstack ranking works](/blog/how-pinstack-ranking-works) so you know what payment does and doesn't buy. For sequencing with a Product Hunt day, see [SaaS directory vs Product Hunt](/blog/saas-directory-vs-product-hunt).
+
 ### Bottom line
 
-Directory listings are a small, low-effort piece of a launch strategy — not a growth strategy on their own. Treat them as a foundation (permanent pages, backlinks, early visibility) to build on top of, not the whole plan.
+Directory listings are a small, low-effort piece of a launch strategy — not a growth strategy on their own. Treat them as a foundation (permanent pages, backlinks, early visibility) to build on top of, not the whole plan. [Pricing for optional upgrades on Pinstack](https://pinstack.cc/pricing) is published separately from organic rank.
 
 ---
 ---
@@ -105,6 +123,9 @@ Directory listings are a small, low-effort piece of a launch strategy — not a 
 **Title:** SaaS Directory vs Product Hunt: Where Should You Launch First?
 **Meta description:** A practical comparison of launching on Product Hunt versus smaller SaaS directories — what each is actually good for, and a realistic launch order.
 **Tags:** launch strategy, Product Hunt, SaaS marketing, directories
+**Date:** `2026-07-17`
+**Updated:** `2026-07-22`
+**Related:** `how-to-get-your-saas-listed-on-directories`, `how-pinstack-ranking-works`
 
 ---
 
@@ -132,15 +153,17 @@ Directories like Pinstack work differently — no single "launch day" spike, but
 - **Lower competition for attention** on any given day, since there's no single ranked "leaderboard" resetting daily the way Product Hunt's does
 - **Compounding SEO value** — the page exists indefinitely and can rank in search over time, unlike a Product Hunt launch page that's mostly relevant on launch day itself
 
+Organic placement on Pinstack comes from community upvotes with time decay — not from paying for Featured. Details are in [How we rank products on Pinstack](/blog/how-pinstack-ranking-works).
+
 ### A realistic launch order
 
-1. **Submit to smaller, ongoing directories first** (including Pinstack) — no real downside, no "wasted" launch moment, and it starts building indexed pages and backlinks immediately
+1. **Submit to smaller, ongoing directories first** (including Pinstack) — no real downside, no "wasted" launch moment, and it starts building indexed pages and backlinks immediately. Use the [directory listing checklist](/blog/how-to-get-your-saas-listed-on-directories) so assets are ready once.
 2. **Prepare your Product Hunt launch separately**, with its own timeline — hunters, launch-day promotion plan, and assets ready in advance, since a rushed Product Hunt launch usually underperforms
 3. **Don't launch on Product Hunt and expect ongoing traffic afterward** — plan your post-launch distribution (content, directories, communities) as a separate, continuous effort
 
 ### Bottom line
 
-These aren't competing choices — a smaller directory listing and a Product Hunt launch serve different purposes and don't cannibalize each other. Start with the low-effort, no-single-shot options, and treat Product Hunt as a planned event rather than a default first step.
+These aren't competing choices — a smaller directory listing and a Product Hunt launch serve different purposes and don't cannibalize each other. Start with the low-effort, no-single-shot options, and treat Product Hunt as a planned event rather than a default first step. [List on Pinstack for free →](https://pinstack.cc/login?next=/dashboard/add-product)
 
 ---
 ---
@@ -151,6 +174,9 @@ These aren't competing choices — a smaller directory listing and a Product Hun
 **Title:** How We Rank Products on Pinstack (And Why It's Not Pay-to-Win)
 **Meta description:** A transparent explanation of how Pinstack's product ranking works — what affects it, what doesn't, and why paid placement is kept separate.
 **Tags:** Pinstack, ranking, transparency
+**Date:** `2026-07-18`
+**Updated:** `2026-07-22`
+**Related:** `saas-directory-vs-product-hunt`, `how-to-get-your-saas-listed-on-directories`
 
 ---
 
@@ -173,7 +199,7 @@ This means a free listing with strong genuine community support can rank above a
 - **Featured placement** gives temporary top position within a category page for the period it's active. It does not change the underlying score — it's a separate display slot, clearly labeled "Featured."
 - **Verified badge** signals the listing has been checked by the team. It doesn't add points to ranking either.
 
-Both are opt-in, both are clearly marked when active, and both stop affecting placement once they expire (for Featured) — the listing returns to ranking purely on its community score.
+Both are opt-in, both are clearly marked when active, and both stop affecting placement once they expire (for Featured) — the listing returns to ranking purely on its community score. Current prices are on the [Pricing](https://pinstack.cc/pricing) page.
 
 ### Why we built it this way
 
@@ -185,6 +211,8 @@ A directory only stays useful if people trust that what's on top is actually goo
 - Paid options buy visibility for a period, not a permanent ranking advantage
 - The fastest way to rank well organically is genuine usefulness that earns upvotes, same as it would anywhere else
 
+For launch sequencing (directories first, Product Hunt as a planned event), see [SaaS directory vs Product Hunt](/blog/saas-directory-vs-product-hunt). For the submission checklist, see [How to get your SaaS listed on directories](/blog/how-to-get-your-saas-listed-on-directories). More context on [About Pinstack](https://pinstack.cc/about).
+
 ---
 ---
 
@@ -194,6 +222,9 @@ A directory only stays useful if people trust that what's on top is actually goo
 **Title:** Free vs Paid Tools for API Monitoring: What You Actually Need
 **Meta description:** When a free API monitoring tool is enough, and when it's worth paying — a practical breakdown by team size and use case.
 **Tags:** API monitoring, developer tools, comparison
+**Date:** `2026-07-19`
+**Updated:** `2026-07-22`
+**Related:** `free-api-testing-tools-2026`, `how-to-get-your-saas-listed-on-directories`
 
 ---
 
@@ -229,4 +260,4 @@ For most early-stage products, checking every few minutes and alerting one perso
 
 Start free. Actually hit the limitation — a real missed alert, a real capacity cap — before paying for more. It's easy to over-provision monitoring "just in case," but most early products don't have the traffic or stakes yet to justify it.
 
-If you're building or testing APIs and want monitoring alongside testing in one place, tools like [API Test Lab](https://pinstack.cc/product/api-test-lab) bundle basic monitoring with testing, which avoids paying for two separate services before you actually need the depth either one offers at scale. [See more developer tools on Pinstack →](https://pinstack.cc/category/developer-tools)
+If you're building or testing APIs and want monitoring alongside testing in one place, tools like [API Test Lab](https://pinstack.cc/product/api-test-lab) bundle basic monitoring with testing, which avoids paying for two separate services before you actually need the depth either one offers at scale. For choosing a request/testing workflow first, see [Best free API testing tools in 2026](/blog/free-api-testing-tools-2026). [See more developer tools on Pinstack →](https://pinstack.cc/category/developer-tools)

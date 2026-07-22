@@ -22,11 +22,15 @@ export function markdownToHtml(md: string): string {
 
   const inline = (text: string): string => {
     let s = escapeHtml(text);
-    // links [text](url)
-    s = s.replace(
-      /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g,
-      '<a href="$2" class="text-primary font-semibold hover:underline" target="_blank" rel="noopener noreferrer">$1</a>'
-    );
+    // links [text](url) — absolute stay new-tab; site-relative keep same tab
+    s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label, href) => {
+      const safeHref = String(href).replace(/"/g, '&quot;');
+      const isExternal = /^https?:\/\//i.test(href);
+      if (isExternal) {
+        return `<a href="${safeHref}" class="text-primary font-semibold hover:underline" target="_blank" rel="noopener noreferrer">${label}</a>`;
+      }
+      return `<a href="${safeHref}" class="text-primary font-semibold hover:underline">${label}</a>`;
+    });
     // bold **text**
     s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
     // italic *text* (after bold)

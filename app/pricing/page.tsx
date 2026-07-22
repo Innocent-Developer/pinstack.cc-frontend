@@ -3,6 +3,7 @@ import Link from 'next/link';
 import PageShell from '../../components/PageShell';
 import ScrollReveal from '../../components/ScrollReveal';
 import FaqAccordion from '../../components/FaqAccordion';
+import BlogTeaser from '../../components/BlogTeaser';
 import { buildFaqSchema, pageMetadata, pricingFaqItems } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
@@ -12,6 +13,7 @@ export const metadata: Metadata = pageMetadata({
   path: '/pricing',
   openGraphDescription:
     'Free listings always available. Verified $9 one-time, Featured $5/month, Growth $20/month.',
+  keywords: ['Pinstack pricing', 'free SaaS listing', 'featured listing', 'verified badge'],
 });
 
 const faqSchema = buildFaqSchema(pricingFaqItems);
@@ -143,8 +145,26 @@ export default function PricingPage() {
             Frequently asked questions
           </h2>
           <FaqAccordion items={[...pricingFaqItems]} />
+          <p className="text-sm text-muted text-center mt-6">
+            Paid placement does not change organic rank — see{' '}
+            <Link href="/blog/how-pinstack-ranking-works" className="text-primary font-semibold hover:underline">
+              how ranking works
+            </Link>
+            . New to directories?{' '}
+            <Link
+              href="/blog/how-to-get-your-saas-listed-on-directories"
+              className="text-primary font-semibold hover:underline"
+            >
+              How to get listed
+            </Link>
+            .
+          </p>
         </ScrollReveal>
       </PageShell>
+      <BlogTeaser
+        title="Guides before you upgrade"
+        subtitle="Understand ranking, directories, and launch order before you pay for placement."
+      />
     </>
   );
 }

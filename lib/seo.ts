@@ -119,28 +119,66 @@ export function buildArticleSchema(post: {
   description: string;
   path: string;
   tags?: string[];
+  publishedAt?: string;
+  updatedAt?: string;
+  wordCount?: number;
 }) {
+  const url = `${siteConfig.url}${post.path}`;
   return {
     '@context': 'https://schema.org',
     '@type': 'Article',
     headline: post.title,
     description: post.description,
-    url: `${siteConfig.url}${post.path}`,
+    url,
+    datePublished: post.publishedAt,
+    dateModified: post.updatedAt || post.publishedAt,
+    ...(post.wordCount ? { wordCount: post.wordCount } : {}),
+    inLanguage: 'en-US',
+    isAccessibleForFree: true,
     author: {
       '@type': 'Organization',
-      name: siteConfig.name,
+      name: 'Team Pinstack',
       url: siteConfig.url,
     },
     publisher: {
       '@type': 'Organization',
       name: siteConfig.name,
+      url: siteConfig.url,
       logo: {
         '@type': 'ImageObject',
         url: `${siteConfig.url}${siteConfig.logoPath}`,
       },
     },
-    mainEntityOfPage: `${siteConfig.url}${post.path}`,
+    mainEntityOfPage: {
+      '@type': 'WebPage',
+      '@id': url,
+    },
+    image: [`${siteConfig.url}${siteConfig.ogImage}`],
     ...(post.tags?.length ? { keywords: post.tags.join(', ') } : {}),
+  };
+}
+
+export function buildBlogListSchema(
+  posts: ReadonlyArray<{ title: string; description: string; path: string }>
+) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Blog',
+    name: 'Pinstack Blog',
+    description:
+      'Practical guides for founders on SaaS directories, launch strategy, and developer tools.',
+    url: `${siteConfig.url}/blog`,
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+      url: siteConfig.url,
+    },
+    blogPost: posts.map((p) => ({
+      '@type': 'BlogPosting',
+      headline: p.title,
+      description: p.description,
+      url: `${siteConfig.url}${p.path}`,
+    })),
   };
 }
 
@@ -150,22 +188,67 @@ export function pageMetadata({
   path,
   openGraphTitle,
   openGraphDescription,
+  keywords,
+  type = 'website',
+  publishedTime,
+  modifiedTime,
+  authors,
 }: {
   title: string;
   description: string;
   path: string;
   openGraphTitle?: string;
   openGraphDescription?: string;
+  keywords?: string[];
+  type?: 'website' | 'article';
+  publishedTime?: string;
+  modifiedTime?: string;
+  authors?: string[];
 }): import('next').Metadata {
   const url = `${siteConfig.url}${path}`;
+  const ogTitle = openGraphTitle || title;
+  const ogDescription = openGraphDescription || description;
   return {
     title: { absolute: title },
     description,
+    ...(keywords?.length ? { keywords } : {}),
+    authors: authors?.map((name) => ({ name })) || [{ name: 'Team Pinstack' }],
     alternates: { canonical: url },
     openGraph: {
-      title: openGraphTitle || title,
-      description: openGraphDescription || description,
+      type,
+      title: ogTitle,
+      description: ogDescription,
       url,
+      siteName: siteConfig.name,
+      locale: 'en_US',
+      images: [
+        {
+          url: siteConfig.ogImage,
+          width: 1200,
+          height: 630,
+          alt: ogTitle,
+        },
+      ],
+      ...(type === 'article'
+        ? {
+            publishedTime,
+            modifiedTime: modifiedTime || publishedTime,
+            authors: authors || ['Team Pinstack'],
+            tags: keywords,
+          }
+        : {}),
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: ogTitle,
+      description: ogDescription,
+      images: [siteConfig.ogImage],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
     },
   };
 }

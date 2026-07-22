@@ -29,6 +29,13 @@ export default async function ExplorePage() {
       </Suspense>
 
       <section className="mt-auto pt-16 sm:pt-20 border-t border-borderC shrink-0">
+        <p className="text-sm text-muted text-center mb-8 max-w-xl mx-auto">
+          New to directories? Read the{' '}
+          <Link href="/blog" className="text-primary font-semibold hover:underline">
+            Pinstack blog
+          </Link>{' '}
+          — ranking, launch order, and how to prepare a listing.
+        </p>
         <div className="rounded-2xl bg-bgAlt border border-borderC px-5 sm:px-8 py-8 sm:py-10 text-center max-w-xl mx-auto">
           <h2 className="text-lg sm:text-xl font-extrabold text-heading mb-2">Questions or need help?</h2>
           <p className="text-sm text-muted mb-6 leading-relaxed">

@@ -1,3 +1,63 @@
+/** Related blog posts shown on category pages (slug → guide links). */
+export const categoryBlogGuides: Record<
+  string,
+  Array<{ slug: string; label: string }>
+> = {
+  apis: [
+    { slug: 'free-api-testing-tools-2026', label: 'Best free API testing tools in 2026' },
+    {
+      slug: 'free-vs-paid-api-monitoring-tools',
+      label: 'Free vs paid API monitoring tools',
+    },
+  ],
+  'developer-tools': [
+    { slug: 'free-api-testing-tools-2026', label: 'Best free API testing tools in 2026' },
+    {
+      slug: 'free-vs-paid-api-monitoring-tools',
+      label: 'Free vs paid API monitoring tools',
+    },
+    {
+      slug: 'how-to-get-your-saas-listed-on-directories',
+      label: 'How to get listed on directories',
+    },
+  ],
+  saas: [
+    {
+      slug: 'how-to-get-your-saas-listed-on-directories',
+      label: 'How to get your SaaS listed on directories',
+    },
+    {
+      slug: 'saas-directory-vs-product-hunt',
+      label: 'SaaS directory vs Product Hunt',
+    },
+    { slug: 'how-pinstack-ranking-works', label: 'How Pinstack ranking works' },
+  ],
+  'ai-tools': [
+    {
+      slug: 'how-to-get-your-saas-listed-on-directories',
+      label: 'How to get listed on directories',
+    },
+    {
+      slug: 'saas-directory-vs-product-hunt',
+      label: 'Directory vs Product Hunt launch order',
+    },
+  ],
+  marketing: [
+    {
+      slug: 'saas-directory-vs-product-hunt',
+      label: 'SaaS directory vs Product Hunt',
+    },
+    {
+      slug: 'how-to-get-your-saas-listed-on-directories',
+      label: 'How to get listed on directories',
+    },
+  ],
+};
+
+export function categoryGuides(slug: string) {
+  return categoryBlogGuides[slug] || [];
+}
+
 /** Short unique intros for category pages (SEO / thin-content fix). */
 export const categoryIntros: Record<string, string> = {
   'ai-tools':
