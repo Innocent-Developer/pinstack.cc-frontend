@@ -44,6 +44,9 @@ export default function Footer() {
             <Link href="/pricing" className="hover:text-primary transition">
               Pricing
             </Link>
+            <Link href="/blog" className="hover:text-primary transition">
+              Blog
+            </Link>
           </nav>
         </div>
 

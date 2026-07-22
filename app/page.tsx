@@ -33,7 +33,7 @@ const websiteSchema = buildWebsiteSchema();
 const whyItems = [
   {
     title: 'Discover',
-    body: 'Browse thousands of SaaS products, AI tools, and developer tools by category.',
+    body: 'Browse SaaS products, AI tools, and developer tools by category — growing every week.',
     tone: 'bg-emerald-50 text-primary',
     icon: '◎',
   },

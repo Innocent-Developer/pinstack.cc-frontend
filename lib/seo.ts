@@ -114,6 +114,36 @@ export function buildProductSchema(product: {
   };
 }
 
+export function buildArticleSchema(post: {
+  title: string;
+  description: string;
+  path: string;
+  tags?: string[];
+}) {
+  return {
+    '@context': 'https://schema.org',
+    '@type': 'Article',
+    headline: post.title,
+    description: post.description,
+    url: `${siteConfig.url}${post.path}`,
+    author: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+      url: siteConfig.url,
+    },
+    publisher: {
+      '@type': 'Organization',
+      name: siteConfig.name,
+      logo: {
+        '@type': 'ImageObject',
+        url: `${siteConfig.url}${siteConfig.logoPath}`,
+      },
+    },
+    mainEntityOfPage: `${siteConfig.url}${post.path}`,
+    ...(post.tags?.length ? { keywords: post.tags.join(', ') } : {}),
+  };
+}
+
 export function pageMetadata({
   title,
   description,

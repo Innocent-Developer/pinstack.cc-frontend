@@ -1,5 +1,6 @@
 import { MetadataRoute } from 'next';
 import { api } from '../lib/api';
+import { getAllBlogPosts } from '../lib/blog';
 import { siteConfig } from '../config/site';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
@@ -14,8 +15,15 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${siteConfig.url}/pricing`, changeFrequency: 'monthly', priority: 0.7 },
     { url: `${siteConfig.url}/explore`, changeFrequency: 'daily', priority: 0.9 },
     { url: `${siteConfig.url}/categories`, changeFrequency: 'weekly', priority: 0.7 },
+    { url: `${siteConfig.url}/blog`, changeFrequency: 'weekly', priority: 0.8 },
     { url: `${siteConfig.url}/contact`, changeFrequency: 'yearly', priority: 0.3 },
   ];
+
+  const blogPages: MetadataRoute.Sitemap = getAllBlogPosts().map((p) => ({
+    url: `${siteConfig.url}/blog/${p.slug}`,
+    changeFrequency: 'monthly' as const,
+    priority: 0.75,
+  }));
 
   const productPages: MetadataRoute.Sitemap = productsRes.data.map((p) => ({
     url: `${siteConfig.url}/product/${p.slug}`,
@@ -30,5 +38,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }));
 
-  return [...staticPages, ...productPages, ...categoryPages];
+  return [...staticPages, ...blogPages, ...productPages, ...categoryPages];
 }

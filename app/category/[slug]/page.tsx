@@ -3,6 +3,7 @@ import PageShell from '../../../components/PageShell';
 import ProductCard from '../../../components/ProductCard';
 import EmptyState from '../../../components/EmptyState';
 import { api } from '../../../lib/api';
+import { categoryIntro } from '../../../lib/categoryIntros';
 import { buildBreadcrumbSchema, pageMetadata } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
 
@@ -49,12 +50,10 @@ export default async function CategoryPage({ params }: Props) {
         <div className="shrink-0 mb-8">
           <h1 className="text-2xl font-extrabold text-heading mb-2">Best {categoryName}</h1>
           <p className="text-sm text-body mb-2 max-w-2xl leading-relaxed">
-            Browse {categoryName.toLowerCase()} tools and products on {siteConfig.name}. Listings are
-            ranked by community upvotes so you see what founders and builders actually recommend — not
-            paid placement.
+            {categoryIntro(params.slug, categoryName)}
           </p>
           <p className="text-sm text-muted">
-            {category?.productCount || 0} tools, ranked by community upvotes.
+            {category?.productCount || 0} tools on {siteConfig.name}, ranked by community upvotes.
           </p>
         </div>
 
