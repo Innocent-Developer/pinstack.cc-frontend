@@ -110,7 +110,7 @@ export default function AddProductWizard() {
             logoUploaded = true;
             toastSuccess('Logo fetched from website');
           } catch {
-            setError('Auto-fill worked, but we could not fetch the logo — upload it manually in Images.');
+            setError('Auto-fill worked, but we could not fetch the logo  upload it manually in Images.');
           } finally {
             setLogoFetching(false);
           }
@@ -130,7 +130,7 @@ export default function AddProductWizard() {
         }
       } else {
         setForm((f) => ({ ...f, websiteUrl: autofillUrl.trim(), submissionMethod: 'manual' }));
-        setError(res.message || 'Could not auto-fill — continue manually');
+        setError(res.message || 'Could not auto-fill  continue manually');
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Autofill failed');
@@ -445,7 +445,7 @@ export default function AddProductWizard() {
         <div className="border border-borderC rounded-2xl p-6 bg-white space-y-4">
           <h2 className="font-extrabold text-heading text-lg">Social links</h2>
           <p className="text-xs text-muted">
-            Optional. Add your product&apos;s social profiles — shown as icons on your listing page.
+            Optional. Add your product&apos;s social profiles  shown as icons on your listing page.
           </p>
           <SocialLinkFields
             values={socialLinks}
@@ -485,7 +485,7 @@ export default function AddProductWizard() {
           <div className="lg:col-span-2 border border-borderC rounded-2xl p-5 bg-bgAlt space-y-3">
             <h3 className="font-bold text-heading text-sm">Ask AI</h3>
             <p className="text-xs text-muted">
-              Generate or rewrite listing copy — results auto-fill Tagline and Description.
+              Generate or rewrite listing copy  results auto-fill Tagline and Description.
             </p>
             <select
               value={aiField}
@@ -530,7 +530,7 @@ export default function AddProductWizard() {
             <p className="text-xs text-muted">1 logo required · up to 3 feature images · each under 1 MB</p>
             {autofilledLogoUrl && !logoFile && (
               <p className="text-xs text-primary mt-1 font-medium">
-                Logo auto-fetched from your website — replace below if needed.
+                Logo auto-fetched from your website  replace below if needed.
               </p>
             )}
             {logoFetching && (

@@ -6,6 +6,7 @@ import Header from '../../../components/Header';
 import Footer from '../../../components/Footer';
 import ProductCard from '../../../components/ProductCard';
 import VisitWebsiteButton from '../../../components/VisitWebsiteButton';
+import ProductChatBot from '../../../components/ProductChatBot';
 import ProductReviews from '../../../components/ProductReviews';
 import ProductVoteButtons from '../../../components/ProductVoteButtons';
 import VerifiedBadge from '../../../components/VerifiedBadge';
@@ -14,6 +15,7 @@ import { api } from '../../../lib/api';
 import { productCategories } from '../../../lib/categories';
 import { buildBreadcrumbSchema, buildProductSchema } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
+import { visitWebsiteUrl } from '../../../lib/utm';
 import type { Product } from '../../../types';
 
 // Always fetch fresh  isVerified / isFeatured change without a redeploy
@@ -239,6 +241,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 <VisitWebsiteButton
                   productId={product._id}
                   websiteUrl={product.websiteUrl}
+                  slug={product.slug}
                   className="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-3 rounded-full text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-sm"
                 />
                 <Link
@@ -352,7 +355,7 @@ export default async function ProductDetailPage({ params }: Props) {
                     <dt className="text-muted shrink-0">Website</dt>
                     <dd className="min-w-0">
                       <a
-                        href={product.websiteUrl}
+                        href={visitWebsiteUrl(product.websiteUrl, product.slug)}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-borderC bg-white hover:border-primary hover:bg-bgAlt text-xs font-semibold text-heading transition group max-w-[180px]"
@@ -394,6 +397,7 @@ export default async function ProductDetailPage({ params }: Props) {
                 <VisitWebsiteButton
                   productId={product._id}
                   websiteUrl={product.websiteUrl}
+                  slug={product.slug}
                   className="mt-5 w-full inline-flex justify-center px-4 py-2.5 rounded-full text-sm font-semibold bg-heading text-white hover:opacity-90"
                 >
                   Open website
@@ -529,6 +533,7 @@ export default async function ProductDetailPage({ params }: Props) {
           </div>
         </section>
       </main>
+      <ProductChatBot productId={product._id} productName={product.name} />
       <Footer />
     </>
   );

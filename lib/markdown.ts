@@ -22,7 +22,7 @@ export function markdownToHtml(md: string): string {
 
   const inline = (text: string): string => {
     let s = escapeHtml(text);
-    // links [text](url) — absolute stay new-tab; site-relative keep same tab
+    // links [text](url)  absolute stay new-tab; site-relative keep same tab
     s = s.replace(/\[([^\]]+)\]\(([^)\s]+)\)/g, (_m, label, href) => {
       const safeHref = String(href).replace(/"/g, '&quot;');
       const isExternal = /^https?:\/\//i.test(href);
@@ -62,7 +62,7 @@ export function markdownToHtml(md: string): string {
       continue;
     }
 
-    // Skip duplicate H1 if present — page already has title
+    // Skip duplicate H1 if present  page already has title
     if (trimmed.startsWith('# ')) {
       closeLists();
       i += 1;

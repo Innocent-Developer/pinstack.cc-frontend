@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { siteConfig } from '../config/site';
+import { badgeProductUrl } from '../lib/utm';
 
 type Theme = 'brand' | 'dark' | 'light';
 
@@ -32,20 +34,13 @@ const THEMES: {
   },
 ];
 
-const SNIPPET: Record<Theme, string> = {
-  brand: `<a href="https://pinstack.cc/product/your-product" target="_blank" rel="noopener noreferrer">
-  <img src="https://pinstack.cc/api/badge/your-product?theme=brand"
+function buildSnippet(theme: Theme): string {
+  const productUrl = badgeProductUrl(siteConfig.url, 'your-product');
+  return `<a href="${productUrl}" target="_blank" rel="noopener noreferrer">
+  <img src="${siteConfig.url}/api/badge/your-product?theme=${theme}"
        alt="Featured on Pinstack" />
-</a>`,
-  dark: `<a href="https://pinstack.cc/product/your-product" target="_blank" rel="noopener noreferrer">
-  <img src="https://pinstack.cc/api/badge/your-product?theme=dark"
-       alt="Featured on Pinstack" />
-</a>`,
-  light: `<a href="https://pinstack.cc/product/your-product" target="_blank" rel="noopener noreferrer">
-  <img src="https://pinstack.cc/api/badge/your-product?theme=light"
-       alt="Featured on Pinstack" />
-</a>`,
-};
+</a>`;
+}
 
 export default function BadgeSection() {
   const [theme, setTheme] = useState<Theme>('brand');
@@ -55,7 +50,7 @@ export default function BadgeSection() {
 
   const handleCopy = async () => {
     try {
-      await navigator.clipboard.writeText(SNIPPET[theme]);
+      await navigator.clipboard.writeText(buildSnippet(theme));
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch {
@@ -144,11 +139,12 @@ export default function BadgeSection() {
                 </button>
               </div>
               <pre className="text-[11px] leading-relaxed text-body bg-bgAlt rounded-btn p-3 overflow-x-auto whitespace-pre-wrap break-all">
-                <code>{SNIPPET[theme]}</code>
+                <code>{buildSnippet(theme)}</code>
               </pre>
               <p className="text-[10px] text-muted mt-2">
                 Replace <code className="font-mono bg-bgAlt px-1 rounded">your-product</code> with
-                your listing&apos;s slug.
+                your listing&apos;s slug. Badge links include{' '}
+                <code className="font-mono bg-bgAlt px-1 rounded">utm_medium=pinstack_badge</code>.
               </p>
             </div>
           </div>

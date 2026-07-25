@@ -144,7 +144,7 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
       {products.length === 0 && !loading ? (
         <EmptyState
           title="No products match this search yet"
-          description="Try a different category or keyword — or submit your own product to the directory."
+          description="Try a different category or keyword  or submit your own product to the directory."
           actionHref="/login?next=/dashboard/add-product"
           actionLabel="Submit your product"
         />

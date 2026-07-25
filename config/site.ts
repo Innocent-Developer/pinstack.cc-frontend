@@ -4,14 +4,14 @@
 export const siteConfig = {
   name: 'Pinstack',
   domain: 'pinstack.cc',
-  /** Canonical public site URL (apex — www has no DNS record unless you add it) */
+  /** Canonical public site URL (apex  www has no DNS record unless you add it) */
   url: 'https://pinstack.cc',
   /** Production API base */
   apiUrl: 'https://api.pinstack.cc/api',
   tagline: 'Discover, launch, and grow.',
   description:
     'Pinstack is a free directory where founders list SaaS products, AI tools, and developer APIs, and users discover and upvote them. Submit your product free.',
-  /** Social share image — replace with /og-default.png (1200×630) before launch if available */
+  /** Social share image  replace with /og-default.png (1200×630) before launch if available */
   ogImage: '/icon.png',
   email: 'hello@pinstack.cc',
 

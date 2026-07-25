@@ -13,7 +13,7 @@ interface Props {
 
 export default function EmptyState({
   title = 'Nothing here yet',
-  description = 'Check back soon — new listings are added regularly.',
+  description = 'Check back soon  new listings are added regularly.',
   actionHref,
   actionLabel,
   icon,

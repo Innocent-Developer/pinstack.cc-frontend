@@ -24,7 +24,7 @@ export const pricingFaqItems = [
   },
   {
     q: 'What does Growth include?',
-    a: 'Growth is $20/month and bundles Featured + Verified. At signup, our team also does a one-time review and optimization of your listing copy — a fixed deliverable, not ongoing strategy work.',
+    a: 'Growth is $20/month and bundles Featured + Verified. At signup, our team also does a one-time review and optimization of your listing copy  a fixed deliverable, not ongoing strategy work.',
   },
   {
     q: 'Can I cancel Featured or Growth?',

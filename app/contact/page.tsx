@@ -8,7 +8,7 @@ import { siteConfig, socialLinks } from '../../config/site';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Contact Pinstack — Questions, Listing Help & Partnerships',
+  title: 'Contact Pinstack  Questions, Listing Help & Partnerships',
   description:
     'Get in touch with the Pinstack team about your listing, a partnership, or general questions. We read every message.',
   path: '/contact',
@@ -17,24 +17,24 @@ export const metadata: Metadata = pageMetadata({
 const contactTopics = [
   {
     title: 'List your product',
-    body: 'Free forever. Sign in and submit from your dashboard — reviewed within a few days.',
+    body: 'Free forever. Sign in and submit from your dashboard  reviewed within a few days.',
     href: '/login?next=/dashboard/add-product',
     cta: 'Add a product',
   },
   {
-    title: 'Verified — $9',
+    title: 'Verified  $9',
     body: 'One-time verified badge on your listing, plus an embeddable badge for your site.',
     href: '/contact?topic=verified',
     cta: 'Ask about verified',
   },
   {
-    title: 'Featured — $5/mo',
+    title: 'Featured  $5/mo',
     body: 'Top placement in your category for the active paid period. Cancel anytime.',
     href: '/contact?topic=featured',
     cta: 'Ask about featured',
   },
   {
-    title: 'Growth — $20/mo',
+    title: 'Growth  $20/mo',
     body: 'Featured + Verified bundled, plus a one-time listing copy review at signup.',
     href: '/contact?topic=growth',
     cta: 'Ask about growth',
@@ -59,7 +59,7 @@ export default function ContactPage({ searchParams }: Props) {
                 Get in touch
               </h1>
               <p className="text-sm sm:text-base text-muted max-w-2xl leading-relaxed">
-                Questions about your listing, partnerships, or anything else — we read every
+                Questions about your listing, partnerships, or anything else  we read every
                 message.
               </p>
             </ScrollReveal>

@@ -6,7 +6,7 @@ import { formatBlogDate, getAllBlogPosts } from '../../lib/blog';
 import { buildBlogListSchema, buildBreadcrumbSchema, pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Pinstack Blog — SaaS Directories, Launch Strategy & Developer Tools',
+  title: 'Pinstack Blog  SaaS Directories, Launch Strategy & Developer Tools',
   description:
     'Practical founder guides: free API testing tools, how to list your SaaS on directories, Product Hunt vs directories, how Pinstack ranking works, and free vs paid API monitoring.',
   path: '/blog',
@@ -51,7 +51,7 @@ export default function BlogIndexPage() {
             Guides for founders & builders
           </h1>
           <p className="text-body mb-4 leading-relaxed">
-            Plain, practical posts on directories, launch strategy, and developer tools — written to
+            Plain, practical posts on directories, launch strategy, and developer tools  written to
             be useful for search and for people deciding where to list or which tool to try.
           </p>
           <p className="text-sm text-muted mb-10">

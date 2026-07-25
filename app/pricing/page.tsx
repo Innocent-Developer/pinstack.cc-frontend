@@ -7,7 +7,7 @@ import BlogTeaser from '../../components/BlogTeaser';
 import { buildFaqSchema, pageMetadata, pricingFaqItems } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Pinstack Pricing — Free Listings, Verified, Featured & Growth',
+  title: 'Pinstack Pricing  Free Listings, Verified, Featured & Growth',
   description:
     'List your SaaS or AI tool on Pinstack for free. Optional Verified ($9 one-time), Featured ($5/mo), and Growth ($20/mo) plans. No hidden fees.',
   path: '/pricing',
@@ -23,7 +23,7 @@ const plans = [
     name: 'Free',
     price: '$0',
     period: 'always free',
-    blurb: 'Basic listing — forever free.',
+    blurb: 'Basic listing  forever free.',
     features: [
       'Basic listing, live on the directory',
       'Appears in search and category browse',
@@ -58,7 +58,7 @@ const plans = [
       'Everything in Free',
       'Top placement in your category',
       'Clearly marked as featured',
-      'Cancel anytime — stays active for the paid period',
+      'Cancel anytime  stays active for the paid period',
     ],
     cta: 'Get Featured',
     href: '/contact?topic=featured',
@@ -146,7 +146,7 @@ export default function PricingPage() {
           </h2>
           <FaqAccordion items={[...pricingFaqItems]} />
           <p className="text-sm text-muted text-center mt-6">
-            Paid placement does not change organic rank — see{' '}
+            Paid placement does not change organic rank  see{' '}
             <Link href="/blog/how-pinstack-ranking-works" className="text-primary font-semibold hover:underline">
               how ranking works
             </Link>

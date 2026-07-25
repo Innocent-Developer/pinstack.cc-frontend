@@ -164,7 +164,7 @@ export default function SubmissionDetailPage({ productId }: Props) {
           }`}
         >
           <p className="text-sm font-bold text-heading mb-0.5">
-            {status === 'rejected' ? 'Rejected — not public' : 'Pending review — not public yet'}
+            {status === 'rejected' ? 'Rejected  not public' : 'Pending review  not public yet'}
           </p>
           <p className="text-sm text-body">
             {status === 'rejected'
@@ -212,7 +212,7 @@ export default function SubmissionDetailPage({ productId }: Props) {
                       {c.icon} {c.name}
                     </span>
                   ))
-                : '—'}
+                : ''}
             </dd>
           </div>
           <div className="min-w-0">
@@ -300,7 +300,7 @@ export default function SubmissionDetailPage({ productId }: Props) {
         </section>
       )}
 
-      {/* Reviews — live listings only; pending stays private */}
+      {/* Reviews  live listings only; pending stays private */}
       <section className="rounded-2xl border border-borderC bg-white p-5 sm:p-6">
         <h2 className="font-extrabold text-heading text-lg mb-1">Reviews</h2>
         {isLive ? (

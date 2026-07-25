@@ -10,7 +10,7 @@ if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/** Apple-like deceleration — long, soft settle */
+/** Apple-like deceleration  long, soft settle */
 const APPLE_EASE = 'expo.out';
 
 const METRICS = [
@@ -103,7 +103,7 @@ export default function HomeHero() {
         });
       }
 
-      // Gentle float via CSS — keeps GSAP free for magnetic tilt
+      // Gentle float via CSS  keeps GSAP free for magnetic tilt
       if (tilt) {
         tilt.classList.add('home-float-soft');
       }

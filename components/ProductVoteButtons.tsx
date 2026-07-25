@@ -70,7 +70,7 @@ export default function ProductVoteButtons({
       setScore(prev.score);
       setUpvotes(prev.upvotes);
       setDownvotes(prev.downvotes);
-      const msg = err instanceof Error ? err.message : 'Vote failed — please try again';
+      const msg = err instanceof Error ? err.message : 'Vote failed  please try again';
       if (/not authorized|log in|token/i.test(msg)) {
         requireLogin();
       } else {

@@ -7,7 +7,7 @@ import { api } from '../../lib/api';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Explore SaaS Tools, AI Products & APIs — Pinstack Directory',
+  title: 'Explore SaaS Tools, AI Products & APIs  Pinstack Directory',
   description:
     'Browse and search SaaS products, AI tools, developer tools, and APIs on Pinstack. Filter by category, sort by newest or most upvoted.',
   path: '/explore',
@@ -34,12 +34,12 @@ export default async function ExplorePage() {
           <Link href="/blog" className="text-primary font-semibold hover:underline">
             Pinstack blog
           </Link>{' '}
-          — ranking, launch order, and how to prepare a listing.
+           ranking, launch order, and how to prepare a listing.
         </p>
         <div className="rounded-2xl bg-bgAlt border border-borderC px-5 sm:px-8 py-8 sm:py-10 text-center max-w-xl mx-auto">
           <h2 className="text-lg sm:text-xl font-extrabold text-heading mb-2">Questions or need help?</h2>
           <p className="text-sm text-muted mb-6 leading-relaxed">
-            For listing support, featured placement, verified badges, or anything else — reach out and
+            For listing support, featured placement, verified badges, or anything else  reach out and
             we will get back to you.
           </p>
           <Link

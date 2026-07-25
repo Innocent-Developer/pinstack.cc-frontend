@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const name = category?.name || params.slug;
 
   return pageMetadata({
-    title: `Best ${name} Tools — Pinstack Directory`,
+    title: `Best ${name} Tools  Pinstack Directory`,
     description: `Discover the top ${name.toLowerCase()} tools and products on Pinstack. Browse SaaS and AI products ranked by community upvotes, with new listings added weekly.`,
     path: `/category/${params.slug}`,
   });
@@ -78,7 +78,7 @@ export default async function CategoryPage({ params }: Props) {
         {productsRes.data.length === 0 ? (
           <EmptyState
             title="No products in this category yet"
-            description="Be the first to list a product here — free submissions are reviewed within a few days."
+            description="Be the first to list a product here  free submissions are reviewed within a few days."
             actionHref="/login?next=/dashboard/add-product"
             actionLabel="Add your product"
           />

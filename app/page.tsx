@@ -18,11 +18,11 @@ import type { Category, Product, Stats } from '../types';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: { absolute: 'Pinstack — Discover and Launch SaaS Tools, AI Products & APIs' },
+  title: { absolute: 'Pinstack  Discover and Launch SaaS Tools, AI Products & APIs' },
   description: siteConfig.description,
   alternates: { canonical: siteConfig.url },
   openGraph: {
-    title: 'Pinstack — Discover and Launch SaaS Tools, AI Products & APIs',
+    title: 'Pinstack  Discover and Launch SaaS Tools, AI Products & APIs',
     description: siteConfig.description,
     url: siteConfig.url,
   },
@@ -34,7 +34,7 @@ const websiteSchema = buildWebsiteSchema();
 const whyItems = [
   {
     title: 'Discover',
-    body: 'Browse SaaS products, AI tools, and developer tools by category — growing every week.',
+    body: 'Browse SaaS products, AI tools, and developer tools by category  growing every week.',
     tone: 'bg-emerald-50 text-primary',
     icon: '◎',
   },
@@ -199,7 +199,7 @@ export default async function HomePage() {
                 More than a directory. Real discovery.
               </h2>
               <p className="text-sm text-body mb-6 leading-relaxed">
-                Every listing is reviewed before it goes live. Ranking reflects community upvotes —
+                Every listing is reviewed before it goes live. Ranking reflects community upvotes 
                 not who paid the most. Featured placement stays clearly marked.
               </p>
               <ul className="space-y-3 text-sm text-body mb-8">

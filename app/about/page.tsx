@@ -6,11 +6,11 @@ import BlogTeaser from '../../components/BlogTeaser';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'About Pinstack — A Directory Built for Founders and Builders',
+  title: 'About Pinstack  A Directory Built for Founders and Builders',
   description:
     'Pinstack is a community-run directory for SaaS, AI, and developer tools. Learn how listings work, how ranking works, and what Pinstack is not.',
   path: '/about',
-  openGraphTitle: 'About Pinstack — A Directory Built for Founders and Builders',
+  openGraphTitle: 'About Pinstack  A Directory Built for Founders and Builders',
   keywords: ['about Pinstack', 'SaaS directory', 'community ranking', 'product listing'],
 });
 
@@ -21,8 +21,8 @@ export default function AboutPage() {
         <ScrollReveal>
           <h1 className="text-3xl font-extrabold text-heading mb-4">Why Pinstack exists</h1>
           <p className="text-body mb-10">
-            Pinstack helps people discover useful software — SaaS products, AI tools, APIs, and
-            developer tools — and helps the founders who build them get found. Listings are
+            Pinstack helps people discover useful software  SaaS products, AI tools, APIs, and
+            developer tools  and helps the founders who build them get found. Listings are
             reviewed by a small team before going live, and rank based on real community upvotes.
           </p>
         </ScrollReveal>
@@ -34,7 +34,7 @@ export default function AboutPage() {
               {
                 n: 1,
                 t: 'Founders submit their product',
-                b: "A founder submits their product's name, description, logo, and category — either by pasting their website URL for auto-fill, or filling the form manually.",
+                b: "A founder submits their product's name, description, logo, and category  either by pasting their website URL for auto-fill, or filling the form manually.",
               },
               {
                 n: 2,

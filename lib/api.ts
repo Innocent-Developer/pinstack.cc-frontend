@@ -67,7 +67,7 @@ async function apiFetch<T>(
     return data as T;
   } catch (err) {
     if (err instanceof Error && err.name === 'AbortError') {
-      throw new Error('Request timed out — check your connection and try again');
+      throw new Error('Request timed out  check your connection and try again');
     }
     throw err;
   } finally {
@@ -172,7 +172,7 @@ export const api = {
       return (data as { data: { logoUrl?: string; screenshotUrls: string[] } }).data;
     } catch (err) {
       if (err instanceof Error && err.name === 'AbortError') {
-        throw new Error('Upload timed out — try a smaller image or check your connection');
+        throw new Error('Upload timed out  try a smaller image or check your connection');
       }
       throw err;
     } finally {
@@ -203,6 +203,21 @@ export const api = {
       }
     ),
   trackClick: (id: string) => apiFetch(`/products/${id}/click`, { method: 'POST' }),
+  chatProduct: (
+    id: string,
+    payload: {
+      message: string;
+      history?: Array<{ role: 'user' | 'assistant'; content: string }>;
+    }
+  ) =>
+    apiFetch<{ success: boolean; data: { reply: string }; message?: string }>(
+      `/products/${id}/chat`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        timeoutMs: 45_000,
+      }
+    ),
   getProductReviews: (productId: string, page = 1) =>
     apiFetch<import('../types').ProductReviewsResponse>(
       `/products/${productId}/reviews?page=${page}&limit=10`,

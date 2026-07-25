@@ -67,17 +67,17 @@ export const categoryIntros: Record<string, string> = {
   analytics:
     'Analytics tools help teams understand product usage, funnels, and performance. This category collects SaaS and developer-facing options ranked by community upvotes.',
   design:
-    'Design tools for product teams — UI kits, prototyping, and creative workflows. Listings grow as founders submit; upvote what you would recommend to a peer.',
+    'Design tools for product teams  UI kits, prototyping, and creative workflows. Listings grow as founders submit; upvote what you would recommend to a peer.',
   'developer-tools':
     'Developer tools on Pinstack range from local utilities to cloud platforms. Rankings reflect community upvotes so useful tools surface without pay-to-win placement.',
   finance:
-    'Finance tools for founders and operators — billing, accounting, and money workflows. Browse current listings or submit a product for review.',
+    'Finance tools for founders and operators  billing, accounting, and money workflows. Browse current listings or submit a product for review.',
   marketing:
     'Marketing tools for acquisition, email, and growth experiments. Discover community-ranked options and share tools that helped your own launch.',
   productivity:
-    'Productivity software for founders and small teams — focus, collaboration, and workflow. Rankings update from real upvotes, not paid slots.',
+    'Productivity software for founders and small teams  focus, collaboration, and workflow. Rankings update from real upvotes, not paid slots.',
   security:
-    'Security tools for apps and teams — auth, privacy, and protection utilities. Explore what is listed today and add a product if you build in this space.',
+    'Security tools for apps and teams  auth, privacy, and protection utilities. Explore what is listed today and add a product if you build in this space.',
   saas:
     'SaaS products across niches, ranked by community upvotes rather than ad spend. Use this page to discover tools or list your own for free review.',
 };

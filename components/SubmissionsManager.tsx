@@ -129,7 +129,7 @@ export default function SubmissionsManager({ products, loading }: Props) {
           </p>
           <p className="text-sm text-muted mb-5 max-w-sm mx-auto">
             {products.length === 0
-              ? 'Add your first product — we will review it and list it in the directory.'
+              ? 'Add your first product  we will review it and list it in the directory.'
               : 'Try another filter or clear your search.'}
           </p>
           {products.length === 0 && (

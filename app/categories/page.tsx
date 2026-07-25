@@ -8,7 +8,7 @@ import { pageMetadata } from '../../lib/seo';
 import type { Category } from '../../types';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Browse Categories — SaaS, AI Tools & APIs',
+  title: 'Browse Categories  SaaS, AI Tools & APIs',
   description: 'Explore Pinstack categories and find the best tools by topic.',
   path: '/categories',
 });
@@ -34,7 +34,7 @@ export default async function CategoriesPage() {
       {categories.length === 0 ? (
         <EmptyState
           title="No categories yet"
-          description="We're setting things up. Check back soon — or explore the full directory while we add categories."
+          description="We're setting things up. Check back soon  or explore the full directory while we add categories."
           actionHref="/explore"
           actionLabel="Explore products"
           icon={

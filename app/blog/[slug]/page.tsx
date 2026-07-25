@@ -24,7 +24,7 @@ export function generateMetadata({ params }: Props): Metadata {
   const post = getBlogPost(params.slug);
   if (!post) return {};
   return pageMetadata({
-    title: `${post.title} — Pinstack Blog`,
+    title: `${post.title}  Pinstack Blog`,
     description: post.description,
     path: `/blog/${post.slug}`,
     type: 'article',
@@ -169,7 +169,7 @@ export default function BlogPostPage({ params }: Props) {
 
         <div className="mt-12 pt-8 border-t border-borderC">
           <p className="text-sm text-body mb-4">
-            Building something worth sharing? List it free on Pinstack — community ranking, not
+            Building something worth sharing? List it free on Pinstack  community ranking, not
             pay-to-win.
           </p>
           <div className="flex flex-wrap gap-3">

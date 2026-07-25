@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { badgeProductUrl } from '../lib/utm';
+import { siteConfig } from '../config/site';
 
 interface Props {
   slug: string;
@@ -39,9 +41,9 @@ export default function BadgeCopyWidget({ slug, name, upvotes }: Props) {
   const [theme, setTheme] = useState<Theme>('brand');
 
   const origin =
-    typeof window !== 'undefined' ? window.location.origin : 'https://pinstack.cc';
+    typeof window !== 'undefined' ? window.location.origin : siteConfig.url;
   const badgeSvg = `${origin}/api/badge/${slug}?theme=${theme}`;
-  const productUrl = `${origin}/product/${slug}`;
+  const productUrl = badgeProductUrl(origin, slug);
 
   const snippet =
     format === 'img'
@@ -67,7 +69,9 @@ export default function BadgeCopyWidget({ slug, name, upvotes }: Props) {
           Embed badge
         </p>
         <p className="text-xs text-muted">
-          Show this badge on your website or README  updates with live upvote count.
+          Show this badge on your website or README  updates with live upvote count. Links include{' '}
+          <code className="font-mono text-[10px] bg-bgAlt px-1 rounded">utm_medium=pinstack_badge</code>{' '}
+          so you can track badge traffic.
         </p>
       </div>
 
