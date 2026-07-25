@@ -13,6 +13,7 @@ const FALLBACK: Stats = { products: 0, founders: 0, categories: 0 };
 
 function Stat({ label, target, icon }: { label: string; target: number; icon: string }) {
   const [value, setValue] = useState(0);
+  const [visible, setVisible] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -20,13 +21,26 @@ function Stat({ label, target, icon }: { label: string; target: number; icon: st
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) {
       setValue(target);
+      setVisible(true);
       return;
     }
     const obj = { n: 0 };
     const ctx = gsap.context(() => {
+      gsap.fromTo(
+        ref.current,
+        { opacity: 0, y: 16 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.55,
+          ease: 'power2.out',
+          scrollTrigger: { trigger: ref.current, start: 'top 90%', once: true },
+          onStart: () => setVisible(true),
+        }
+      );
       gsap.to(obj, {
         n: target,
-        duration: 1.25,
+        duration: 1.35,
         ease: 'power2.out',
         scrollTrigger: { trigger: ref.current, start: 'top 85%', once: true },
         onUpdate: () => setValue(Math.round(obj.n)),
@@ -36,8 +50,16 @@ function Stat({ label, target, icon }: { label: string; target: number; icon: st
   }, [target]);
 
   return (
-    <div ref={ref} className="flex items-center gap-3 sm:flex-col sm:text-center sm:gap-2">
-      <div className="w-10 h-10 rounded-xl bg-bgAlt text-primary flex items-center justify-center text-lg shrink-0" aria-hidden>
+    <div
+      ref={ref}
+      className={`flex items-center gap-3 sm:flex-col sm:text-center sm:gap-2 transition-opacity duration-300 ${
+        visible ? 'opacity-100' : 'opacity-0'
+      }`}
+    >
+      <div
+        className="w-10 h-10 rounded-xl bg-bgAlt text-primary flex items-center justify-center text-lg shrink-0 transition-transform duration-300 hover:scale-110"
+        aria-hidden
+      >
         {icon}
       </div>
       <div>

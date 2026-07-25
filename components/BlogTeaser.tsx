@@ -35,7 +35,7 @@ export default function BlogTeaser({
             <Link
               key={post.slug}
               href={`/blog/${post.slug}`}
-              className="block bg-white border border-borderC rounded-2xl p-5 hover:border-primary/40 hover:shadow-sm transition"
+              className="block lift-card bg-white border border-borderC rounded-2xl p-5 hover:border-primary/40"
             >
               <p className="text-[11px] font-semibold text-muted mb-2">
                 {formatBlogDate(post.publishedAt)} · {post.readingMinutes} min read

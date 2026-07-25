@@ -102,14 +102,17 @@ export default async function HomePage() {
         {/* Why Pinstack */}
         <section className="py-12 sm:py-16 max-w-[1160px] mx-auto px-4 sm:px-6" aria-labelledby="why-heading">
           <ScrollReveal className="text-center mb-10">
-            <h2 id="why-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2">
+            <h2 id="why-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2 tracking-tight">
               Why Pinstack
             </h2>
+            <span className="section-line" aria-hidden />
           </ScrollReveal>
           <ScrollReveal stagger className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {whyItems.map((item) => (
-              <div key={item.title} className="lift-card border border-borderC rounded-2xl p-5 bg-white">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-3 ${item.tone}`}>
+              <div key={item.title} className="lift-card border border-borderC rounded-2xl p-5 bg-white group">
+                <div
+                  className={`why-icon w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-3 ${item.tone}`}
+                >
                   {item.icon}
                 </div>
                 <h3 className="font-bold text-heading text-[15px] mb-1.5">{item.title}</h3>
@@ -124,10 +127,11 @@ export default async function HomePage() {
           <div className="max-w-[1160px] mx-auto px-4 sm:px-6">
             <ScrollReveal className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-9">
               <div>
-                <h2 id="categories-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2">
+                <h2 id="categories-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2 tracking-tight">
                   Explore by category
                 </h2>
-                <p className="text-sm text-muted">Pick a lane and browse tools ranked by the community.</p>
+                <span className="section-line !mx-0" aria-hidden />
+                <p className="text-sm text-muted mt-3">Pick a lane and browse tools ranked by the community.</p>
               </div>
               <Link href="/categories" className="text-sm font-semibold text-primary hover:underline">
                 View all categories →
@@ -141,14 +145,14 @@ export default async function HomePage() {
                 ))}
               </div>
             ) : (
-              <ScrollReveal stagger className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
+              <ScrollReveal stagger scale className="grid grid-cols-2 md:grid-cols-4 gap-3.5">
                 {categories.map((cat) => (
                   <Link
                     key={cat._id}
                     href={`/category/${cat.slug}`}
-                    className="lift-card border border-borderC bg-white rounded-2xl p-5 text-center hover:border-primary"
+                    className="lift-card group border border-borderC bg-white rounded-2xl p-5 text-center hover:border-primary"
                   >
-                    <div className="text-2xl mb-2" aria-hidden>
+                    <div className="text-2xl mb-2 transition-transform duration-300 group-hover:scale-110" aria-hidden>
                       {cat.icon}
                     </div>
                     <div className="text-sm font-bold text-heading">{cat.name}</div>
@@ -164,10 +168,11 @@ export default async function HomePage() {
         <section id="trending" className="py-16 scroll-mt-24" aria-labelledby="trending-heading">
           <div className="max-w-[1160px] mx-auto px-4 sm:px-6">
             <ScrollReveal className="text-center mb-9">
-              <h2 id="trending-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2">
+              <h2 id="trending-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-2 tracking-tight">
                 Trending this week
               </h2>
-              <p className="text-sm text-muted">Ranked by community upvotes, updated hourly.</p>
+              <span className="section-line" aria-hidden />
+              <p className="text-sm text-muted mt-3">Ranked by community upvotes, updated hourly.</p>
             </ScrollReveal>
 
             {trending.length === 0 ? (
@@ -177,7 +182,7 @@ export default async function HomePage() {
                 ))}
               </div>
             ) : (
-              <ScrollReveal stagger className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <ScrollReveal stagger scale className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 {trending.map((p) => (
                   <ProductCard key={p._id} product={p} />
                 ))}
@@ -194,7 +199,7 @@ export default async function HomePage() {
                 More than a directory. Real discovery.
               </h2>
               <p className="text-sm text-body mb-6 leading-relaxed">
-                Every listing is reviewed before it goes live. Ranking reflects community upvotes 
+                Every listing is reviewed before it goes live. Ranking reflects community upvotes —
                 not who paid the most. Featured placement stays clearly marked.
               </p>
               <ul className="space-y-3 text-sm text-body mb-8">
@@ -204,8 +209,11 @@ export default async function HomePage() {
                   'Category pages built for SEO & discovery',
                   'Embeddable “Featured on Pinstack” badge',
                 ].map((line) => (
-                  <li key={line} className="flex gap-2">
-                    <span className="text-primary font-bold" aria-hidden>
+                  <li key={line} className="flex gap-2 items-start">
+                    <span
+                      className="text-primary font-bold mt-0.5 inline-flex w-5 h-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-xs"
+                      aria-hidden
+                    >
                       ✓
                     </span>
                     {line}
@@ -214,13 +222,13 @@ export default async function HomePage() {
               </ul>
               <Link
                 href="/about"
-                className="inline-flex text-sm font-semibold text-primary hover:underline"
+                className="btn-smooth inline-flex text-sm font-semibold text-primary hover:underline"
               >
                 Learn how Pinstack works →
               </Link>
             </ScrollReveal>
 
-            <ScrollReveal>
+            <ScrollReveal scale delay={0.08}>
               <div className="w-full min-w-0 max-w-full bg-white border border-borderC rounded-2xl p-4 sm:p-6 shadow-[0_20px_50px_-30px_rgba(15,23,42,0.3)]">
                 <p className="text-xs font-semibold text-muted uppercase tracking-wide mb-3 sm:mb-4">
                   Snapshot
@@ -231,7 +239,7 @@ export default async function HomePage() {
                     { k: 'Founders', v: stats?.founders ?? 0 },
                     { k: 'Categories', v: stats?.categories ?? 0 },
                   ].map((s) => (
-                    <div key={s.k} className="min-w-0 rounded-xl bg-bgAlt p-2 sm:p-3 text-center">
+                    <div key={s.k} className="min-w-0 rounded-xl bg-bgAlt p-2 sm:p-3 text-center transition-transform duration-300 hover:-translate-y-0.5">
                       <div className="text-base sm:text-lg font-extrabold text-heading tabular-nums">{s.v}</div>
                       <div className="text-[9px] sm:text-[11px] text-muted leading-tight">{s.k}</div>
                     </div>
@@ -245,7 +253,7 @@ export default async function HomePage() {
                       <Link
                         key={p._id}
                         href={`/product/${p.slug}`}
-                        className="flex items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-borderC hover:border-primary transition w-full min-w-0"
+                        className="flex items-center justify-between gap-2 sm:gap-3 p-2.5 sm:p-3 rounded-xl border border-borderC hover:border-primary hover:bg-bgAlt/60 hover:shadow-sm transition-all duration-300 w-full min-w-0"
                       >
                         <div className="min-w-0 flex-1">
                           <p className="text-sm font-bold text-heading truncate">{p.name}</p>
@@ -264,38 +272,44 @@ export default async function HomePage() {
         </section>
 
         {/* Compare / social proof bar */}
-        <section className="bg-heading text-white py-8">
-          <div className="max-w-[1160px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-            <div>
-              <p className="text-lg font-extrabold mb-1">Compare before you choose</p>
-              <p className="text-sm text-slate-400">
-                Browse categories side by side and upvote what actually helps.
-              </p>
+        <ScrollReveal>
+          <section className="bg-heading text-white py-8">
+            <div className="max-w-[1160px] mx-auto px-4 sm:px-6 flex flex-col md:flex-row items-center justify-between gap-6">
+              <div>
+                <p className="text-lg font-extrabold mb-1">Compare before you choose</p>
+                <p className="text-sm text-slate-400">
+                  Browse categories side by side and upvote what actually helps.
+                </p>
+              </div>
+              <Link
+                href="/categories"
+                className="btn-smooth px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover shrink-0 shadow-lg shadow-primary/30"
+              >
+                Browse categories →
+              </Link>
             </div>
-            <Link
-              href="/categories"
-              className="px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover shrink-0"
-            >
-              Browse categories →
-            </Link>
-          </div>
-        </section>
+          </section>
+        </ScrollReveal>
 
-        <BadgeSection />
+        <ScrollReveal>
+          <BadgeSection />
+        </ScrollReveal>
 
-        <BlogTeaser />
+        <ScrollReveal>
+          <BlogTeaser />
+        </ScrollReveal>
 
         {/* Final CTA */}
         <section className="py-16 bg-white" aria-labelledby="cta-heading">
           <div className="max-w-[900px] mx-auto px-4 sm:px-6 text-center">
-            <ScrollReveal>
+            <ScrollReveal scale>
               <h2 id="cta-heading" className="text-2xl md:text-[28px] font-extrabold text-heading mb-3">
                 Built something worth sharing?
               </h2>
               <p className="text-sm text-muted mb-6 max-w-md mx-auto">
                 List it free. Upgrade later if you want featured placement.
               </p>
-              <AddProductButton className="inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/20" />
+              <AddProductButton className="btn-smooth inline-flex items-center px-6 py-3 rounded-xl text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-lg shadow-primary/25" />
             </ScrollReveal>
           </div>
         </section>

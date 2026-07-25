@@ -76,7 +76,7 @@ export default function Header() {
               {user.name.split(' ')[0]}
             </Link>
           )}
-          <AddProductButton className="hidden sm:inline-flex items-center px-4 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-sm shadow-primary/25 transition" />
+          <AddProductButton className="hidden sm:inline-flex items-center px-4 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-sm shadow-primary/25 btn-smooth" />
           <button
             type="button"
             className="lg:hidden p-2 text-heading"

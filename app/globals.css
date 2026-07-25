@@ -117,14 +117,182 @@ body {
   }
 }
 
-/* Soft lift on interactive cards sitewide */
+/* Soft lift on interactive cards sitewide — Apple-like spring settle */
 .lift-card {
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.55s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    background-color 0.35s ease;
 }
 
 .lift-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 12px 28px -12px rgba(15, 23, 42, 0.18);
+  transform: translateY(-5px) scale(1.01);
+  box-shadow: 0 22px 44px -20px rgba(15, 23, 42, 0.22);
+}
+
+/* Homepage CTA / button polish */
+.btn-smooth {
+  transition: transform 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.25s ease,
+    border-color 0.25s ease,
+    filter 0.25s ease;
+}
+
+.btn-smooth:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.03);
+}
+
+.btn-smooth:active {
+  transform: translateY(0) scale(0.985);
+  transition-duration: 0.12s;
+}
+
+/* Frosted glass panel (hero card) */
+.apple-glass {
+  background: linear-gradient(165deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.82) 100%);
+  backdrop-filter: blur(18px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+}
+
+.apple-field {
+  transition: box-shadow 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    border-color 0.35s ease,
+    transform 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.apple-field:focus-within {
+  border-color: rgba(5, 150, 105, 0.45);
+  box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.12), 0 10px 28px -16px rgba(15, 23, 42, 0.18);
+  transform: translateY(-1px);
+}
+
+/* Soft drifting orbs behind hero */
+@keyframes home-orb-drift {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(10px, -14px) scale(1.04);
+  }
+}
+
+.home-orb {
+  animation: home-orb-drift 14s ease-in-out infinite;
+}
+
+.home-orb-delay {
+  animation-delay: -5s;
+}
+
+@keyframes home-float-soft {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -6px;
+  }
+}
+
+.home-float-soft {
+  animation: home-float-soft 5.2s ease-in-out infinite;
+  animation-delay: 1.2s;
+}
+
+@keyframes home-mesh-shift {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.88;
+  }
+}
+
+.home-hero-mesh {
+  animation: home-mesh-shift 12s ease-in-out infinite;
+}
+
+/* Live status pill */
+.live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 9999px;
+  background: currentColor;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(5, 150, 105, 0.4);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(0.9);
+    box-shadow: 0 0 0 7px rgba(5, 150, 105, 0);
+  }
+}
+
+/* Why-section icon nudge on card hover */
+.why-icon {
+  transition: transform 0.55s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.lift-card:hover .why-icon {
+  transform: scale(1.1) rotate(-3deg);
+}
+
+/* Section title thin underline draw */
+.section-line {
+  display: block;
+  height: 1px;
+  width: 40px;
+  margin: 0.75rem auto 0;
+  background: linear-gradient(90deg, transparent, rgba(5, 150, 105, 0.55), transparent);
+  transform-origin: center;
+  animation: section-line-in 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes section-line-in {
+  from {
+    transform: scaleX(0);
+    opacity: 0;
+  }
+  to {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+}
+
+/* Soft sheen pass on glass / featured cards */
+@keyframes apple-sheen {
+  0% {
+    transform: translateX(-120%) skewX(-18deg);
+  }
+  100% {
+    transform: translateX(220%) skewX(-18deg);
+  }
+}
+
+.apple-sheen::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.35) 50%,
+    transparent 60%
+  );
+  pointer-events: none;
+  animation: apple-sheen 4.5s ease-in-out infinite;
+  animation-delay: 2s;
 }
 
 @keyframes empty-float {
@@ -177,6 +345,12 @@ body {
     scroll-behavior: auto;
   }
   .auth-orb,
+  .home-orb,
+  .home-hero-mesh,
+  .home-float-soft,
+  .live-dot,
+  .section-line,
+  .apple-sheen::after,
   .animate-empty-float,
   .animate-empty-glow {
     animation: none;
@@ -185,6 +359,10 @@ body {
   .modal-sheet-in,
   .animate-empty-fade {
     animation: none !important;
+  }
+  .btn-smooth:hover,
+  .lift-card:hover {
+    transform: none;
   }
   *,
   *::before,

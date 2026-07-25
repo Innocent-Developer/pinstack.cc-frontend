@@ -13,6 +13,8 @@ interface ScrollRevealProps {
   className?: string;
   delay?: number;
   stagger?: boolean;
+  /** Soft scale-up (product-card style) */
+  scale?: boolean;
 }
 
 export default function ScrollReveal({
@@ -20,6 +22,7 @@ export default function ScrollReveal({
   className = '',
   delay = 0,
   stagger = false,
+  scale = false,
 }: ScrollRevealProps) {
   const ref = useRef<HTMLDivElement>(null);
 
@@ -32,18 +35,26 @@ export default function ScrollReveal({
     const ctx = gsap.context(() => {
       gsap.fromTo(
         targets,
-        { opacity: 0, y: 28, filter: 'blur(4px)' },
+        {
+          opacity: 0,
+          y: 24,
+          ...(scale ? { scale: 0.985 } : {}),
+          filter: 'blur(8px)',
+        },
         {
           opacity: 1,
           y: 0,
+          ...(scale ? { scale: 1 } : {}),
           filter: 'blur(0px)',
-          duration: 0.7,
+          duration: 1.05,
           delay,
-          ease: 'power3.out',
-          stagger: stagger ? 0.09 : 0,
+          ease: 'expo.out',
+          stagger: stagger
+            ? { each: 0.08, from: 'start', ease: 'power1.out' }
+            : 0,
           scrollTrigger: {
             trigger: ref.current,
-            start: 'top 88%',
+            start: 'top 92%',
             once: true,
           },
         }
@@ -51,7 +62,7 @@ export default function ScrollReveal({
     }, ref);
 
     return () => ctx.revert();
-  }, [delay, stagger]);
+  }, [delay, stagger, scale]);
 
   return (
     <div ref={ref} className={`min-w-0 w-full ${className}`.trim()}>
