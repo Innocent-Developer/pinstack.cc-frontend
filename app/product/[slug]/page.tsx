@@ -533,8 +533,8 @@ export default async function ProductDetailPage({ params }: Props) {
           </div>
         </section>
       </main>
-      <ProductChatBot productId={product._id} productName={product.name} />
       <Footer />
+      <ProductChatBot productId={product._id} productName={product.name} />
     </>
   );
 }

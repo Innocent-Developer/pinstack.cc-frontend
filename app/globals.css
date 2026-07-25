@@ -340,6 +340,150 @@ body {
   animation: empty-fade 0.45s ease-out both;
 }
 
+/* ── Product page chat (viewport-fixed via portal to body) ── */
+.product-chat-root {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  pointer-events: none;
+}
+
+.product-chat-backdrop {
+  display: none;
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: rgba(15, 23, 42, 0.45);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.product-chat-dock {
+  position: absolute;
+  right: max(1rem, env(safe-area-inset-right));
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+  max-width: calc(100vw - 1.5rem);
+  pointer-events: none;
+}
+
+.product-chat-panel {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  width: min(100vw - 2rem, 380px);
+  height: min(70dvh, 520px);
+  max-height: min(70dvh, 520px);
+  border-radius: 1rem;
+  border: 1px solid #e2e8f0;
+  background: #fff;
+  box-shadow: 0 24px 60px -20px rgba(15, 23, 42, 0.45);
+  overflow: hidden;
+}
+
+.product-chat-header {
+  flex-shrink: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: #0f172a;
+}
+
+.product-chat-messages {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.75rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  background: rgba(248, 250, 252, 0.95);
+}
+
+.product-chat-suggestions {
+  flex-shrink: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  padding: 0 0.75rem 0.5rem;
+  background: rgba(248, 250, 252, 0.95);
+}
+
+.product-chat-form {
+  flex-shrink: 0;
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.625rem;
+  border-top: 1px solid #e2e8f0;
+  background: #fff;
+}
+
+.product-chat-fab {
+  pointer-events: auto;
+  position: relative;
+  width: 3.5rem;
+  height: 3.5rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: #059669;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 12px 28px -8px rgba(5, 150, 105, 0.55);
+  border: 0;
+  cursor: pointer;
+}
+
+.product-chat-fab:hover {
+  background: #047857;
+}
+
+.product-chat-fab-dot {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 9999px;
+  background: #6ee7b7;
+  box-shadow: 0 0 0 2px #fff;
+  animation: live-pulse 2s ease-in-out infinite;
+}
+
+@media (max-width: 639px) {
+  .product-chat-backdrop {
+    display: block;
+  }
+
+  .product-chat-dock {
+    left: max(0.5rem, env(safe-area-inset-left));
+    right: max(0.5rem, env(safe-area-inset-right));
+    bottom: max(0.5rem, env(safe-area-inset-bottom));
+    align-items: stretch;
+    max-width: none;
+  }
+
+  .product-chat-panel {
+    width: 100%;
+    height: min(78dvh, 560px);
+    max-height: min(78dvh, 560px);
+    border-radius: 1rem;
+  }
+
+  .product-chat-fab {
+    align-self: flex-end;
+    margin-right: 0.15rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -349,6 +493,7 @@ body {
   .home-hero-mesh,
   .home-float-soft,
   .live-dot,
+  .product-chat-fab-dot,
   .section-line,
   .apple-sheen::after,
   .animate-empty-float,
