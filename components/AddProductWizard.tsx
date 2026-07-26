@@ -9,6 +9,7 @@ import { getStoredUser, getToken, StoredUser } from '../lib/auth';
 import { useToast } from './ToastProvider';
 import type { Category } from '../types';
 import SocialLinkFields from './SocialLinkFields';
+import BadgeCopyWidget from './BadgeCopyWidget';
 import {
   EMPTY_SOCIAL_LINKS,
   socialLinksFromForm,
@@ -35,6 +36,28 @@ export default function AddProductWizard() {
   const { success: toastSuccess, error: toastError } = useToast();
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
+  const [submitted, setSubmitted] = useState<{
+    _id: string;
+    slug: string;
+    name: string;
+    websiteUrl: string;
+  } | null>(null);
+  const [postStep, setPostStep] = useState<'plan' | 'free-badge' | 'paid' | 'done'>('plan');
+  const [selectedPlan, setSelectedPlan] = useState<'free' | 'verified' | 'featured' | 'growth' | null>(
+    null
+  );
+  const [listTiming, setListTiming] = useState<'now' | 'scheduled'>('now');
+  const [scheduleDate, setScheduleDate] = useState('');
+  const [liveResult, setLiveResult] = useState<{
+    liveNow: boolean;
+    publishAt?: string | null;
+    status?: string;
+  } | null>(null);
+  const [badgeStatus, setBadgeStatus] = useState<{
+    found: boolean;
+    message: string;
+  } | null>(null);
+  const [verifyBusy, setVerifyBusy] = useState(false);
 
   const [autofillUrl, setAutofillUrl] = useState('');
   const [aiQuestion, setAiQuestion] = useState('');
@@ -263,7 +286,7 @@ export default function AddProductWizard() {
         screenshotUrls = uploaded.screenshotUrls || [];
       }
 
-      await api.submitProduct({
+      const created = await api.submitProduct({
         name: form.name,
         tagline: form.tagline,
         description: form.description,
@@ -282,6 +305,14 @@ export default function AddProductWizard() {
         socialLinks: socialLinksFromForm(socialLinks),
       });
 
+      const product = created.data;
+      setSubmitted({
+        _id: product._id,
+        slug: product.slug,
+        name: product.name,
+        websiteUrl: product.websiteUrl,
+      });
+      setPostStep('plan');
       setDone(true);
       toastSuccess('Product submitted for review!');
     } catch (err) {
@@ -293,27 +324,327 @@ export default function AddProductWizard() {
     }
   };
 
-  if (done) {
+  const choosePlan = async (plan: 'free' | 'verified' | 'featured' | 'growth') => {
+    if (!submitted) return;
+    const token = getToken();
+    if (!token) return;
+
+    if (listTiming === 'scheduled' && !scheduleDate) {
+      setError('Pick a schedule date, or choose “List as soon as possible”.');
+      return;
+    }
+
+    setSelectedPlan(plan);
+    setBusy(true);
+    setError(null);
+    try {
+      const res = await api.setMyProductPlan(token, submitted._id, plan, {
+        listTiming,
+        publishAt: listTiming === 'scheduled' ? scheduleDate : undefined,
+      });
+      setLiveResult({
+        liveNow: !!res.data.liveNow,
+        publishAt: res.data.publishAt,
+        status: res.data.status,
+      });
+      if (plan === 'free') {
+        setPostStep('free-badge');
+        setBadgeStatus(null);
+        toastSuccess(res.message || 'Free plan saved');
+      } else {
+        setPostStep('paid');
+        toastSuccess(res.message || 'Paid plan applied — listing is live');
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Could not save plan';
+      setError(msg);
+      toastError(msg);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const runBadgeVerify = async () => {
+    if (!submitted) return;
+    const token = getToken();
+    if (!token) return;
+    setVerifyBusy(true);
+    setBadgeStatus(null);
+    setError(null);
+    try {
+      const res = await api.verifyMyProductBadge(token, submitted._id);
+      setBadgeStatus({ found: res.data.found, message: res.data.message });
+      if (res.data.found) {
+        toastSuccess('Badge verified on your website!');
+        setPostStep('done');
+      } else {
+        toastError('Badge not found yet — add it, then verify again.');
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : 'Verify failed';
+      setError(msg);
+      toastError(msg);
+    } finally {
+      setVerifyBusy(false);
+    }
+  };
+
+  if (done && submitted) {
     return (
-      <div className="border border-borderC rounded-2xl p-8 bg-bgAlt text-center">
-        <h2 className="text-xl font-extrabold text-heading mb-2">Submitted for review</h2>
-        <p className="text-sm text-muted mb-6">
-          Thanks your product is in the queue. We’ll email you when it’s approved.
-        </p>
-        <div className="flex flex-wrap justify-center gap-3">
-          <Link
-            href="/dashboard"
-            className="px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
-          >
-            Back to dashboard
-          </Link>
-          <Link
-            href="/explore"
-            className="px-5 py-2.5 rounded-btn text-sm font-semibold border border-borderC text-heading hover:bg-white"
-          >
-            Explore directory
-          </Link>
+      <div className="space-y-5">
+        <div className="border border-borderC rounded-2xl p-6 sm:p-8 bg-bgAlt">
+          <p className="text-xs font-bold uppercase tracking-wide text-primary mb-2">Submitted</p>
+          <h2 className="text-xl font-extrabold text-heading mb-2">{submitted.name} is ready</h2>
+          <p className="text-sm text-muted leading-relaxed">
+            Choose when to list and Free vs Paid. <strong>Paid plans go live instantly</strong> (no
+            pending queue). Free stays pending until admin approval.
+          </p>
         </div>
+
+        {error && (
+          <p className="text-sm text-red-700 bg-red-50 border border-red-100 px-3.5 py-3 rounded-btn">
+            {error}
+          </p>
+        )}
+
+        {postStep === 'plan' && (
+          <div className="border border-borderC rounded-2xl p-6 bg-white space-y-5">
+            <div>
+              <h3 className="font-extrabold text-heading text-lg mb-1">When should it list?</h3>
+              <p className="text-sm text-muted mb-3">
+                Schedule up to 90 days ahead. Paid listings publish automatically on that date.
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3 mb-3">
+                <button
+                  type="button"
+                  onClick={() => setListTiming('now')}
+                  className={`text-left border rounded-2xl p-4 transition ${
+                    listTiming === 'now'
+                      ? 'border-primary bg-bgAlt ring-1 ring-primary/30'
+                      : 'border-borderC hover:border-primary'
+                  }`}
+                >
+                  <p className="text-sm font-extrabold text-heading mb-1">As soon as possible</p>
+                  <p className="text-xs text-muted">
+                    Free → pending review. Paid → live right away.
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setListTiming('scheduled')}
+                  className={`text-left border rounded-2xl p-4 transition ${
+                    listTiming === 'scheduled'
+                      ? 'border-primary bg-bgAlt ring-1 ring-primary/30'
+                      : 'border-borderC hover:border-primary'
+                  }`}
+                >
+                  <p className="text-sm font-extrabold text-heading mb-1">Schedule a date</p>
+                  <p className="text-xs text-muted">Pick when your listing should appear publicly.</p>
+                </button>
+              </div>
+              {listTiming === 'scheduled' && (
+                <div>
+                  <label className="block text-xs font-semibold text-heading mb-1">
+                    Go-live date & time
+                  </label>
+                  <input
+                    type="datetime-local"
+                    value={scheduleDate}
+                    min={new Date(Date.now() + 60 * 60 * 1000).toISOString().slice(0, 16)}
+                    onChange={(e) => setScheduleDate(e.target.value)}
+                    className="w-full sm:max-w-sm px-3 py-2.5 border border-borderC rounded-btn text-sm"
+                  />
+                </div>
+              )}
+            </div>
+
+            <div>
+              <h3 className="font-extrabold text-heading text-lg mb-1">Choose Free or Paid</h3>
+              <p className="text-sm text-muted mb-3">
+                Paid options skip the pending queue and list immediately (or on your schedule).
+              </p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void choosePlan('free')}
+                  className="text-left border border-borderC rounded-2xl p-4 hover:border-primary hover:bg-bgAlt transition disabled:opacity-50"
+                >
+                  <p className="text-sm font-extrabold text-heading mb-1">Free</p>
+                  <p className="text-xs text-muted">
+                    Pending admin approval + embed badge. Forever free.
+                  </p>
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void choosePlan('verified')}
+                  className="text-left border border-borderC rounded-2xl p-4 hover:border-primary hover:bg-bgAlt transition disabled:opacity-50"
+                >
+                  <p className="text-sm font-extrabold text-heading mb-1">Verified · $9</p>
+                  <p className="text-xs text-muted">Instant live + verified badge. No pending.</p>
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void choosePlan('featured')}
+                  className="text-left border border-borderC rounded-2xl p-4 hover:border-primary hover:bg-bgAlt transition disabled:opacity-50"
+                >
+                  <p className="text-sm font-extrabold text-heading mb-1">Featured · $5/mo</p>
+                  <p className="text-xs text-muted">Instant live + featured placement (30 days).</p>
+                </button>
+                <button
+                  type="button"
+                  disabled={busy}
+                  onClick={() => void choosePlan('growth')}
+                  className="text-left border border-borderC rounded-2xl p-4 hover:border-primary hover:bg-bgAlt transition disabled:opacity-50"
+                >
+                  <p className="text-sm font-extrabold text-heading mb-1">Growth · $20/mo</p>
+                  <p className="text-xs text-muted">Instant live + Featured & Verified.</p>
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {postStep === 'free-badge' && (
+          <div className="border border-borderC rounded-2xl p-6 bg-white space-y-4">
+            <h3 className="font-extrabold text-heading text-lg">Add your free badge</h3>
+            <p className="text-sm text-muted leading-relaxed">
+              Copy the embed code below and paste it on{' '}
+              <a
+                href={submitted.websiteUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-primary font-semibold hover:underline"
+              >
+                {submitted.websiteUrl.replace(/^https?:\/\//, '')}
+              </a>
+              . Then click <strong>Verify badge</strong> — we’ll scan your site for the Pinstack
+              badge.
+            </p>
+
+            <BadgeCopyWidget slug={submitted.slug} name={submitted.name} upvotes={0} />
+
+            {badgeStatus && (
+              <div
+                className={`text-sm rounded-xl px-3.5 py-3 border ${
+                  badgeStatus.found
+                    ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
+                    : 'bg-amber-50 border-amber-200 text-amber-950'
+                }`}
+              >
+                {badgeStatus.message}
+                {!badgeStatus.found && (
+                  <p className="mt-2 font-semibold">Add the badge now, publish your page, then verify again.</p>
+                )}
+              </div>
+            )}
+
+            <div className="flex flex-wrap gap-3 pt-1">
+              <button
+                type="button"
+                disabled={verifyBusy}
+                onClick={() => void runBadgeVerify()}
+                className="px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover disabled:opacity-50"
+              >
+                {verifyBusy ? 'Scanning your site…' : 'Verify badge'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPostStep('done')}
+                className="px-5 py-2.5 rounded-btn text-sm font-semibold border border-borderC text-heading hover:bg-bgAlt"
+              >
+                Skip for now
+              </button>
+            </div>
+          </div>
+        )}
+
+        {postStep === 'paid' && selectedPlan && (
+          <div className="border border-borderC rounded-2xl p-6 bg-white space-y-4">
+            <h3 className="font-extrabold text-heading text-lg">
+              {liveResult?.liveNow
+                ? 'You’re live — no pending review'
+                : 'Approved & scheduled'}
+            </h3>
+            <p className="text-sm text-muted leading-relaxed">
+              <strong className="text-heading capitalize">{selectedPlan}</strong> is applied.
+              {liveResult?.liveNow
+                ? ' Your product is listed on Pinstack now.'
+                : liveResult?.publishAt
+                  ? ` It will appear publicly on ${new Date(liveResult.publishAt).toLocaleString()}.`
+                  : ' Your go-live time is saved.'}{' '}
+              Admin was notified. You can still add the free embed badge anytime.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              {liveResult?.liveNow && (
+                <Link
+                  href={`/product/${submitted.slug}`}
+                  className="px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
+                >
+                  View live listing →
+                </Link>
+              )}
+              <Link
+                href="/dashboard"
+                className="px-5 py-2.5 rounded-btn text-sm font-semibold border border-borderC text-heading hover:bg-bgAlt"
+              >
+                Dashboard
+              </Link>
+              <button
+                type="button"
+                onClick={() => {
+                  setPostStep('free-badge');
+                }}
+                className="px-5 py-2.5 rounded-btn text-sm font-semibold text-primary hover:underline"
+              >
+                Add embed badge
+              </button>
+            </div>
+          </div>
+        )}
+
+        {postStep === 'done' && (
+          <div className="border border-borderC rounded-2xl p-6 sm:p-8 bg-white text-center space-y-4">
+            <h3 className="text-lg font-extrabold text-heading">
+              {liveResult?.liveNow
+                ? 'Listing is live'
+                : badgeStatus?.found
+                  ? 'Badge verified — you’re set'
+                  : 'You’re all set for now'}
+            </h3>
+            <p className="text-sm text-muted max-w-md mx-auto">
+              {liveResult?.liveNow
+                ? 'Paid plan applied — your product skipped the pending queue.'
+                : badgeStatus?.found
+                  ? 'We found your Pinstack badge. Free listings still need admin approval before going public.'
+                  : 'We’ll email you when a free listing is approved. Verify the badge anytime from your dashboard.'}
+            </p>
+            <div className="flex flex-wrap justify-center gap-3">
+              {liveResult?.liveNow && (
+                <Link
+                  href={`/product/${submitted.slug}`}
+                  className="px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
+                >
+                  View listing
+                </Link>
+              )}
+              <Link
+                href="/dashboard"
+                className="px-5 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover"
+              >
+                Back to dashboard
+              </Link>
+              <Link
+                href="/explore"
+                className="px-5 py-2.5 rounded-btn text-sm font-semibold border border-borderC text-heading hover:bg-bgAlt"
+              >
+                Explore directory
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     );
   }
@@ -631,7 +962,8 @@ export default function AddProductWizard() {
             )}
           </dl>
           <p className="text-xs text-muted pt-2">
-            Submitting as {user?.name} ({user?.email}). Listing stays pending until review.
+            Submitting as {user?.name} ({user?.email}). Next you&apos;ll choose Free/Paid and when to
+            list.
           </p>
         </div>
       )}

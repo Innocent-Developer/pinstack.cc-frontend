@@ -25,6 +25,10 @@ export interface Product {
   score: number;
   isFeatured: boolean;
   isVerified: boolean;
+  badgeEmbedded?: boolean;
+  badgeVerifiedAt?: string | null;
+  planChoice?: 'free' | 'verified' | 'featured' | 'growth' | null;
+  publishAt?: string | null;
   viewCount: number;
   websiteClickCount?: number;
   socialLinks?: ProductSocialLinks;

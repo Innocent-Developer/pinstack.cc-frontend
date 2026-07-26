@@ -110,6 +110,49 @@ export const api = {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${token}` },
     }),
+  setMyProductPlan: (
+    token: string,
+    id: string,
+    plan: 'free' | 'verified' | 'featured' | 'growth',
+    opts?: { listTiming?: 'now' | 'scheduled'; publishAt?: string }
+  ) =>
+    apiFetch<{
+      success: boolean;
+      message?: string;
+      data: {
+        planChoice: string;
+        badgeEmbedded: boolean;
+        status?: string;
+        publishAt?: string | null;
+        isVerified?: boolean;
+        isFeatured?: boolean;
+        liveNow?: boolean;
+      };
+    }>(`/products/mine/${id}/plan`, {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({
+        plan,
+        listTiming: opts?.listTiming || 'now',
+        publishAt: opts?.publishAt,
+      }),
+    }),
+  verifyMyProductBadge: (token: string, id: string) =>
+    apiFetch<{
+      success: boolean;
+      data: {
+        found: boolean;
+        badgeEmbedded: boolean;
+        badgeVerifiedAt: string | null;
+        checkedUrl: string;
+        matchedOn: string | null;
+        message: string;
+      };
+    }>(`/products/mine/${id}/verify-badge`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      timeoutMs: 20_000,
+    }),
   getCategories: () =>
     apiFetch<{ success: boolean; data: import('../types').Category[] }>('/categories', {
       cacheMode: 'no-store',
@@ -147,7 +190,10 @@ export const api = {
       timeoutMs: 30_000,
     }),
   submitProduct: (payload: Record<string, unknown>) =>
-    apiFetch('/products', { method: 'POST', body: JSON.stringify(payload), timeoutMs: 30_000 }),
+    apiFetch<{ success: boolean; data: import('../types').Product; message?: string }>(
+      '/products',
+      { method: 'POST', body: JSON.stringify(payload), timeoutMs: 30_000 }
+    ),
   uploadImages: async (
     token: string,
     files: { logo?: File | null; screenshots?: File[] }

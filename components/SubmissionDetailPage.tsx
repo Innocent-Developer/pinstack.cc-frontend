@@ -290,15 +290,68 @@ export default function SubmissionDetailPage({ productId }: Props) {
         )}
       </section>
 
-      {isLive && (
-        <section className="rounded-2xl border border-borderC bg-white p-5 sm:p-6">
-          <BadgeCopyWidget
-            slug={product.slug}
-            name={product.name}
-            upvotes={product.upvoteCount ?? product.score ?? 0}
-          />
-        </section>
-      )}
+      <section className="rounded-2xl border border-borderC bg-white p-5 sm:p-6 space-y-4">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div>
+            <h2 className="font-extrabold text-heading text-lg mb-1">Pinstack badge</h2>
+            <p className="text-sm text-muted">
+              Embed this on your site. Click Verify and we’ll scan{' '}
+              <span className="font-medium text-heading">{product.websiteUrl}</span> for the badge.
+            </p>
+          </div>
+          {product.badgeEmbedded ? (
+            <span className="text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-800 ring-1 ring-inset ring-emerald-600/20">
+              Badge verified
+            </span>
+          ) : (
+            <span className="text-[11px] font-bold uppercase tracking-wide px-2.5 py-1 rounded-full bg-amber-50 text-amber-900 ring-1 ring-inset ring-amber-600/20">
+              Not verified yet
+            </span>
+          )}
+        </div>
+
+        <BadgeCopyWidget
+          slug={product.slug}
+          name={product.name}
+          upvotes={product.upvoteCount ?? product.score ?? 0}
+        />
+
+        <div className="flex flex-wrap items-center gap-3">
+          <button
+            type="button"
+            disabled={busy}
+            onClick={async () => {
+              const token = getToken();
+              if (!token) return;
+              setBusy(true);
+              try {
+                const res = await api.verifyMyProductBadge(token, product._id);
+                setProduct((p) =>
+                  p
+                    ? {
+                        ...p,
+                        badgeEmbedded: res.data.badgeEmbedded,
+                        badgeVerifiedAt: res.data.badgeVerifiedAt,
+                      }
+                    : p
+                );
+                if (res.data.found) toastSuccess(res.data.message);
+                else toastError(res.data.message);
+              } catch (err) {
+                toastError(err instanceof Error ? err.message : 'Verify failed');
+              } finally {
+                setBusy(false);
+              }
+            }}
+            className="px-4 py-2.5 rounded-full text-sm font-semibold bg-heading text-white hover:opacity-90 disabled:opacity-50"
+          >
+            {busy ? 'Scanning…' : 'Verify badge on my site'}
+          </button>
+          {!product.badgeEmbedded && (
+            <p className="text-xs text-muted">If not found: add the badge, publish, then verify again.</p>
+          )}
+        </div>
+      </section>
 
       {/* Reviews  live listings only; pending stays private */}
       <section className="rounded-2xl border border-borderC bg-white p-5 sm:p-6">
