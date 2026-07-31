@@ -143,13 +143,13 @@ export default function SubmissionDetailPage({ productId }: Props) {
           >
             Edit listing
           </Link>
-          {isLive && (
+          {product.slug && status !== 'rejected' && (
             <Link
               href={`/product/${product.slug}`}
               target="_blank"
               className="px-4 py-2.5 rounded-full text-sm font-semibold border border-borderC bg-white hover:bg-bgAlt"
             >
-              Public page ↗
+              {isLive ? 'Public page ↗' : 'Preview page ↗'}
             </Link>
           )}
         </div>
@@ -164,12 +164,18 @@ export default function SubmissionDetailPage({ productId }: Props) {
           }`}
         >
           <p className="text-sm font-bold text-heading mb-0.5">
-            {status === 'rejected' ? 'Rejected  not public' : 'Pending review  not public yet'}
+            {status === 'rejected'
+              ? 'Rejected — not public'
+              : status === 'pending'
+                ? 'Pending review — preview available'
+                : 'Scheduled — not in Explore yet'}
           </p>
           <p className="text-sm text-body">
             {status === 'rejected'
               ? 'This listing is hidden from the directory. Edit and resubmit to send it back for review.'
-              : 'Your listing is in the review queue. It will appear on Pinstack only after approval. You can still edit details below.'}
+              : status === 'pending'
+                ? 'Your listing is in the review queue. The product page is visible with a Pending banner, but it will not appear in Explore until approved.'
+                : 'Your listing is approved but scheduled. The product page shows a Scheduled banner until go-live.'}
           </p>
           {status === 'rejected' && product.rejectionReason && (
             <p className="text-sm text-red-700 mt-2">

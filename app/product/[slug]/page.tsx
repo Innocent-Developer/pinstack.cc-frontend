@@ -11,6 +11,7 @@ import ProductReviews from '../../../components/ProductReviews';
 import ProductVoteButtons from '../../../components/ProductVoteButtons';
 import VerifiedBadge from '../../../components/VerifiedBadge';
 import ProductSocialLinks from '../../../components/ProductSocialLinks';
+import ProductListingStatusBanner from '../../../components/ProductListingStatusBanner';
 import { api } from '../../../lib/api';
 import { productCategories } from '../../../lib/categories';
 import { buildBreadcrumbSchema, buildProductSchema } from '../../../lib/seo';
@@ -18,7 +19,7 @@ import { siteConfig } from '../../../config/site';
 import { visitWebsiteUrl } from '../../../lib/utm';
 import type { Product } from '../../../types';
 
-// Always fetch fresh  isVerified / isFeatured change without a redeploy
+// Always fetch fresh — isVerified / isFeatured change without a redeploy
 export const revalidate = 0;
 
 interface Props {
@@ -38,21 +39,44 @@ function formatDate(iso?: string) {
   }
 }
 
+function isProductLive(product: Product) {
+  if (product.status === 'rejected') return false;
+  if (product.status === 'pending') return false;
+  if (product.status && product.status !== 'approved') return false;
+  if (!product.publishAt) return true;
+  const at = new Date(product.publishAt);
+  if (Number.isNaN(at.getTime())) return true;
+  return at.getTime() <= Date.now();
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
     const res = await api.getProductBySlug(params.slug);
     const product = res.data;
+    if (!product || product.status === 'rejected') {
+      return { title: { absolute: 'Product Not Found' } };
+    }
+
+    const live = isProductLive(product);
     const description =
       product.aiDescription ||
       product.description?.slice(0, 155) ||
       (product.tagline.length > 155 ? product.tagline.slice(0, 155) : product.tagline);
 
+    const statusLabel =
+      product.status === 'pending'
+        ? ' (Pending review)'
+        : !live
+          ? ' (Scheduled)'
+          : '';
+
     return {
-      title: { absolute: `${product.name}  ${product.tagline}` },
+      title: { absolute: `${product.name} — ${product.tagline}${statusLabel}` },
       description,
       alternates: { canonical: `${siteConfig.url}/product/${product.slug}` },
+      robots: live ? undefined : { index: false, follow: false },
       openGraph: {
-        title: `${product.name} on Pinstack`,
+        title: `${product.name} on Pinstack${statusLabel}`,
         description: product.tagline,
         url: `${siteConfig.url}/product/${product.slug}`,
         images: [
@@ -86,21 +110,24 @@ export default async function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
-  // Never render pending / rejected listings on the public site
-  if (!product || product.status === 'pending' || product.status === 'rejected') {
+  // Rejected stays hidden; pending + scheduled still render with a status banner
+  if (!product || product.status === 'rejected') {
     notFound();
   }
 
+  const live = isProductLive(product);
   const cats = productCategories(product);
   const primaryCategoryId = cats[0]?._id || product.category?._id;
 
   const [relatedRes, trendingRes, categoriesRes] = await Promise.all([
-    primaryCategoryId
+    live && primaryCategoryId
       ? api.getProducts({ category: primaryCategoryId, sort: 'ranked', limit: '12' }).catch(() => ({
           data: [] as Product[],
         }))
       : Promise.resolve({ data: [] as Product[] }),
-    api.getProducts({ sort: 'ranked', limit: '12' }).catch(() => ({ data: [] as Product[] })),
+    live
+      ? api.getProducts({ sort: 'ranked', limit: '12' }).catch(() => ({ data: [] as Product[] }))
+      : Promise.resolve({ data: [] as Product[] }),
     api.getCategories().catch(() => ({ data: [] as { _id: string; name: string; slug: string; icon: string }[] })),
   ]);
 
@@ -117,15 +144,17 @@ export default async function ProductDetailPage({ params }: Props) {
   const listedOn = formatDate(product.createdAt);
   const primaryCat = cats[0];
 
-  const productSchema = buildProductSchema({
-    name: product.name,
-    description: product.description,
-    tagline: product.tagline,
-    websiteUrl: product.websiteUrl,
-    logoUrl: product.logoUrl,
-    category: product.category,
-    categories: cats,
-  });
+  const productSchema = live
+    ? buildProductSchema({
+        name: product.name,
+        description: product.description,
+        tagline: product.tagline,
+        websiteUrl: product.websiteUrl,
+        logoUrl: product.logoUrl,
+        category: product.category,
+        categories: cats,
+      })
+    : null;
 
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: 'Home', path: '/' },
@@ -137,16 +166,24 @@ export default async function ProductDetailPage({ params }: Props) {
 
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-      />
+      {productSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        />
+      )}
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
       />
       <Header />
       <main className="bg-[linear-gradient(180deg,#f8fafc_0%,#ffffff_220px)]">
+        <ProductListingStatusBanner
+          status={product.status}
+          publishAt={product.publishAt}
+          productName={product.name}
+        />
+
         {/* Hero */}
         <section className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-8">
           <nav className="text-xs text-muted mb-6 flex flex-wrap items-center gap-1.5">
@@ -194,6 +231,16 @@ export default async function ProductDetailPage({ params }: Props) {
                 </div>
                 <div className="min-w-0 flex-1">
                   <div className="flex flex-wrap items-center gap-2 mb-2">
+                    {!live && product.status === 'pending' && (
+                      <span className="text-[11px] bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full font-bold">
+                        Pending review
+                      </span>
+                    )}
+                    {!live && product.status === 'approved' && (
+                      <span className="text-[11px] bg-sky-100 text-sky-900 px-2.5 py-0.5 rounded-full font-bold">
+                        Scheduled
+                      </span>
+                    )}
                     {product.isVerified && <VerifiedBadge size="md" />}
                     {product.isFeatured && (
                       <span className="text-[11px] bg-amber-50 text-featured px-2.5 py-0.5 rounded-full font-bold">
@@ -257,16 +304,25 @@ export default async function ProductDetailPage({ params }: Props) {
             <aside className="rounded-2xl border border-borderC bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
               <p className="text-xs font-bold text-muted uppercase tracking-wide mb-3">At a glance</p>
 
-              <div className="flex justify-center mb-4 pb-4 border-b border-borderC">
-                <ProductVoteButtons
-                  productId={product._id}
-                  productName={product.name}
-                  initialScore={product.score ?? 0}
-                  initialUpvotes={product.upvoteCount ?? 0}
-                  initialDownvotes={product.downvoteCount ?? 0}
-                  variant="compact"
-                />
-              </div>
+              {live ? (
+                <div className="flex justify-center mb-4 pb-4 border-b border-borderC">
+                  <ProductVoteButtons
+                    productId={product._id}
+                    productName={product.name}
+                    initialScore={product.score ?? 0}
+                    initialUpvotes={product.upvoteCount ?? 0}
+                    initialDownvotes={product.downvoteCount ?? 0}
+                    variant="compact"
+                  />
+                </div>
+              ) : (
+                <div className="mb-4 pb-4 border-b border-borderC text-center">
+                  <p className="text-sm font-semibold text-heading">Voting paused</p>
+                  <p className="text-xs text-muted mt-1">
+                    Votes open once this listing is live in the directory.
+                  </p>
+                </div>
+              )}
 
               <dl className="grid grid-cols-2 gap-3">
                 {[
@@ -284,7 +340,9 @@ export default async function ProductDetailPage({ params }: Props) {
                 ))}
               </dl>
               {listedOn && (
-                <p className="text-xs text-muted mt-4 text-center">Listed {listedOn}</p>
+                <p className="text-xs text-muted mt-4 text-center">
+                  {live ? `Listed ${listedOn}` : `Submitted ${listedOn}`}
+                </p>
               )}
             </aside>
           </div>
@@ -376,6 +434,16 @@ export default async function ProductDetailPage({ params }: Props) {
                     </dd>
                   </div>
                   <div className="flex justify-between gap-3">
+                    <dt className="text-muted">Status</dt>
+                    <dd className="text-heading font-medium text-right capitalize">
+                      {product.status === 'pending'
+                        ? 'Pending review'
+                        : !live
+                          ? 'Scheduled'
+                          : 'Live'}
+                    </dd>
+                  </div>
+                  <div className="flex justify-between gap-3">
                     <dt className="text-muted">Categories</dt>
                     <dd className="text-heading font-medium text-right">
                       {cats.map((c) => c.name).join(', ') || ''}
@@ -383,7 +451,7 @@ export default async function ProductDetailPage({ params }: Props) {
                   </div>
                   {listedOn && (
                     <div className="flex justify-between gap-3">
-                      <dt className="text-muted">Listed on</dt>
+                      <dt className="text-muted">{live ? 'Listed on' : 'Submitted'}</dt>
                       <dd className="text-heading font-medium">{listedOn}</dd>
                     </div>
                   )}
@@ -407,14 +475,25 @@ export default async function ProductDetailPage({ params }: Props) {
           </div>
         </section>
 
-        {/* Reviews */}
-        <section className="max-w-[1100px] mx-auto px-4 sm:px-6 pb-12">
-          <ProductReviews
-            productId={product._id}
-            productSlug={product.slug}
-            productName={product.name}
-          />
-        </section>
+        {/* Reviews — only when live */}
+        {live ? (
+          <section className="max-w-[1100px] mx-auto px-4 sm:px-6 pb-12">
+            <ProductReviews
+              productId={product._id}
+              productSlug={product.slug}
+              productName={product.name}
+            />
+          </section>
+        ) : (
+          <section className="max-w-[1100px] mx-auto px-4 sm:px-6 pb-12">
+            <div className="rounded-2xl border border-dashed border-borderC bg-white px-5 py-8 text-center">
+              <p className="text-sm font-bold text-heading">Reviews unlock when live</p>
+              <p className="text-sm text-muted mt-1 max-w-md mx-auto">
+                Community reviews will appear here after this product is approved and listed in Explore.
+              </p>
+            </div>
+          </section>
+        )}
 
         {/* Related */}
         {related.length > 0 && (
@@ -534,7 +613,8 @@ export default async function ProductDetailPage({ params }: Props) {
         </section>
       </main>
       <Footer />
-      <ProductChatBot productId={product._id} productName={product.name} />
+      {live && <ProductChatBot productId={product._id} productName={product.name} />}
     </>
   );
 }
+
