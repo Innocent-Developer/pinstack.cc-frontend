@@ -3,14 +3,15 @@ import Link from 'next/link';
 import PageShell from '../../components/PageShell';
 import ScrollReveal from '../../components/ScrollReveal';
 import BlogTeaser from '../../components/BlogTeaser';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'About Pinstack  A Directory Built for Founders and Builders',
+  title: 'About Pinstack — A Directory Built for Founders and Builders',
   description:
     'Pinstack is a community-run directory for SaaS, AI, and developer tools. Learn how listings work, how ranking works, and what Pinstack is not.',
   path: '/about',
-  openGraphTitle: 'About Pinstack  A Directory Built for Founders and Builders',
+  openGraphTitle: 'About Pinstack — A Directory Built for Founders and Builders',
   keywords: ['about Pinstack', 'SaaS directory', 'community ranking', 'product listing'],
 });
 
@@ -18,6 +19,13 @@ export default function AboutPage() {
   return (
     <>
       <PageShell className="max-w-[760px] py-12 sm:py-16">
+        <Breadcrumbs
+          items={[
+            { name: 'Home', path: '/' },
+            { name: 'About', path: '/about' },
+          ]}
+          className="mb-6"
+        />
         <ScrollReveal>
           <h1 className="text-3xl font-extrabold text-heading mb-4">Why Pinstack exists</h1>
           <p className="text-body mb-10">

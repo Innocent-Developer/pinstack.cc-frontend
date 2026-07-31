@@ -13,7 +13,7 @@ export default function SignupPage() {
   return (
     <AuthShell
       title="Create your account"
-      subtitle="Free to join. We’ll send a verification link to unlock your account  s."
+      subtitle="Free to join. We’ll send a verification link to unlock your account."
       footer={
         <p className="text-xs text-muted">
           Prefer browsing first?{' '}

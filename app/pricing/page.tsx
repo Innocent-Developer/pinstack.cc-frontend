@@ -4,10 +4,11 @@ import PageShell from '../../components/PageShell';
 import ScrollReveal from '../../components/ScrollReveal';
 import FaqAccordion from '../../components/FaqAccordion';
 import BlogTeaser from '../../components/BlogTeaser';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { buildFaqSchema, pageMetadata, pricingFaqItems } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Pinstack Pricing  Free Listings, Verified, Featured & Growth',
+  title: 'Pinstack Pricing — Free Listings, Verified, Featured & Growth',
   description:
     'List your SaaS or AI tool on Pinstack for free. Optional Verified ($9 one-time), Featured ($5/mo), and Growth ($20/mo) plans. No hidden fees.',
   path: '/pricing',
@@ -89,6 +90,13 @@ export default function PricingPage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
       />
       <PageShell className="py-12 sm:py-16">
+        <Breadcrumbs
+          items={[
+            { name: 'Home', path: '/' },
+            { name: 'Pricing', path: '/pricing' },
+          ]}
+          className="mb-6"
+        />
         <ScrollReveal className="text-center mb-12">
           <h1 className="text-3xl font-extrabold text-heading mb-2">Simple, transparent pricing</h1>
           <p className="text-body text-sm max-w-lg mx-auto">

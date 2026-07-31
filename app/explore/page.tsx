@@ -3,11 +3,12 @@ import Link from 'next/link';
 import { Suspense } from 'react';
 import PageShell from '../../components/PageShell';
 import ExploreResults from '../../components/ExploreResults';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { api } from '../../lib/api';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Explore SaaS Tools, AI Products & APIs  Pinstack Directory',
+  title: 'Explore SaaS Tools, AI Products & APIs — Pinstack Directory',
   description:
     'Browse and search SaaS products, AI tools, developer tools, and APIs on Pinstack. Filter by category, sort by newest or most upvoted.',
   path: '/explore',
@@ -21,6 +22,13 @@ export default async function ExplorePage() {
 
   return (
     <PageShell className="py-8 sm:py-12">
+      <Breadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Explore', path: '/explore' },
+        ]}
+        className="mb-4 shrink-0"
+      />
       <h1 className="text-2xl sm:text-3xl font-extrabold text-heading mb-6 sm:mb-8 shrink-0">
         Explore products
       </h1>

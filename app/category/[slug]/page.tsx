@@ -3,9 +3,10 @@ import Link from 'next/link';
 import PageShell from '../../../components/PageShell';
 import ProductCard from '../../../components/ProductCard';
 import EmptyState from '../../../components/EmptyState';
+import Breadcrumbs from '../../../components/Breadcrumbs';
 import { api } from '../../../lib/api';
 import { categoryGuides, categoryIntro } from '../../../lib/categoryIntros';
-import { buildBreadcrumbSchema, pageMetadata } from '../../../lib/seo';
+import { pageMetadata } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
 
 export const revalidate = 0;
@@ -20,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const name = category?.name || params.slug;
 
   return pageMetadata({
-    title: `Best ${name} Tools  Pinstack Directory`,
+    title: `Best ${name} Tools — Pinstack Directory`,
     description: `Discover the top ${name.toLowerCase()} tools and products on Pinstack. Browse SaaS and AI products ranked by community upvotes, with new listings added weekly.`,
     path: `/category/${params.slug}`,
   });
@@ -37,18 +38,17 @@ export default async function CategoryPage({ params }: Props) {
   const categoryName = category?.name || params.slug;
   const guides = categoryGuides(params.slug);
 
-  const breadcrumbSchema = buildBreadcrumbSchema([
-    { name: 'Home', path: '/' },
-    { name: categoryName, path: `/category/${params.slug}` },
-  ]);
-
   return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
       <PageShell>
+        <Breadcrumbs
+          items={[
+            { name: 'Home', path: '/' },
+            { name: 'Categories', path: '/categories' },
+            { name: categoryName, path: `/category/${params.slug}` },
+          ]}
+          className="mb-4 shrink-0"
+        />
         <div className="shrink-0 mb-8">
           <h1 className="text-2xl font-extrabold text-heading mb-2">Best {categoryName}</h1>
           <p className="text-sm text-body mb-2 max-w-2xl leading-relaxed">

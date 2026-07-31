@@ -4,11 +4,12 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import ScrollReveal from '../../components/ScrollReveal';
 import ContactForm from '../../components/ContactForm';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { siteConfig, socialLinks } from '../../config/site';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Contact Pinstack  Questions, Listing Help & Partnerships',
+  title: 'Contact Pinstack — Questions, Listing Help & Partnerships',
   description:
     'Get in touch with the Pinstack team about your listing, a partnership, or general questions. We read every message.',
   path: '/contact',
@@ -54,6 +55,13 @@ export default function ContactPage({ searchParams }: Props) {
       <main className="flex-1 flex flex-col overflow-x-hidden">
         <section className="bg-[linear-gradient(180deg,#f0fdf4_0%,#ffffff_100%)] border-b border-borderC">
           <div className="max-w-[1100px] mx-auto px-4 sm:px-6 py-12 sm:py-16">
+            <Breadcrumbs
+              items={[
+                { name: 'Home', path: '/' },
+                { name: 'Contact', path: '/contact' },
+              ]}
+              className="mb-4"
+            />
             <ScrollReveal>
               <h1 className="text-3xl sm:text-4xl font-extrabold text-heading tracking-tight mb-3">
                 Get in touch

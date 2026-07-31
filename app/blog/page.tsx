@@ -2,11 +2,12 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import PageShell from '../../components/PageShell';
 import ScrollReveal from '../../components/ScrollReveal';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { formatBlogDate, getAllBlogPosts } from '../../lib/blog';
-import { buildBlogListSchema, buildBreadcrumbSchema, pageMetadata } from '../../lib/seo';
+import { buildBlogListSchema, pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Pinstack Blog  SaaS Directories, Launch Strategy & Developer Tools',
+  title: 'Pinstack Blog — SaaS Directories, Launch Strategy & Developer Tools',
   description:
     'Practical founder guides: free API testing tools, how to list your SaaS on directories, Product Hunt vs directories, how Pinstack ranking works, and free vs paid API monitoring.',
   path: '/blog',
@@ -29,22 +30,20 @@ export default function BlogIndexPage() {
       path: `/blog/${p.slug}`,
     }))
   );
-  const breadcrumbSchema = buildBreadcrumbSchema([
-    { name: 'Home', path: '/' },
-    { name: 'Blog', path: '/blog' },
-  ]);
-
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(listSchema) }}
       />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
-      />
       <PageShell className="max-w-[760px] py-12 sm:py-16">
+        <Breadcrumbs
+          items={[
+            { name: 'Home', path: '/' },
+            { name: 'Blog', path: '/blog' },
+          ]}
+          className="mb-6"
+        />
         <ScrollReveal>
           <p className="text-xs font-bold uppercase tracking-wider text-primary mb-2">Blog</p>
           <h1 className="text-3xl font-extrabold text-heading mb-3">

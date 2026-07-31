@@ -3,12 +3,13 @@ import Link from 'next/link';
 import PageShell from '../../components/PageShell';
 import ScrollReveal from '../../components/ScrollReveal';
 import EmptyState from '../../components/EmptyState';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { api } from '../../lib/api';
 import { pageMetadata } from '../../lib/seo';
 import type { Category } from '../../types';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Browse Categories  SaaS, AI Tools & APIs',
+  title: 'Browse Categories — SaaS, AI Tools & APIs',
   description: 'Explore Pinstack categories and find the best tools by topic.',
   path: '/categories',
 });
@@ -24,6 +25,13 @@ export default async function CategoriesPage() {
 
   return (
     <PageShell>
+      <Breadcrumbs
+        items={[
+          { name: 'Home', path: '/' },
+          { name: 'Categories', path: '/categories' },
+        ]}
+        className="mb-4 shrink-0"
+      />
       <ScrollReveal className="mb-10 shrink-0">
         <h1 className="text-3xl font-extrabold text-heading mb-2">Categories</h1>
         <p className="text-sm text-muted">

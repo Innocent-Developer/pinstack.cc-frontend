@@ -13,7 +13,7 @@ const jakarta = Plus_Jakarta_Sans({
   display: 'swap',
 });
 
-const defaultTitle = 'Pinstack  Discover and Launch SaaS Tools, AI Products & APIs';
+const defaultTitle = 'Pinstack — Discover and Launch SaaS Tools, AI Products & APIs';
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteConfig.url),
@@ -57,7 +57,7 @@ export const metadata: Metadata = {
         url: siteConfig.ogImage,
         width: 1200,
         height: 630,
-        alt: 'Pinstack  Discover SaaS Tools',
+        alt: 'Pinstack — Discover SaaS Tools',
       },
     ],
   },
