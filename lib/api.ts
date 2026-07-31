@@ -240,14 +240,24 @@ export const api = {
       }
     ),
   vote: (token: string, id: string, direction: 'up' | 'down') =>
-    apiFetch<{ success: boolean; upvoteCount: number; downvoteCount: number; score: number }>(
-      `/products/${id}/vote`,
-      {
-        method: 'POST',
-        headers: { Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ direction }),
-      }
-    ),
+    apiFetch<{
+      success: boolean;
+      upvoteCount: number;
+      downvoteCount: number;
+      score: number;
+      myVote: 'up' | 'down' | null;
+    }>(`/products/${id}/vote`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify({ direction }),
+    }),
+  getMyVotes: (token: string, ids: string[]) => {
+    const q = ids.filter(Boolean).join(',');
+    return apiFetch<{ success: boolean; data: Record<string, 'up' | 'down'> }>(
+      `/products/votes/mine?ids=${encodeURIComponent(q)}`,
+      { headers: { Authorization: `Bearer ${token}` }, cacheMode: 'no-store' }
+    );
+  },
   trackClick: (id: string) => apiFetch(`/products/${id}/click`, { method: 'POST' }),
   chatProduct: (
     id: string,
