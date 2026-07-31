@@ -19,7 +19,7 @@ import { siteConfig } from '../../../config/site';
 import { visitWebsiteUrl } from '../../../lib/utm';
 import type { Product } from '../../../types';
 
-// Always fetch fresh — isVerified / isFeatured change without a redeploy
+// Always fetch fresh - isVerified / isFeatured change without a redeploy
 export const revalidate = 0;
 
 interface Props {
@@ -71,7 +71,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
           : '';
 
     return {
-      title: { absolute: `${product.name} — ${product.tagline}${statusLabel}` },
+      title: { absolute: `${product.name} - ${product.tagline}${statusLabel}` },
       description,
       alternates: { canonical: `${siteConfig.url}/product/${product.slug}` },
       robots: live ? undefined : { index: false, follow: false },
@@ -459,7 +459,7 @@ export default async function ProductDetailPage({ params }: Props) {
           </div>
         </section>
 
-        {/* Reviews — only when live */}
+        {/* Reviews - only when live */}
         {live ? (
           <section className="max-w-[1100px] mx-auto px-4 sm:px-6 pb-12">
             <ProductReviews

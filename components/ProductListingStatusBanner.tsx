@@ -62,7 +62,7 @@ export default function ProductListingStatusBanner({ status, publishAt, productN
             </p>
             <p className={`text-sm mt-0.5 leading-snug ${isPending ? 'text-amber-900/80' : 'text-sky-900/80'}`}>
               {isPending
-                ? 'This listing is awaiting approval. It is not in Explore yet — votes, reviews, and ranking are paused until it goes live.'
+                ? 'This listing is awaiting approval. It is not in Explore yet - votes, reviews, and ranking are paused until it goes live.'
                 : when
                   ? `This listing goes live on ${when}. Until then it stays out of Explore and rankings.`
                   : 'This listing is scheduled and not live in Explore yet.'}

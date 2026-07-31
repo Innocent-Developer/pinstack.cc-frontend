@@ -7,11 +7,11 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'About Pinstack — A Directory Built for Founders and Builders',
+  title: 'About Pinstack - A Directory Built for Founders and Builders',
   description:
     'Pinstack is a community-run directory for SaaS, AI, and developer tools. Learn how listings work, how ranking works, and what Pinstack is not.',
   path: '/about',
-  openGraphTitle: 'About Pinstack — A Directory Built for Founders and Builders',
+  openGraphTitle: 'About Pinstack - A Directory Built for Founders and Builders',
   keywords: ['about Pinstack', 'SaaS directory', 'community ranking', 'product listing'],
 });
 

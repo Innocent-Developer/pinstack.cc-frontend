@@ -18,11 +18,11 @@ import type { Category, Product, Stats } from '../types';
 export const revalidate = 60;
 
 export const metadata: Metadata = {
-  title: { absolute: 'Pinstack — Discover and Launch SaaS Tools, AI Products & APIs' },
+  title: { absolute: 'Pinstack - Discover and Launch SaaS Tools, AI Products & APIs' },
   description: siteConfig.description,
   alternates: { canonical: siteConfig.url },
   openGraph: {
-    title: 'Pinstack — Discover and Launch SaaS Tools, AI Products & APIs',
+    title: 'Pinstack - Discover and Launch SaaS Tools, AI Products & APIs',
     description: siteConfig.description,
     url: siteConfig.url,
   },

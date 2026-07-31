@@ -180,7 +180,7 @@ export const api = {
         return data;
       })
       .catch((err) => {
-        // Don't poison the cache on failure — next caller retries
+        // Don't poison the cache on failure - next caller retries
         categoriesCache = null;
         throw err;
       })

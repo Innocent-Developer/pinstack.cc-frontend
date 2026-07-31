@@ -7,7 +7,7 @@ import { formatBlogDate, getAllBlogPosts } from '../../lib/blog';
 import { buildBlogListSchema, pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Pinstack Blog — SaaS Directories, Launch Strategy & Developer Tools',
+  title: 'Pinstack Blog - SaaS Directories, Launch Strategy & Developer Tools',
   description:
     'Practical founder guides: free API testing tools, how to list your SaaS on directories, Product Hunt vs directories, how Pinstack ranking works, and free vs paid API monitoring.',
   path: '/blog',

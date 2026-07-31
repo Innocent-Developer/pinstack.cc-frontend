@@ -24,7 +24,7 @@ export function generateMetadata({ params }: Props): Metadata {
   const post = getBlogPost(params.slug);
   if (!post) return {};
   return pageMetadata({
-    title: `${post.title} — Pinstack Blog`,
+    title: `${post.title} - Pinstack Blog`,
     description: post.description,
     path: `/blog/${post.slug}`,
     type: 'article',

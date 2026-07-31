@@ -72,7 +72,7 @@ export default function ProductVoteButtons({
         if (!cancelled) setMyVote(vote);
       })
       .catch(() => {
-        /* ignore — guest or expired token */
+        /* ignore - guest or expired token */
       });
 
     return () => {
@@ -129,7 +129,7 @@ export default function ProductVoteButtons({
       setDownvotes(prev.downvotes);
       setMyVote(prev.myVote);
       setCachedMyVote(productId, prev.myVote);
-      const msg = err instanceof Error ? err.message : 'Vote failed — please try again';
+      const msg = err instanceof Error ? err.message : 'Vote failed - please try again';
       if (/not authorized|log in|token/i.test(msg)) {
         requireLogin();
       } else {
@@ -160,7 +160,7 @@ export default function ProductVoteButtons({
           disabled={voting}
           aria-label={`Upvote ${productName}`}
           aria-pressed={upActive}
-          title={upActive ? 'You upvoted — click to remove' : 'Upvote'}
+          title={upActive ? 'You upvoted - click to remove' : 'Upvote'}
           className={`flex items-center justify-center w-9 h-9 rounded-full border font-bold transition disabled:opacity-50 ${upClass} ${
             bounce ? 'animate-vote-bounce' : ''
           }`}
@@ -183,7 +183,7 @@ export default function ProductVoteButtons({
           disabled={voting}
           aria-label={`Downvote ${productName}`}
           aria-pressed={downActive}
-          title={downActive ? 'You downvoted — click to remove' : 'Downvote'}
+          title={downActive ? 'You downvoted - click to remove' : 'Downvote'}
           className={`flex items-center justify-center w-9 h-9 rounded-full border font-bold transition disabled:opacity-50 ${downClass}`}
         >
           ▼
@@ -200,7 +200,7 @@ export default function ProductVoteButtons({
         disabled={voting}
         aria-label={`Upvote ${productName}`}
         aria-pressed={upActive}
-        title={upActive ? 'You upvoted — click to remove' : 'Upvote'}
+        title={upActive ? 'You upvoted - click to remove' : 'Upvote'}
         className={`rounded-[7px] px-2.5 py-1.5 border transition disabled:opacity-50 ${upClass} ${
           bounce ? 'animate-vote-bounce' : ''
         }`}
@@ -221,7 +221,7 @@ export default function ProductVoteButtons({
         disabled={voting}
         aria-label={`Downvote ${productName}`}
         aria-pressed={downActive}
-        title={downActive ? 'You downvoted — click to remove' : 'Downvote'}
+        title={downActive ? 'You downvoted - click to remove' : 'Downvote'}
         className={`rounded-[7px] px-2.5 py-1.5 border transition disabled:opacity-50 ${downClass}`}
       >
         ▼

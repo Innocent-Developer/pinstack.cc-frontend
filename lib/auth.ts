@@ -39,7 +39,7 @@ export function clearAuth(): void {
   localStorage.removeItem(USER_KEY);
   // Avoid leaking previous user's vote highlights to the next session
   try {
-    // Lazy import path avoided — call via dynamic to keep auth free of circular deps if any
+    // Lazy import path avoided - call via dynamic to keep auth free of circular deps if any
     void import('./myVotes').then((m) => m.clearMyVotesCache());
   } catch {
     /* ignore */

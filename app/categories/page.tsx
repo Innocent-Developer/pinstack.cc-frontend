@@ -9,7 +9,7 @@ import { pageMetadata } from '../../lib/seo';
 import type { Category } from '../../types';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Browse Categories — SaaS, AI Tools & APIs',
+  title: 'Browse Categories - SaaS, AI Tools & APIs',
   description: 'Explore Pinstack categories and find the best tools by topic.',
   path: '/categories',
 });

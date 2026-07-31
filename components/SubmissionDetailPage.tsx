@@ -165,10 +165,10 @@ export default function SubmissionDetailPage({ productId }: Props) {
         >
           <p className="text-sm font-bold text-heading mb-0.5">
             {status === 'rejected'
-              ? 'Rejected — not public'
+              ? 'Rejected - not public'
               : status === 'pending'
-                ? 'Pending review — preview available'
-                : 'Scheduled — not in Explore yet'}
+                ? 'Pending review - preview available'
+                : 'Scheduled - not in Explore yet'}
           </p>
           <p className="text-sm text-body">
             {status === 'rejected'

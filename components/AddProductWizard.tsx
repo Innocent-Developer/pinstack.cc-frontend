@@ -353,7 +353,7 @@ export default function AddProductWizard() {
         toastSuccess(res.message || 'Free plan saved');
       } else {
         setPostStep('paid');
-        toastSuccess(res.message || 'Paid plan applied — listing is live');
+        toastSuccess(res.message || 'Paid plan applied - listing is live');
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Could not save plan';
@@ -378,7 +378,7 @@ export default function AddProductWizard() {
         toastSuccess('Badge verified on your website!');
         setPostStep('done');
       } else {
-        toastError('Badge not found yet — add it, then verify again.');
+        toastError('Badge not found yet - add it, then verify again.');
       }
     } catch (err) {
       const msg = err instanceof Error ? err.message : 'Verify failed';
@@ -520,7 +520,7 @@ export default function AddProductWizard() {
               >
                 {submitted.websiteUrl.replace(/^https?:\/\//, '')}
               </a>
-              . Then click <strong>Verify badge</strong> — we’ll scan your site for the Pinstack
+              . Then click <strong>Verify badge</strong> - we’ll scan your site for the Pinstack
               badge.
             </p>
 
@@ -565,7 +565,7 @@ export default function AddProductWizard() {
           <div className="border border-borderC rounded-2xl p-6 bg-white space-y-4">
             <h3 className="font-extrabold text-heading text-lg">
               {liveResult?.liveNow
-                ? 'You’re live — no pending review'
+                ? 'You’re live - no pending review'
                 : 'Approved & scheduled'}
             </h3>
             <p className="text-sm text-muted leading-relaxed">
@@ -611,12 +611,12 @@ export default function AddProductWizard() {
               {liveResult?.liveNow
                 ? 'Listing is live'
                 : badgeStatus?.found
-                  ? 'Badge verified — you’re set'
+                  ? 'Badge verified - you’re set'
                   : 'You’re all set for now'}
             </h3>
             <p className="text-sm text-muted max-w-md mx-auto">
               {liveResult?.liveNow
-                ? 'Paid plan applied — your product skipped the pending queue.'
+                ? 'Paid plan applied - your product skipped the pending queue.'
                 : badgeStatus?.found
                   ? 'We found your Pinstack badge. Free listings still need admin approval before going public.'
                   : 'We’ll email you when a free listing is approved. Verify the badge anytime from your dashboard.'}

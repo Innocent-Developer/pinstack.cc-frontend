@@ -8,7 +8,7 @@ import { api } from '../../lib/api';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Explore SaaS Tools, AI Products & APIs — Pinstack Directory',
+  title: 'Explore SaaS Tools, AI Products & APIs - Pinstack Directory',
   description:
     'Browse and search SaaS products, AI tools, developer tools, and APIs on Pinstack. Filter by category, sort by newest or most upvoted.',
   path: '/explore',

@@ -112,7 +112,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [...staticPages, ...safeBlogEntries(), ...productPages, ...categoryPages];
   } catch {
-    // Absolute fallback — never 500 the sitemap
+    // Absolute fallback - never 500 the sitemap
     return [...staticPages, ...safeBlogEntries()];
   }
 }

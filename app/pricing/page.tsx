@@ -8,7 +8,7 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import { buildFaqSchema, pageMetadata, pricingFaqItems } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Pinstack Pricing — Free Listings, Verified, Featured & Growth',
+  title: 'Pinstack Pricing - Free Listings, Verified, Featured & Growth',
   description:
     'List your SaaS or AI tool on Pinstack for free. Optional Verified ($9 one-time), Featured ($5/mo), and Growth ($20/mo) plans. No hidden fees.',
   path: '/pricing',

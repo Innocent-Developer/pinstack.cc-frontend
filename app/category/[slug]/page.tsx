@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const name = category?.name || params.slug;
 
   return pageMetadata({
-    title: `Best ${name} Tools — Pinstack Directory`,
+    title: `Best ${name} Tools - Pinstack Directory`,
     description: `Discover the top ${name.toLowerCase()} tools and products on Pinstack. Browse SaaS and AI products ranked by community upvotes, with new listings added weekly.`,
     path: `/category/${params.slug}`,
   });

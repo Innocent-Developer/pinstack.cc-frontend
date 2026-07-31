@@ -27,7 +27,7 @@ export default function ProductChatBot({ productId, productName }: Props) {
   const [messages, setMessages] = useState<ChatMsg[]>([
     {
       role: 'assistant',
-      content: `Hi — I’m the Pinstack assistant for ${productName}. Ask about this listing. I’m powered by Code-XA and API Test Lab.`,
+      content: `Hi - I’m the Pinstack assistant for ${productName}. Ask about this listing. I’m powered by Code-XA and API Test Lab.`,
     },
   ]);
   const listRef = useRef<HTMLDivElement>(null);
@@ -91,7 +91,7 @@ export default function ProductChatBot({ productId, productName }: Props) {
         {
           role: 'assistant',
           content: msg.includes('Too many')
-            ? 'Too many messages — wait a moment and try again.'
+            ? 'Too many messages - wait a moment and try again.'
             : 'Sorry, chat is temporarily unavailable. Please try again in a bit.',
         },
       ]);

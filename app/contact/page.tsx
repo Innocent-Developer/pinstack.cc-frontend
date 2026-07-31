@@ -9,7 +9,7 @@ import { siteConfig, socialLinks } from '../../config/site';
 import { pageMetadata } from '../../lib/seo';
 
 export const metadata: Metadata = pageMetadata({
-  title: 'Contact Pinstack — Questions, Listing Help & Partnerships',
+  title: 'Contact Pinstack - Questions, Listing Help & Partnerships',
   description:
     'Get in touch with the Pinstack team about your listing, a partnership, or general questions. We read every message.',
   path: '/contact',
