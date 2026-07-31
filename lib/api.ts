@@ -37,6 +37,17 @@ export const API_BASE = resolveApiBase();
 const DEFAULT_TIMEOUT_MS = 12_000;
 const AUTH_TIMEOUT_MS = 10_000;
 
+/** Share one /categories request across parallel callers (metadata + page, cards, etc.). */
+type CategoriesResponse = { success: boolean; data: import('../types').Category[] };
+const CATEGORIES_TTL_MS = 5 * 60_000; // 5 minutes
+let categoriesCache: { data: CategoriesResponse; expires: number } | null = null;
+let categoriesInflight: Promise<CategoriesResponse> | null = null;
+
+export function clearCategoriesCache() {
+  categoriesCache = null;
+  categoriesInflight = null;
+}
+
 async function apiFetch<T>(
   path: string,
   options?: RequestInit & { timeoutMs?: number; cacheMode?: RequestCache }
@@ -153,10 +164,32 @@ export const api = {
       headers: { Authorization: `Bearer ${token}` },
       timeoutMs: 20_000,
     }),
-  getCategories: () =>
-    apiFetch<{ success: boolean; data: import('../types').Category[] }>('/categories', {
-      cacheMode: 'no-store',
-    }),
+  getCategories: () => {
+    const now = Date.now();
+    if (categoriesCache && categoriesCache.expires > now) {
+      return Promise.resolve(categoriesCache.data);
+    }
+    if (categoriesInflight) return categoriesInflight;
+
+    categoriesInflight = apiFetch<CategoriesResponse>('/categories', {
+      // Allow CDN/browser caching; our memory cache also dedupes bursts
+      cacheMode: 'force-cache',
+    })
+      .then((data) => {
+        categoriesCache = { data, expires: Date.now() + CATEGORIES_TTL_MS };
+        return data;
+      })
+      .catch((err) => {
+        // Don't poison the cache on failure — next caller retries
+        categoriesCache = null;
+        throw err;
+      })
+      .finally(() => {
+        categoriesInflight = null;
+      });
+
+    return categoriesInflight;
+  },
   autofill: (websiteUrl: string) =>
     apiFetch<import('../types').AutofillResponse>('/products/autofill', {
       method: 'POST',
