@@ -52,6 +52,29 @@ export const categoryBlogGuides: Record<
       label: 'How to get listed on directories',
     },
   ],
+  seo: [
+    {
+      slug: 'how-to-get-your-saas-listed-on-directories',
+      label: 'How to get listed on directories',
+    },
+    {
+      slug: 'saas-directory-vs-product-hunt',
+      label: 'SaaS directory vs Product Hunt',
+    },
+  ],
+  b2b: [
+    {
+      slug: 'how-to-get-your-saas-listed-on-directories',
+      label: 'How to get your SaaS listed on directories',
+    },
+    { slug: 'how-pinstack-ranking-works', label: 'How Pinstack ranking works' },
+  ],
+  portfolio: [
+    {
+      slug: 'how-to-get-your-saas-listed-on-directories',
+      label: 'How to get listed on directories',
+    },
+  ],
 };
 
 export function categoryGuides(slug: string) {
@@ -67,19 +90,43 @@ export const categoryIntros: Record<string, string> = {
   analytics:
     'Analytics tools help teams understand product usage, funnels, and performance. This category collects SaaS and developer-facing options ranked by community upvotes.',
   design:
-    'Design tools for product teams  UI kits, prototyping, and creative workflows. Listings grow as founders submit; upvote what you would recommend to a peer.',
+    'Design tools for product teams — UI kits, prototyping, and creative workflows. Listings grow as founders submit; upvote what you would recommend to a peer.',
   'developer-tools':
     'Developer tools on Pinstack range from local utilities to cloud platforms. Rankings reflect community upvotes so useful tools surface without pay-to-win placement.',
   finance:
-    'Finance tools for founders and operators  billing, accounting, and money workflows. Browse current listings or submit a product for review.',
+    'Finance tools for founders and operators — billing, accounting, and money workflows. Browse current listings or submit a product for review.',
   marketing:
     'Marketing tools for acquisition, email, and growth experiments. Discover community-ranked options and share tools that helped your own launch.',
+  seo:
+    'SEO tools for research, auditing, ranking, and content optimization. Browse community-ranked products built for founders, marketers, and agencies.',
+  b2b:
+    'B2B products for selling to businesses — platforms, workflows, and ops tools. Discover listings ranked by community upvotes, not ad spend.',
+  portfolio:
+    'Portfolio and showcase tools for creators, freelancers, and agencies. Find builders that help you present work, case studies, and personal brands.',
   productivity:
-    'Productivity software for founders and small teams  focus, collaboration, and workflow. Rankings update from real upvotes, not paid slots.',
+    'Productivity software for founders and small teams — focus, collaboration, and workflow. Rankings update from real upvotes, not paid slots.',
   security:
-    'Security tools for apps and teams  auth, privacy, and protection utilities. Explore what is listed today and add a product if you build in this space.',
+    'Security tools for apps and teams — auth, privacy, and protection utilities. Explore what is listed today and add a product if you build in this space.',
   saas:
     'SaaS products across niches, ranked by community upvotes rather than ad spend. Use this page to discover tools or list your own for free review.',
+  'sales-crm':
+    'Sales and CRM tools for pipelines, outreach, and closing deals. Compare community-ranked options for founders and revenue teams.',
+  ecommerce:
+    'E-commerce tools for stores, checkout, merchandising, and growth. Browse what sellers use and list your product for review.',
+  'customer-support':
+    'Customer support tools for help desks, live chat, and ticketing. Find software that keeps users happy after launch.',
+  'hr-recruiting':
+    'HR and recruiting tools for hiring, onboarding, and people ops. Discover products built for startups and growing teams.',
+  'no-code':
+    'No-code and low-code builders for shipping apps, sites, and automations without a full engineering team.',
+  'content-writing':
+    'Content and writing tools for blogs, docs, copy, and editorial workflows. Ranked by community upvotes on Pinstack.',
+  education:
+    'Education and learning products — courses, tutoring, and knowledge platforms for creators and institutions.',
+  'open-source':
+    'Open source tools and projects for builders who want transparent, community-driven software. Browse and upvote what you use.',
+  healthcare:
+    'Healthcare and wellness tools for clinics, patients, and health-tech founders. Listings are reviewed before going live.',
 };
 
 export function categoryIntro(slug: string, name: string): string {
