@@ -115,14 +115,20 @@ function escapeRegExp(s: string): string {
 }
 
 export function getAllBlogPosts(): BlogPost[] {
-  const raw = fs.readFileSync(blogsFilePath(), 'utf8').replace(/\r\n/g, '\n');
-  const chunks = raw.split(/^# POST \d+\s*$/m).slice(1);
-  const posts: BlogPost[] = [];
-  for (const chunk of chunks) {
-    const post = parsePostBlock(chunk);
-    if (post) posts.push(post);
+  try {
+    const filePath = blogsFilePath();
+    if (!fs.existsSync(filePath)) return [];
+    const raw = fs.readFileSync(filePath, 'utf8').replace(/\r\n/g, '\n');
+    const chunks = raw.split(/^# POST \d+\s*$/m).slice(1);
+    const posts: BlogPost[] = [];
+    for (const chunk of chunks) {
+      const post = parsePostBlock(chunk);
+      if (post) posts.push(post);
+    }
+    return posts.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
+  } catch {
+    return [];
   }
-  return posts.sort((a, b) => b.publishedAt.localeCompare(a.publishedAt));
 }
 
 export function getBlogPost(slug: string): BlogPost | undefined {
