@@ -4,9 +4,8 @@ import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 import { getToken } from '../lib/auth';
+import { loadMyVote, setCachedMyVote, type MyVote } from '../lib/myVotes';
 import { useToast } from './ToastProvider';
-
-type MyVote = 'up' | 'down' | null;
 
 interface Props {
   productId: string;
@@ -46,33 +45,31 @@ export default function ProductVoteButtons({
   initialScore,
   initialUpvotes = 0,
   initialDownvotes = 0,
-  initialMyVote = null,
+  initialMyVote,
   variant = 'card',
 }: Props) {
   const [score, setScore] = useState(initialScore);
   const [upvotes, setUpvotes] = useState(initialUpvotes);
   const [downvotes, setDownvotes] = useState(initialDownvotes);
-  const [myVote, setMyVote] = useState<MyVote>(initialMyVote);
+  const [myVote, setMyVote] = useState<MyVote>(initialMyVote ?? null);
   const [voting, setVoting] = useState(false);
   const [bounce, setBounce] = useState(false);
   const { error: toastError, info: toastInfo } = useToast();
   const router = useRouter();
 
   useEffect(() => {
-    if (initialMyVote != null) {
+    if (initialMyVote !== undefined) {
       setMyVote(initialMyVote);
+      setCachedMyVote(productId, initialMyVote);
       return;
     }
 
-    const token = getToken();
-    if (!token || !productId) return;
+    if (!productId || !getToken()) return;
 
     let cancelled = false;
-    api
-      .getMyVotes(token, [productId])
-      .then((res) => {
-        if (cancelled) return;
-        setMyVote(res.data?.[productId] ?? null);
+    loadMyVote(productId)
+      .then((vote) => {
+        if (!cancelled) setMyVote(vote);
       })
       .catch(() => {
         /* ignore — guest or expired token */
@@ -108,6 +105,7 @@ export default function ProductVoteButtons({
     const optimistic = applyVoteDelta(upvotes, downvotes, myVote, next);
 
     setMyVote(next);
+    setCachedMyVote(productId, next);
     setScore(optimistic.score);
     setUpvotes(optimistic.upvotes);
     setDownvotes(optimistic.downvotes);
@@ -122,12 +120,15 @@ export default function ProductVoteButtons({
       setScore(result.score);
       setUpvotes(result.upvoteCount);
       setDownvotes(result.downvoteCount);
-      setMyVote(result.myVote ?? null);
+      const confirmed = result.myVote ?? null;
+      setMyVote(confirmed);
+      setCachedMyVote(productId, confirmed);
     } catch (err) {
       setScore(prev.score);
       setUpvotes(prev.upvotes);
       setDownvotes(prev.downvotes);
       setMyVote(prev.myVote);
+      setCachedMyVote(productId, prev.myVote);
       const msg = err instanceof Error ? err.message : 'Vote failed — please try again';
       if (/not authorized|log in|token/i.test(msg)) {
         requireLogin();
