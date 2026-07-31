@@ -82,9 +82,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   try {
     const [productsRes, categoriesRes] = await Promise.all([
-      fetchJson<{ data?: Array<{ slug?: string; updatedAt?: string; createdAt?: string }> }>(
-        '/products?limit=1000&sort=ranked'
-      ),
+          fetchJson<{ data?: Array<{ slug?: string; updatedAt?: string; createdAt?: string }> }>(
+            '/products?limit=1000&sort=ranked&live=1'
+          ),
       fetchJson<{ data?: Array<{ slug?: string }> }>('/categories'),
     ]);
 

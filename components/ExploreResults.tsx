@@ -100,7 +100,7 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
           </div>
 
           <p className="text-[11px] text-muted">
-            
+            Pending listings appear with a badge — voting unlocks after approval.
           </p>
 
           {/* Category chips  click to filter, not a dropdown */}

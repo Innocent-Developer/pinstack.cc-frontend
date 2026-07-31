@@ -62,10 +62,10 @@ export default function ProductListingStatusBanner({ status, publishAt, productN
             </p>
             <p className={`text-sm mt-0.5 leading-snug ${isPending ? 'text-amber-900/80' : 'text-sky-900/80'}`}>
               {isPending
-                ? 'This listing is awaiting approval. It is not in Explore yet - votes, reviews, and ranking are paused until it goes live.'
+                ? 'This listing is awaiting approval. It appears in Explore with a Pending badge — votes, reviews, and ranking stay paused until it goes live.'
                 : when
-                  ? `This listing goes live on ${when}. Until then it stays out of Explore and rankings.`
-                  : 'This listing is scheduled and not live in Explore yet.'}
+                  ? `This listing goes live on ${when}. It can appear in Explore as Scheduled — votes and ranking unlock at go-live.`
+                  : 'This listing is scheduled. Votes and ranking unlock when it goes live.'}
             </p>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function ProductListingStatusBanner({ status, publishAt, productN
               isPending ? 'border-amber-200 text-amber-950' : 'border-sky-200 text-sky-950'
             }`}
           >
-            Browse live products →
+            View in Explore →
           </Link>
         </div>
       </div>

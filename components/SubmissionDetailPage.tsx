@@ -165,17 +165,17 @@ export default function SubmissionDetailPage({ productId }: Props) {
         >
           <p className="text-sm font-bold text-heading mb-0.5">
             {status === 'rejected'
-              ? 'Rejected - not public'
+              ? 'Rejected — not public'
               : status === 'pending'
-                ? 'Pending review - preview available'
-                : 'Scheduled - not in Explore yet'}
+                ? 'Pending review — visible in Explore'
+                : 'Scheduled — visible in Explore'}
           </p>
           <p className="text-sm text-body">
             {status === 'rejected'
               ? 'This listing is hidden from the directory. Edit and resubmit to send it back for review.'
               : status === 'pending'
-                ? 'Your listing is in the review queue. The product page is visible with a Pending banner, but it will not appear in Explore until approved.'
-                : 'Your listing is approved but scheduled. The product page shows a Scheduled banner until go-live.'}
+                ? 'Your listing appears in Explore with a Pending badge. Votes, reviews, and ranking stay paused until an admin approves it.'
+                : 'Your listing is approved but scheduled. It can show in Explore as Scheduled until go-live — votes unlock then.'}
           </p>
           {status === 'rejected' && product.rejectionReason && (
             <p className="text-sm text-red-700 mt-2">

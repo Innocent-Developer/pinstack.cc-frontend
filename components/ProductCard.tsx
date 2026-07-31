@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import { Product } from '../types';
-import { api } from '../lib/api';
 import { productCategories } from '../lib/categories';
+import { isProductLive, listingStatusLabel } from '../lib/listingStatus';
 import VerifiedBadge from './VerifiedBadge';
 import ProductVoteButtons from './ProductVoteButtons';
 
@@ -13,6 +13,9 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
+  const live = isProductLive(product);
+  const statusLabel = listingStatusLabel(product);
+
   return (
     <article className="lift-card border border-borderC rounded-card p-[18px] bg-white">
       <div className="flex items-start justify-between mb-3">
@@ -41,13 +44,22 @@ export default function ProductCard({ product }: ProductCardProps) {
           )}
         </div>
 
-        <ProductVoteButtons
-          productId={product._id}
-          productName={product.name}
-          initialScore={product.score}
-          initialUpvotes={product.upvoteCount}
-          initialDownvotes={product.downvoteCount}
-        />
+        {live ? (
+          <ProductVoteButtons
+            productId={product._id}
+            productName={product.name}
+            initialScore={product.score}
+            initialUpvotes={product.upvoteCount}
+            initialDownvotes={product.downvoteCount}
+          />
+        ) : (
+          <div className="text-right">
+            <span className="inline-flex items-center px-2 py-1 rounded-md text-[10px] font-bold uppercase tracking-wide bg-amber-50 text-amber-900 border border-amber-200">
+              {statusLabel || 'Pending'}
+            </span>
+            <p className="text-[10px] text-muted mt-1">Votes paused</p>
+          </div>
+        )}
       </div>
 
       <Link href={`/product/${product.slug}`} className="block">
@@ -59,6 +71,17 @@ export default function ProductCard({ product }: ProductCardProps) {
       </Link>
 
       <div className="flex gap-1.5 flex-wrap items-center">
+        {statusLabel && (
+          <span
+            className={`text-[11px] px-2.5 py-0.5 rounded-full font-bold ${
+              statusLabel === 'Pending'
+                ? 'bg-amber-50 text-amber-900'
+                : 'bg-sky-50 text-sky-900'
+            }`}
+          >
+            {statusLabel}
+          </span>
+        )}
         {product.isFeatured && (
           <span className="text-[11px] bg-amber-50 text-featured px-2.5 py-0.5 rounded-full font-bold">
             Featured

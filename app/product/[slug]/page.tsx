@@ -14,6 +14,7 @@ import ProductSocialLinks from '../../../components/ProductSocialLinks';
 import ProductListingStatusBanner from '../../../components/ProductListingStatusBanner';
 import { loadProductPage } from '../../../lib/productPage';
 import { productCategories } from '../../../lib/categories';
+import { isProductLive } from '../../../lib/listingStatus';
 import { buildBreadcrumbSchema, buildProductSchema } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
 import { visitWebsiteUrl } from '../../../lib/utm';
@@ -37,16 +38,6 @@ function formatDate(iso?: string) {
   } catch {
     return null;
   }
-}
-
-function isProductLive(product: Product) {
-  if (product.status === 'rejected') return false;
-  if (product.status === 'pending') return false;
-  if (product.status && product.status !== 'approved') return false;
-  if (!product.publishAt) return true;
-  const at = new Date(product.publishAt);
-  if (Number.isNaN(at.getTime())) return true;
-  return at.getTime() <= Date.now();
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
