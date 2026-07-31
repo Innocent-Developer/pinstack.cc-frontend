@@ -190,6 +190,29 @@ export const api = {
 
     return categoriesInflight;
   },
+  /** Landing page: trending + categories + stats in ONE request (server-cached hourly). */
+  getHome: () =>
+    apiFetch<{
+      success: boolean;
+      data: {
+        trending: import('../types').Product[];
+        categories: import('../types').Category[];
+        stats: import('../types').Stats;
+        updatedAt: string;
+      };
+    }>('/home', { cacheMode: 'force-cache' }),
+  /** Product detail page bundle: product + related + explore + categories. */
+  getProductPage: (slug: string) =>
+    apiFetch<{
+      success: boolean;
+      data: {
+        product: import('../types').Product;
+        related: import('../types').Product[];
+        moreToExplore: import('../types').Product[];
+        categories: import('../types').Category[];
+      };
+      meta: { isLive: boolean };
+    }>(`/products/page/${encodeURIComponent(slug)}`, { cacheMode: 'no-store' }),
   autofill: (websiteUrl: string) =>
     apiFetch<import('../types').AutofillResponse>('/products/autofill', {
       method: 'POST',

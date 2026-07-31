@@ -60,27 +60,25 @@ const whyItems = [
 
 export default async function HomePage() {
   // Soft timeout so a slow API never blocks the whole homepage from opening
-  const emptyCats = { success: false, data: [] as Category[] };
-  const emptyProducts = {
+  const emptyHome = {
     success: false,
-    data: [] as Product[],
-    pagination: { total: 0, page: 1, pages: 1 },
+    data: {
+      trending: [] as Product[],
+      categories: [] as Category[],
+      stats: null as Stats | null,
+      updatedAt: '',
+    },
   };
-  const emptyStats = { success: false, data: null as Stats | null };
 
-  const [categoriesRes, trendingRes, statsRes] = await Promise.all([
-    withTimeout(api.getCategories().catch(() => emptyCats), 8000, emptyCats),
-    withTimeout(
-      api.getProducts({ sort: 'upvoted', limit: '6' }).catch(() => emptyProducts),
-      8000,
-      emptyProducts
-    ),
-    withTimeout(api.getStats().catch(() => emptyStats), 8000, emptyStats),
-  ]);
+  const homeRes = await withTimeout(
+    api.getHome().catch(() => emptyHome),
+    8000,
+    emptyHome
+  );
 
-  const categories = categoriesRes.data.slice(0, 8);
-  const trending = trendingRes.data;
-  const stats = statsRes.data;
+  const categories = (homeRes.data.categories || []).slice(0, 8);
+  const trending = homeRes.data.trending || [];
+  const stats = homeRes.data.stats;
   const previewProducts = trending.slice(0, 3);
 
   return (

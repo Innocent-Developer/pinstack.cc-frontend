@@ -12,7 +12,7 @@ import ProductVoteButtons from '../../../components/ProductVoteButtons';
 import VerifiedBadge from '../../../components/VerifiedBadge';
 import ProductSocialLinks from '../../../components/ProductSocialLinks';
 import ProductListingStatusBanner from '../../../components/ProductListingStatusBanner';
-import { api } from '../../../lib/api';
+import { loadProductPage } from '../../../lib/productPage';
 import { productCategories } from '../../../lib/categories';
 import { buildBreadcrumbSchema, buildProductSchema } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
@@ -51,13 +51,13 @@ function isProductLive(product: Product) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   try {
-    const res = await api.getProductBySlug(params.slug);
-    const product = res.data;
+    const res = await loadProductPage(params.slug);
+    const product = res.data.product;
     if (!product || product.status === 'rejected') {
       return { title: { absolute: 'Product Not Found' } };
     }
 
-    const live = isProductLive(product);
+    const live = res.meta?.isLive ?? isProductLive(product);
     const description =
       product.aiDescription ||
       product.description?.slice(0, 155) ||
@@ -103,9 +103,18 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductDetailPage({ params }: Props) {
   let product: Product;
+  let related: Product[] = [];
+  let moreToExplore: Product[] = [];
+  let directoryCategories: { _id: string; name: string; slug: string; icon: string }[] = [];
+  let live = false;
+
   try {
-    const res = await api.getProductBySlug(params.slug);
-    product = res.data;
+    const res = await loadProductPage(params.slug);
+    product = res.data.product;
+    related = res.data.related || [];
+    moreToExplore = res.data.moreToExplore || [];
+    directoryCategories = (res.data.categories || []).slice(0, 8);
+    live = res.meta?.isLive ?? isProductLive(product);
   } catch {
     notFound();
   }
@@ -115,32 +124,7 @@ export default async function ProductDetailPage({ params }: Props) {
     notFound();
   }
 
-  const live = isProductLive(product);
   const cats = productCategories(product);
-  const primaryCategoryId = cats[0]?._id || product.category?._id;
-
-  const [relatedRes, trendingRes, categoriesRes] = await Promise.all([
-    live && primaryCategoryId
-      ? api.getProducts({ category: primaryCategoryId, sort: 'ranked', limit: '12' }).catch(() => ({
-          data: [] as Product[],
-        }))
-      : Promise.resolve({ data: [] as Product[] }),
-    live
-      ? api.getProducts({ sort: 'ranked', limit: '12' }).catch(() => ({ data: [] as Product[] }))
-      : Promise.resolve({ data: [] as Product[] }),
-    api.getCategories().catch(() => ({ data: [] as { _id: string; name: string; slug: string; icon: string }[] })),
-  ]);
-
-  const related = (relatedRes.data || [])
-    .filter((p) => p._id !== product._id)
-    .slice(0, 6);
-
-  const relatedIds = new Set(related.map((p) => p._id));
-  const moreToExplore = (trendingRes.data || [])
-    .filter((p) => p._id !== product._id && !relatedIds.has(p._id))
-    .slice(0, 6);
-
-  const directoryCategories = (categoriesRes.data || []).slice(0, 8);
   const listedOn = formatDate(product.createdAt);
   const primaryCat = cats[0];
 
