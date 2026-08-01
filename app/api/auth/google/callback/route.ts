@@ -99,23 +99,24 @@ export async function GET(req: NextRequest) {
       return fail(backendData.message || 'google_backend_failed');
     }
 
-    // Hand token to client page via short-lived httpOnly cookie (avoids long JWT in URL)
+    // Hand token to client via short-lived httpOnly cookie → /api/auth/oauth-session
+    // (avoids document.cookie encoding issues that broke Google sign-in)
     const safeNext = nextPath.startsWith('/') ? nextPath : '/dashboard';
     const res = NextResponse.redirect(new URL(`/auth/callback?next=${encodeURIComponent(safeNext)}`, origin));
 
     res.cookies.set(
       'oauth_session',
-      encodeURIComponent(JSON.stringify({ token: backendData.token, user: backendData.user })),
+      JSON.stringify({ token: backendData.token, user: backendData.user }),
       {
-        httpOnly: false, // client must read for localStorage setAuth
+        httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
         sameSite: 'lax',
         maxAge: 120,
         path: '/',
       }
     );
-    res.cookies.delete('oauth_state');
-    res.cookies.delete('oauth_next');
+    res.cookies.set('oauth_state', '', { httpOnly: true, path: '/', maxAge: 0 });
+    res.cookies.set('oauth_next', '', { httpOnly: true, path: '/', maxAge: 0 });
 
     return res;
   } catch (err) {
