@@ -6,16 +6,29 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
 import { api } from '../lib/api';
 import { setAuth } from '../lib/auth';
+import GoogleContinueButton, { AuthDivider } from './GoogleContinueButton';
 
 function LoginFormInner() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get('next') || '/dashboard';
+  const oauthError = searchParams.get('error');
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(() => {
+    if (!oauthError) return null;
+    const map: Record<string, string> = {
+      google_cancelled: 'Google sign-in was cancelled.',
+      google_not_configured: 'Google sign-in is not configured yet.',
+      google_state_mismatch: 'Google sign-in expired. Please try again.',
+      google_token_exchange: 'Could not complete Google sign-in. Try again.',
+      google_backend_failed: 'Could not create your session. Try again.',
+      google_failed: 'Google sign-in failed. Please try again.',
+    };
+    return map[oauthError] || 'Google sign-in failed. Please try again.';
+  });
   const [needsVerification, setNeedsVerification] = useState(false);
   const [loading, setLoading] = useState(false);
   const [resending, setResending] = useState(false);
@@ -61,7 +74,11 @@ function LoginFormInner() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+    <div className="space-y-4">
+      <GoogleContinueButton label="Continue with Google" />
+      <AuthDivider />
+
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {error && (
         <div className="text-sm text-red-700 bg-red-50 border border-red-100 px-3.5 py-3 rounded-btn">
           {error}
@@ -147,6 +164,7 @@ function LoginFormInner() {
         </Link>
       </p>
     </form>
+    </div>
   );
 }
 

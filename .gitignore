@@ -25,6 +25,11 @@ yarn-error.log*
 # local env files
 .env*.local
 .env
+.env.production.local
+
+# Google OAuth client secrets (never commit)
+client_secret*.json
+**/client_secret*.json
 
 # typescript
 next-env.d.ts

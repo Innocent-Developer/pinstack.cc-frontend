@@ -4,6 +4,7 @@ import { FormEvent, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { api } from '../lib/api';
+import GoogleContinueButton, { AuthDivider } from './GoogleContinueButton';
 
 export default function SignupForm() {
   const router = useRouter();
@@ -42,7 +43,11 @@ export default function SignupForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" noValidate>
+    <div className="space-y-4">
+      <GoogleContinueButton label="Continue with Google" />
+      <AuthDivider />
+
+      <form onSubmit={handleSubmit} className="space-y-4" noValidate>
       {error && (
         <p className="text-sm text-red-700 bg-red-50 border border-red-100 px-3.5 py-3 rounded-btn">
           {error}
@@ -126,5 +131,6 @@ export default function SignupForm() {
         </Link>
       </p>
     </form>
+    </div>
   );
 }
