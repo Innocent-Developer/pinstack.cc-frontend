@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import BrandLogo from './BrandLogo';
 import AddProductButton from './AddProductButton';
+import AccountVerifiedTick from './AccountVerifiedTick';
 import { clearAuth, getStoredUser, StoredUser } from '../lib/auth';
 
 export default function Header() {
@@ -71,9 +72,10 @@ export default function Header() {
           {user && (
             <Link
               href="/dashboard"
-              className="hidden sm:inline text-sm font-semibold text-heading hover:text-primary max-w-[120px] truncate"
+              className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-heading hover:text-primary max-w-[140px]"
             >
-              {user.name.split(' ')[0]}
+              <span className="truncate">{user.name.split(' ')[0]}</span>
+              {user.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
             </Link>
           )}
           <AddProductButton className="hidden sm:inline-flex items-center px-4 py-2.5 rounded-btn text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-sm shadow-primary/25 btn-smooth" />

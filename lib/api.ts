@@ -426,4 +426,52 @@ export const api = {
       cacheMode: 'no-store',
       timeoutMs: AUTH_TIMEOUT_MS,
     }),
+  getAccountVerification: (token: string) =>
+    apiFetch<{
+      success: boolean;
+      isAccountVerified: boolean;
+      accountVerifiedAt?: string | null;
+      accountType?: 'personal' | 'company' | null;
+      companyName?: string | null;
+      payment?: {
+        amountUsd: number;
+        email: string;
+        paymentUrl: string | null;
+        note: string;
+      };
+      request: {
+        id: string;
+        status: string;
+        tier: 'free' | 'priority';
+        paymentStatus: string;
+        accountType: 'personal' | 'company';
+        adminNote?: string;
+        createdAt: string;
+        slaHours: number;
+      } | null;
+    }>('/auth/account-verification', {
+      headers: { Authorization: `Bearer ${token}` },
+      cacheMode: 'no-store',
+      timeoutMs: AUTH_TIMEOUT_MS,
+    }),
+  submitAccountVerification: (
+    token: string,
+    body: Record<string, string>
+  ) =>
+    apiFetch<{
+      success: boolean;
+      message?: string;
+      payment?: {
+        amountUsd: number;
+        email: string;
+        paymentUrl: string | null;
+        note: string;
+      };
+      request: unknown;
+    }>('/auth/account-verification', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body),
+      timeoutMs: AUTH_TIMEOUT_MS,
+    }),
 };

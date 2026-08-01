@@ -25,6 +25,8 @@ export interface Product {
   score: number;
   isFeatured: boolean;
   isVerified: boolean;
+  /** Maker has admin account verification (green tick) */
+  submitterAccountVerified?: boolean;
   badgeEmbedded?: boolean;
   badgeVerifiedAt?: string | null;
   planChoice?: 'free' | 'verified' | 'featured' | 'growth' | null;
@@ -77,6 +79,10 @@ export interface AuthUser {
   name: string;
   email: string;
   isVerified?: boolean;
+  isAccountVerified?: boolean;
+  accountVerifiedAt?: string | null;
+  accountType?: 'personal' | 'company' | null;
+  companyName?: string | null;
 }
 
 export interface AuthResponse {

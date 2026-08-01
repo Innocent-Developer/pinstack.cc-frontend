@@ -5,6 +5,9 @@ export type StoredUser = {
   id: string;
   name: string;
   email: string;
+  isAccountVerified?: boolean;
+  accountType?: 'personal' | 'company' | null;
+  companyName?: string | null;
 };
 
 export function getToken(): string | null {

@@ -6,15 +6,18 @@ import { useRouter } from 'next/navigation';
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import SubmissionsManager from '../../components/SubmissionsManager';
-import { clearAuth, getStoredUser, getToken, StoredUser } from '../../lib/auth';
+import AccountVerificationPanel from '../../components/AccountVerificationPanel';
+import AccountVerifiedTick from '../../components/AccountVerifiedTick';
+import { clearAuth, getStoredUser, getToken, setAuth, StoredUser } from '../../lib/auth';
 import { api } from '../../lib/api';
 import type { Product } from '../../types';
 
-type Tab = 'overview' | 'submissions';
+type Tab = 'overview' | 'submissions' | 'verify';
 
 export default function DashboardPage() {
   const router = useRouter();
   const [user, setUser] = useState<StoredUser | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [products, setProducts] = useState<Product[]>([]);
   const [checking, setChecking] = useState(true);
   const [loadingList, setLoadingList] = useState(true);
@@ -23,15 +26,25 @@ export default function DashboardPage() {
   useEffect(() => {
     const boot = async () => {
       const stored = getStoredUser();
-      const token = getToken();
-      if (!stored || !token) {
+      const tok = getToken();
+      if (!stored || !tok) {
         router.replace('/login?next=/dashboard');
         return;
       }
       try {
-        const me = await api.getMe(token);
-        setUser(me.user);
-        const mine = await api.getMyProducts(token);
+        const me = await api.getMe(tok);
+        const nextUser: StoredUser = {
+          id: me.user.id,
+          name: me.user.name,
+          email: me.user.email,
+          isAccountVerified: !!me.user.isAccountVerified,
+          accountType: me.user.accountType ?? null,
+          companyName: me.user.companyName ?? null,
+        };
+        setAuth(tok, nextUser);
+        setUser(nextUser);
+        setToken(tok);
+        const mine = await api.getMyProducts(tok);
         setProducts(mine.data || []);
       } catch {
         clearAuth();
@@ -59,7 +72,7 @@ export default function DashboardPage() {
     router.push('/');
   };
 
-  if (checking || !user) {
+  if (checking || !user || !token) {
     return (
       <div className="flex flex-col flex-1 min-h-dvh">
         <Header />
@@ -81,8 +94,9 @@ export default function DashboardPage() {
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-4 mb-6">
             <div>
               <p className="text-sm font-semibold text-primary mb-1">Dashboard</p>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-heading tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-extrabold text-heading tracking-tight inline-flex items-center gap-2">
                 Hi, {firstName}
+                {user.isAccountVerified ? <AccountVerifiedTick size={22} /> : null}
               </h1>
               <p className="text-sm text-muted mt-1">{user.email}</p>
             </div>
@@ -95,11 +109,11 @@ export default function DashboardPage() {
             </button>
           </div>
 
-          {/* Google-like tab bar */}
           <div className="flex gap-1 border-b border-borderC mb-7 overflow-x-auto -mx-1 px-1 scrollbar-none">
             {(
               [
                 { key: 'submissions' as Tab, label: 'My submissions', count: stats.total },
+                { key: 'verify' as Tab, label: 'Verify account' },
                 { key: 'overview' as Tab, label: 'Overview' },
               ] as const
             ).map((t) => (
@@ -107,13 +121,18 @@ export default function DashboardPage() {
                 key={t.key}
                 type="button"
                 onClick={() => setTab(t.key)}
-                className={`relative px-4 py-3 text-sm font-semibold transition ${
+                className={`relative px-4 py-3 text-sm font-semibold transition whitespace-nowrap ${
                   tab === t.key ? 'text-primary' : 'text-muted hover:text-heading'
                 }`}
               >
                 {t.label}
                 {'count' in t && t.count !== undefined ? (
                   <span className="ml-1.5 text-xs tabular-nums opacity-70">{t.count}</span>
+                ) : null}
+                {t.key === 'verify' && user.isAccountVerified ? (
+                  <span className="ml-1.5 inline-block align-middle">
+                    <AccountVerifiedTick size={12} />
+                  </span>
                 ) : null}
                 {tab === t.key && (
                   <span className="absolute left-2 right-2 -bottom-px h-0.5 rounded-full bg-primary" />
@@ -127,6 +146,19 @@ export default function DashboardPage() {
               products={products}
               loading={loadingList}
               onChanged={setProducts}
+            />
+          ) : tab === 'verify' ? (
+            <AccountVerificationPanel
+              token={token}
+              defaultName={user.name}
+              onVerifiedChange={(verified) => {
+                setUser((u) => (u ? { ...u, isAccountVerified: verified } : u));
+                const tok = getToken();
+                const stored = getStoredUser();
+                if (tok && stored) {
+                  setAuth(tok, { ...stored, isAccountVerified: verified });
+                }
+              }}
             />
           ) : (
             <div className="space-y-6">
@@ -147,6 +179,21 @@ export default function DashboardPage() {
                 ))}
               </div>
 
+              {!user.isAccountVerified && (
+                <button
+                  type="button"
+                  onClick={() => setTab('verify')}
+                  className="w-full text-left rounded-2xl border border-emerald-200 bg-emerald-50/50 p-5 hover:border-emerald-400 transition"
+                >
+                  <p className="text-xs font-semibold text-emerald-700 mb-1">Trust</p>
+                  <h2 className="font-extrabold text-heading mb-1">Get your green verification tick</h2>
+                  <p className="text-sm text-muted">
+                    Free (up to 7 days) or $5 priority (under 24h). Verified accounts skip product
+                    review.
+                  </p>
+                </button>
+              )}
+
               <div className="grid sm:grid-cols-2 gap-3">
                 <button
                   type="button"
@@ -166,7 +213,9 @@ export default function DashboardPage() {
                   <p className="text-xs font-semibold text-primary mb-1">Create</p>
                   <h2 className="font-extrabold text-heading mb-1">Add a product</h2>
                   <p className="text-sm text-muted">
-                    Multi-step form with AI assist, logo, and screenshots.
+                    {user.isAccountVerified
+                      ? 'Verified account — new listings go live without pending review.'
+                      : 'Multi-step form with AI assist, logo, and screenshots.'}
                   </p>
                 </Link>
               </div>

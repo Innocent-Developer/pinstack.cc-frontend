@@ -77,6 +77,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entry('/categories', { changeFrequency: 'weekly', priority: 0.7 }),
     entry('/pricing', { changeFrequency: 'monthly', priority: 0.7 }),
     entry('/about', { changeFrequency: 'monthly', priority: 0.6 }),
+    entry('/terms', { changeFrequency: 'yearly', priority: 0.3 }),
+    entry('/refund-policy', { changeFrequency: 'yearly', priority: 0.3 }),
     entry('/contact', { changeFrequency: 'yearly', priority: 0.3 }),
   ];
 

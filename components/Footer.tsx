@@ -59,6 +59,12 @@ export default function Footer() {
             <Link href="/contact" className="hover:text-primary transition">
               Contact
             </Link>
+            <Link href="/terms" className="hover:text-primary transition">
+              Terms
+            </Link>
+            <Link href="/refund-policy" className="hover:text-primary transition">
+              Refund Policy
+            </Link>
             <a href={`mailto:${siteConfig.email}`} className="hover:text-primary transition">
               {siteConfig.email}
             </a>
@@ -80,11 +86,19 @@ export default function Footer() {
       <div className="border-t border-slate-700">
         <div className="max-w-[1160px] mx-auto px-4 sm:px-6 py-5 flex flex-col sm:flex-row justify-between gap-2 text-xs text-slate-500">
           <span>
-            © {year} {siteConfig.domain}  {siteConfig.tagline}
+            © {year} {siteConfig.domain} · {siteConfig.tagline}
           </span>
-          <span className="inline-flex items-center gap-1.5">
-            <Image src={siteConfig.iconPath} alt="" width={18} height={18} className="rounded-[4px]" />
-            Built for founders
+          <span className="inline-flex items-center gap-3 flex-wrap justify-end">
+            <Link href="/terms" className="hover:text-slate-300 transition">
+              Terms
+            </Link>
+            <Link href="/refund-policy" className="hover:text-slate-300 transition">
+              Refunds
+            </Link>
+            <span className="inline-flex items-center gap-1.5">
+              <Image src={siteConfig.iconPath} alt="" width={18} height={18} className="rounded-[4px]" />
+              Built for founders
+            </span>
           </span>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { Product } from '../types';
 import { productCategories } from '../lib/categories';
 import { isProductLive, listingStatusLabel } from '../lib/listingStatus';
 import VerifiedBadge from './VerifiedBadge';
+import AccountVerifiedTick from './AccountVerifiedTick';
 import ProductVoteButtons from './ProductVoteButtons';
 
 interface ProductCardProps {
@@ -66,6 +67,15 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="flex flex-wrap items-center gap-2 mb-1">
           <h3 className="text-[15px] font-bold text-heading">{product.name}</h3>
           {product.isVerified && <VerifiedBadge />}
+          {product.submitterAccountVerified && (
+            <span
+              className="inline-flex items-center gap-1 text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full"
+              title="Verified maker account"
+            >
+              <AccountVerifiedTick size={12} />
+              Maker
+            </span>
+          )}
         </div>
         <p className="text-[13px] text-muted mb-3 line-clamp-2">{product.tagline}</p>
       </Link>

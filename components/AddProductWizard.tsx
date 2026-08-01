@@ -472,7 +472,9 @@ export default function AddProductWizard() {
                 >
                   <p className="text-sm font-extrabold text-heading mb-1">Free</p>
                   <p className="text-xs text-muted">
-                    Pending admin approval + embed badge. Forever free.
+                    {user?.isAccountVerified
+                      ? 'Verified account — goes live without pending review.'
+                      : 'Pending admin approval + embed badge. Forever free.'}
                   </p>
                 </button>
                 <button
