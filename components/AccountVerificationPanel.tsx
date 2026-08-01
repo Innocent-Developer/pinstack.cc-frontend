@@ -144,7 +144,7 @@ export default function AccountVerificationPanel({
                 : 'border-borderC hover:border-primary/40'
             } ${pending ? 'opacity-60' : ''}`}
           >
-            <p className="text-xs font-semibold text-primary mb-1">Priority · $5 once</p>
+            <p className="text-xs font-semibold text-primary mb-1">Priority · $9 once</p>
             <p className="font-extrabold text-heading text-sm">Review under 24 hours</p>
             <p className="text-xs text-muted mt-1">One-time payment. Fastest path to the green tick.</p>
           </button>
@@ -166,7 +166,7 @@ export default function AccountVerificationPanel({
 
         {pending && state.request && (
           <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 mb-4">
-            Your {state.request.tier === 'priority' ? 'priority ($5)' : 'free'} request is pending
+            Your {state.request.tier === 'priority' ? 'priority ($9)' : 'free'} request is pending
             {state.request.tier === 'priority' && state.request.paymentStatus === 'awaiting_payment'
               ? ' — complete payment so we can review within 24h.'
               : ` — usually within ${state.request.slaHours >= 24 ? `${Math.round(state.request.slaHours / 24)} days` : `${state.request.slaHours}h`}.`}
@@ -336,7 +336,7 @@ export default function AccountVerificationPanel({
               {submitting
                 ? 'Submitting…'
                 : form.tier === 'priority'
-                  ? 'Submit + pay $5 for 24h review'
+                  ? 'Submit + pay $9 for 24h review'
                   : 'Submit free verification request'}
             </button>
           </form>

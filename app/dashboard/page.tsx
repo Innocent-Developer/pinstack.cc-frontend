@@ -188,7 +188,7 @@ export default function DashboardPage() {
                   <p className="text-xs font-semibold text-emerald-700 mb-1">Trust</p>
                   <h2 className="font-extrabold text-heading mb-1">Get your green verification tick</h2>
                   <p className="text-sm text-muted">
-                    Free (up to 7 days) or $5 priority (under 24h). Verified accounts skip product
+                    Free (up to 7 days) or $9 priority (under 24h). Verified accounts skip product
                     review.
                   </p>
                 </button>

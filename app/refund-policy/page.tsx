@@ -9,7 +9,7 @@ import { siteConfig } from '../../config/site';
 export const metadata: Metadata = pageMetadata({
   title: 'Refund Policy',
   description:
-    'Pinstack refund policy for paid listing plans and priority account verification ($5).',
+    'Pinstack refund policy for paid listing plans and priority account verification ($9).',
   path: '/refund-policy',
   openGraphTitle: 'Refund Policy | Pinstack',
   keywords: ['Pinstack refund', 'refund policy', 'listing refund'],
@@ -54,7 +54,7 @@ export default function RefundPolicyPage() {
               ).
             </li>
             <li>
-              <strong className="text-heading">Priority account verification</strong> — one-time $5
+              <strong className="text-heading">Priority account verification</strong> — one-time $9
               fee for faster review (target under 24 hours after payment is confirmed).
             </li>
           </ul>
@@ -65,7 +65,7 @@ export default function RefundPolicyPage() {
         </ScrollReveal>
 
         <ScrollReveal>
-          <h2 className="text-xl font-extrabold text-heading mb-3">2. Priority account verification ($5)</h2>
+          <h2 className="text-xl font-extrabold text-heading mb-3">2. Priority account verification ($9)</h2>
           <ul className="list-disc pl-5 space-y-2">
             <li>
               <strong className="text-heading">Full refund</strong> if we have not started review
@@ -80,7 +80,7 @@ export default function RefundPolicyPage() {
             </li>
             <li>
               If review takes longer than 24 hours after we confirm payment, you may request either
-              continued free-queue processing or a refund of the $5 priority fee.
+              continued free-queue processing or a refund of the $9 priority fee.
             </li>
           </ul>
         </ScrollReveal>

@@ -70,7 +70,7 @@ export default function TermsPage() {
             <li>
               <strong className="text-heading">Account verification</strong> (green tick) is a
               separate trust review. You may apply as a personal or company account. Free review
-              typically takes up to 7 days; priority review ($5 one-time) targets under 24 hours
+              typically takes up to 7 days; priority review ($9 one-time) targets under 24 hours
               after payment is confirmed.
             </li>
             <li>
