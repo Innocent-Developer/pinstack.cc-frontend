@@ -148,6 +148,55 @@ export const api = {
         publishAt: opts?.publishAt,
       }),
     }),
+  createCheckout: (
+    token: string,
+    body: {
+      kind:
+        | 'listing_verified'
+        | 'listing_featured'
+        | 'listing_growth'
+        | 'account_verification';
+      productId?: string;
+      listTiming?: 'now' | 'scheduled';
+      publishAt?: string;
+      verificationRequestId?: string;
+    }
+  ) =>
+    apiFetch<{
+      success: boolean;
+      data: {
+        intentId: string;
+        checkoutUrl: string;
+        kind: string;
+        fsPlanId: string;
+      };
+    }>('/billing/checkout', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body),
+      timeoutMs: AUTH_TIMEOUT_MS,
+    }),
+  completeFreemiusCheckout: (
+    token: string,
+    body: { intentId: string; license_id: string }
+  ) =>
+    apiFetch<{
+      success: boolean;
+      message?: string;
+      data: {
+        intentId: string;
+        kind: string;
+        applied: boolean;
+        alreadyApplied?: boolean;
+        productId?: string | null;
+        productSlug?: string | null;
+      };
+    }>('/billing/freemius/complete', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(body),
+      timeoutMs: AUTH_TIMEOUT_MS,
+    }),
   verifyMyProductBadge: (token: string, id: string) =>
     apiFetch<{
       success: boolean;
@@ -467,7 +516,12 @@ export const api = {
         paymentUrl: string | null;
         note: string;
       };
-      request: unknown;
+      request: {
+        id: string;
+        status?: string;
+        tier?: string;
+        paymentStatus?: string;
+      };
     }>('/auth/account-verification', {
       method: 'POST',
       headers: { Authorization: `Bearer ${token}` },

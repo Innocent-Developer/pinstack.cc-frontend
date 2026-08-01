@@ -47,7 +47,7 @@ const plans = [
       'Does not affect organic ranking',
     ],
     cta: 'Get Verified',
-    href: '/contact?topic=verified',
+    href: '/login?next=/dashboard/add-product',
     highlight: false,
   },
   {
@@ -62,7 +62,7 @@ const plans = [
       'Cancel anytime  stays active for the paid period',
     ],
     cta: 'Get Featured',
-    href: '/contact?topic=featured',
+    href: '/login?next=/dashboard/add-product',
     highlight: true,
   },
   {
@@ -77,7 +77,7 @@ const plans = [
       'One-time listing copy review & optimize at signup',
     ],
     cta: 'Get Growth',
-    href: '/contact?topic=growth',
+    href: '/login?next=/dashboard/add-product',
     highlight: false,
   },
 ];

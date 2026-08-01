@@ -338,25 +338,45 @@ export default function AddProductWizard() {
     setBusy(true);
     setError(null);
     try {
-      const res = await api.setMyProductPlan(token, submitted._id, plan, {
-        listTiming,
-        publishAt: listTiming === 'scheduled' ? scheduleDate : undefined,
-      });
-      setLiveResult({
-        liveNow: !!res.data.liveNow,
-        publishAt: res.data.publishAt,
-        status: res.data.status,
-      });
       if (plan === 'free') {
+        const res = await api.setMyProductPlan(token, submitted._id, plan, {
+          listTiming,
+          publishAt: listTiming === 'scheduled' ? scheduleDate : undefined,
+        });
+        setLiveResult({
+          liveNow: !!res.data.liveNow,
+          publishAt: res.data.publishAt,
+          status: res.data.status,
+        });
         setPostStep('free-badge');
         setBadgeStatus(null);
         toastSuccess(res.message || 'Free plan saved');
-      } else {
-        setPostStep('paid');
-        toastSuccess(res.message || 'Paid plan applied - listing is live');
+        return;
       }
+
+      const kind =
+        plan === 'verified'
+          ? 'listing_verified'
+          : plan === 'featured'
+            ? 'listing_featured'
+            : 'listing_growth';
+
+      const checkout = await api.createCheckout(token, {
+        kind,
+        productId: submitted._id,
+        listTiming,
+        publishAt: listTiming === 'scheduled' ? scheduleDate : undefined,
+      });
+
+      toastSuccess('Redirecting to secure checkout…');
+      try {
+        sessionStorage.setItem('fs_checkout_intent', checkout.data.intentId);
+      } catch {
+        /* ignore */
+      }
+      window.location.href = checkout.data.checkoutUrl;
     } catch (err) {
-      const msg = err instanceof Error ? err.message : 'Could not save plan';
+      const msg = err instanceof Error ? err.message : 'Could not start checkout';
       setError(msg);
       toastError(msg);
     } finally {
@@ -461,7 +481,8 @@ export default function AddProductWizard() {
             <div>
               <h3 className="font-extrabold text-heading text-lg mb-1">Choose Free or Paid</h3>
               <p className="text-sm text-muted mb-3">
-                Paid options skip the pending queue and list immediately (or on your schedule).
+                Paid plans open Freemius checkout. After payment, your listing goes live (or on your
+                schedule).
               </p>
               <div className="grid sm:grid-cols-2 gap-3">
                 <button

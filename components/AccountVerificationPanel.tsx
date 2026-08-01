@@ -84,13 +84,36 @@ export default function AccountVerificationPanel({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+  const startPriorityCheckout = async (verificationRequestId: string) => {
+    const checkout = await api.createCheckout(token, {
+      kind: 'account_verification',
+      verificationRequestId,
+    });
+    try {
+      sessionStorage.setItem('fs_checkout_intent', checkout.data.intentId);
+    } catch {
+      /* ignore */
+    }
+    window.location.href = checkout.data.checkoutUrl;
+  };
+
   const onSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setSubmitting(true);
     setError(null);
     setOk(null);
     try {
-      const res = await api.submitAccountVerification(token, form);
+      const res = await api.submitAccountVerification(token, {
+        ...form,
+      } as Record<string, string>);
+      const requestId = res.request?.id;
+
+      if (form.tier === 'priority' && requestId) {
+        setOk('Redirecting to secure $9 checkout…');
+        await startPriorityCheckout(requestId);
+        return;
+      }
+
       setOk(res.message || 'Request submitted');
       await load();
     } catch (err) {
@@ -168,20 +191,21 @@ export default function AccountVerificationPanel({
           <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900 mb-4">
             Your {state.request.tier === 'priority' ? 'priority ($9)' : 'free'} request is pending
             {state.request.tier === 'priority' && state.request.paymentStatus === 'awaiting_payment'
-              ? ' — complete payment so we can review within 24h.'
+              ? ' — complete Freemius checkout so we can review within 24h.'
               : ` — usually within ${state.request.slaHours >= 24 ? `${Math.round(state.request.slaHours / 24)} days` : `${state.request.slaHours}h`}.`}
-            {state.payment?.note ? (
-              <p className="mt-2 text-xs opacity-90">{state.payment.note}</p>
-            ) : null}
-            {state.payment?.paymentUrl ? (
-              <a
-                href={state.payment.paymentUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="inline-block mt-2 font-semibold text-primary underline"
+            {state.request.tier === 'priority' &&
+            state.request.paymentStatus === 'awaiting_payment' ? (
+              <button
+                type="button"
+                className="mt-3 inline-flex px-3.5 py-2 rounded-btn text-xs font-semibold bg-primary text-white hover:bg-primary-hover"
+                onClick={() => {
+                  void startPriorityCheckout(state.request!.id).catch((err) =>
+                    setError(err instanceof Error ? err.message : 'Checkout failed')
+                  );
+                }}
               >
-                Open payment link
-              </a>
+                Pay $9 now
+              </button>
             ) : null}
           </div>
         )}
