@@ -2,7 +2,7 @@
 
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { setAuth, type StoredUser } from '../../lib/auth';
+import { setAuth, type StoredUser } from '../../../lib/auth';
 
 function readOAuthSession(): { token: string; user: StoredUser } | null {
   if (typeof document === 'undefined') return null;
