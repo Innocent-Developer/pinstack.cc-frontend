@@ -68,7 +68,7 @@ export default function AddProductWizard() {
   const [logoFile, setLogoFile] = useState<File | null>(null);
   const [logoPreview, setLogoPreview] = useState<string | null>(null);
   const [autofilledLogoUrl, setAutofilledLogoUrl] = useState<string | null>(null);
-  const [logoFetching, setLogoFetching] = useState(false);
+  const [logoUrlInput, setLogoUrlInput] = useState('');
   const [shotFiles, setShotFiles] = useState<File[]>([]);
   const [shotPreviews, setShotPreviews] = useState<string[]>([]);
 
@@ -107,7 +107,6 @@ export default function AddProductWizard() {
 
   const runAutofill = async () => {
     if (!autofillUrl.trim()) return;
-    const token = getToken();
     setBusy(true);
     setError(null);
     try {
@@ -121,35 +120,29 @@ export default function AddProductWizard() {
           submissionMethod: 'auto',
         }));
 
-        if (res.data.logoUrl && token) {
-          setLogoFetching(true);
-          let logoUploaded = false;
-          try {
-            const uploaded = await api.uploadFromUrl(token, res.data.logoUrl, 'logos');
-            const url = uploaded.data.logoUrl || uploaded.data.url;
-            setAutofilledLogoUrl(url);
-            setLogoPreview(url);
-            setLogoFile(null);
-            logoUploaded = true;
-            toastSuccess('Logo fetched from website');
-          } catch {
-            setError('Auto-fill worked, but we could not fetch the logo  upload it manually in Images.');
-          } finally {
-            setLogoFetching(false);
+        if (res.data.logoUrl) {
+          // Direct external link — not copied into R2
+          setAutofilledLogoUrl(res.data.logoUrl);
+          setLogoPreview(res.data.logoUrl);
+          setLogoFile(null);
+          setLogoUrlInput(res.data.logoUrl);
+          const fields = (res.missingFields || []).filter((f) => f !== 'logoUrl');
+          if (fields.length) {
+            setError(`Logo linked from site. Still needed: ${fields.join(', ')}`);
           }
-
-          if (res.missingFields?.length) {
-            const fields = res.missingFields.filter((f) => !(f === 'logoUrl' && logoUploaded));
-            if (fields.length) {
-              setError(`Auto-filled what we could. Still needed: ${fields.join(', ')}`);
-            }
-          } else if (logoUploaded) {
-            toastSuccess('Auto-filled from website');
-          }
-        } else if (res.missingFields?.length) {
-          setError(`Auto-filled what we could. Still needed: ${res.missingFields.join(', ')}`);
+          toastSuccess('Auto-filled — logo uses the website link (not stored on our servers)');
         } else {
-          toastSuccess('Auto-filled from website');
+          setAutofilledLogoUrl(null);
+          setLogoPreview(null);
+          setLogoFile(null);
+          setLogoUrlInput('');
+          const other = (res.missingFields || []).filter((f) => f !== 'logoUrl');
+          setError(
+            other.length
+              ? `No logo/icon found on that site. Upload one or paste a URL in Images. Also needed: ${other.join(', ')}`
+              : 'No logo/icon found on that site. On the Images step, upload a file (max 1 MB) or paste an image URL.'
+          );
+          toastSuccess('Auto-filled text — add a logo on the Images step');
         }
       } else {
         setForm((f) => ({ ...f, websiteUrl: autofillUrl.trim(), submissionMethod: 'manual' }));
@@ -222,6 +215,7 @@ export default function AddProductWizard() {
     setError(null);
     setLogoFile(file);
     setAutofilledLogoUrl(null);
+    setLogoUrlInput('');
     setLogoPreview(URL.createObjectURL(file));
   };
 
@@ -229,6 +223,24 @@ export default function AddProductWizard() {
     setLogoFile(null);
     setLogoPreview(null);
     setAutofilledLogoUrl(null);
+    setLogoUrlInput('');
+  };
+
+  const applyLogoUrl = () => {
+    const raw = logoUrlInput.trim();
+    if (!raw) return;
+    try {
+      const u = new URL(raw);
+      if (!['http:', 'https:'].includes(u.protocol)) throw new Error('bad');
+    } catch {
+      setError('Enter a valid http(s) image URL');
+      return;
+    }
+    setError(null);
+    setAutofilledLogoUrl(raw);
+    setLogoPreview(raw);
+    setLogoFile(null);
+    toastSuccess('Logo linked (external URL — not uploaded to our storage)');
   };
 
   const hasLogo = !!(logoFile || autofilledLogoUrl);
@@ -881,44 +893,117 @@ export default function AddProductWizard() {
         <div className="border border-borderC rounded-2xl p-6 bg-white space-y-6">
           <div>
             <h2 className="font-extrabold text-heading text-lg mb-1">Images</h2>
-            <p className="text-xs text-muted">1 logo required · up to 3 feature images · each under 1 MB</p>
-            {autofilledLogoUrl && !logoFile && (
-              <p className="text-xs text-primary mt-1 font-medium">
-                Logo auto-fetched from your website  replace below if needed.
-              </p>
-            )}
-            {logoFetching && (
-              <p className="text-xs text-muted mt-1">Fetching logo from website…</p>
-            )}
+            <p className="text-xs text-muted">
+              1 logo required · up to 3 feature images · each uploaded file under 1 MB.
+            </p>
           </div>
 
-          <div>
-            <label className="block text-xs font-semibold text-heading mb-2">Logo (required)</label>
-            <input
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              onChange={(e) => onLogo(e.target.files?.[0] || null)}
-              className="block w-full text-sm"
-            />
-            {logoPreview && (
-              <div className="mt-3 flex items-start gap-3">
-                <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-borderC bg-bgAlt">
-                  <Image src={logoPreview} alt="Logo preview" fill className="object-cover" unoptimized />
-                </div>
+          {!hasLogo && (
+            <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-950">
+              <p className="font-semibold">No logo yet</p>
+              <p className="text-xs mt-1 text-amber-900/90">
+                Auto-fill didn&apos;t find an icon, or you skipped it. Paste an image URL below, or
+                upload a logo file (JPEG, PNG, WebP, or GIF · max 1 MB).
+              </p>
+            </div>
+          )}
+
+          {autofilledLogoUrl && !logoFile && (
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 px-4 py-3 text-sm">
+              <p className="font-semibold text-emerald-900">Logo linked from website</p>
+              <p className="text-xs text-emerald-800/90 mt-1 break-all">{autofilledLogoUrl}</p>
+              <p className="text-[11px] text-muted mt-2">
+                Not stored on our servers. Replace anytime with a URL or upload below.
+              </p>
+            </div>
+          )}
+
+          <div className="grid gap-5">
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-muted mb-2">Option A</p>
+              <label className="block text-sm font-semibold text-heading mb-2">
+                Paste logo / icon URL
+              </label>
+              <div className="flex flex-col sm:flex-row gap-2">
+                <input
+                  type="url"
+                  placeholder="https://example.com/logo.png"
+                  value={logoUrlInput}
+                  onChange={(e) => setLogoUrlInput(e.target.value)}
+                  className="flex-1 px-3 py-2.5 border border-borderC rounded-btn text-sm"
+                />
+                <button
+                  type="button"
+                  onClick={applyLogoUrl}
+                  disabled={!logoUrlInput.trim()}
+                  className="px-4 py-2.5 rounded-btn text-sm font-semibold border border-borderC hover:bg-bgAlt disabled:opacity-50"
+                >
+                  Use link
+                </button>
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="absolute inset-x-0 top-0 flex items-center" aria-hidden>
+                <div className="w-full border-t border-borderC" />
+              </div>
+              <div className="relative flex justify-center text-[11px] font-semibold uppercase tracking-wide">
+                <span className="bg-white px-2 text-muted">or</span>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-xs font-bold uppercase tracking-wide text-muted mb-2">Option B</p>
+              <label className="block text-sm font-semibold text-heading mb-2">
+                Upload logo file
+              </label>
+              <p className="text-xs text-muted mb-2">
+                Use this if the site has no icon, or you want your own logo. Max 1 MB · stored on our
+                CDN.
+              </p>
+              <label className="flex flex-col items-center justify-center gap-2 w-full min-h-[120px] rounded-xl border-2 border-dashed border-borderC bg-bgAlt/40 hover:border-primary/40 hover:bg-bgAlt cursor-pointer transition px-4 py-6">
+                <span className="text-sm font-semibold text-heading">Choose image file</span>
+                <span className="text-xs text-muted">JPEG, PNG, WebP, GIF · under 1 MB</span>
+                <input
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif"
+                  onChange={(e) => {
+                    onLogo(e.target.files?.[0] || null);
+                    e.currentTarget.value = '';
+                  }}
+                  className="sr-only"
+                />
+              </label>
+              {logoFile && (
+                <p className="text-xs text-primary mt-2 font-medium">Selected: {logoFile.name}</p>
+              )}
+            </div>
+          </div>
+
+          {logoPreview && (
+            <div className="flex items-start gap-3 pt-1">
+              <div className="relative w-20 h-20 rounded-xl overflow-hidden border border-borderC bg-bgAlt shrink-0">
+                <Image src={logoPreview} alt="Logo preview" fill className="object-cover" unoptimized />
+              </div>
+              <div>
+                <p className="text-xs font-semibold text-heading">Preview</p>
+                <p className="text-[11px] text-muted mt-0.5">
+                  {logoFile ? 'Uploaded file' : 'External link'}
+                </p>
                 <button
                   type="button"
                   onClick={clearLogo}
-                  className="text-xs font-semibold text-red-600 hover:underline mt-1"
+                  className="text-xs font-semibold text-red-600 hover:underline mt-2"
                 >
                   Remove logo
                 </button>
               </div>
-            )}
-          </div>
+            </div>
+          )}
 
           <div>
             <label className="block text-xs font-semibold text-heading mb-2">
-              Feature images (max 3)
+              Feature images (optional · max 3 · each under 1 MB)
             </label>
             <input
               type="file"
@@ -926,7 +1011,6 @@ export default function AddProductWizard() {
               multiple
               onChange={(e) => {
                 onShots(e.target.files);
-                // Allow re-selecting the same files and still trigger onChange.
                 e.currentTarget.value = '';
               }}
               className="block w-full text-sm"
@@ -971,7 +1055,7 @@ export default function AddProductWizard() {
             <div className="flex gap-2">
               <dt className="text-muted w-28 shrink-0">Images</dt>
               <dd className="text-body">
-                1 logo{autofilledLogoUrl && !logoFile ? ' (from website)' : ''}
+                1 logo{autofilledLogoUrl && !logoFile ? ' (external link)' : ''}
                 {shotFiles.length ? ` + ${shotFiles.length} feature` : ''}
               </dd>
             </div>
