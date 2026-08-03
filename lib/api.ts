@@ -256,12 +256,26 @@ export const api = {
       success: boolean;
       data: {
         product: import('../types').Product;
+        maker?: import('../types').PublicMaker | null;
         related: import('../types').Product[];
         moreToExplore: import('../types').Product[];
         categories: import('../types').Category[];
       };
       meta: { isLive: boolean };
     }>(`/products/page/${encodeURIComponent(slug)}`, { cacheMode: 'no-store' }),
+  getMaker: (slugOrId: string) =>
+    apiFetch<{
+      success: boolean;
+      data: {
+        maker: import('../types').PublicMaker;
+        products: import('../types').Product[];
+        stats: {
+          listings: number;
+          live: number;
+          verifiedMaker: boolean;
+        };
+      };
+    }>(`/makers/${encodeURIComponent(slugOrId)}`, { cacheMode: 'no-store' }),
   autofill: (websiteUrl: string) =>
     apiFetch<import('../types').AutofillResponse>('/products/autofill', {
       method: 'POST',
@@ -472,6 +486,28 @@ export const api = {
   getMe: (token: string) =>
     apiFetch<{ success: boolean; user: import('../types').AuthUser }>('/auth/me', {
       headers: { Authorization: `Bearer ${token}` },
+      cacheMode: 'no-store',
+      timeoutMs: AUTH_TIMEOUT_MS,
+    }),
+  updateMyProfile: (
+    token: string,
+    payload: {
+      name?: string;
+      bio?: string;
+      website?: string;
+      country?: string;
+      avatarUrl?: string;
+      linkedinUrl?: string;
+      twitterUrl?: string;
+      slug?: string;
+      accountType?: 'personal' | 'company';
+      companyName?: string;
+    }
+  ) =>
+    apiFetch<{ success: boolean; user: import('../types').AuthUser }>('/auth/me', {
+      method: 'PATCH',
+      headers: { Authorization: `Bearer ${token}` },
+      body: JSON.stringify(payload),
       cacheMode: 'no-store',
       timeoutMs: AUTH_TIMEOUT_MS,
     }),

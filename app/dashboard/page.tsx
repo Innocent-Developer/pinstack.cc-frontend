@@ -40,6 +40,8 @@ export default function DashboardPage() {
           isAccountVerified: !!me.user.isAccountVerified,
           accountType: me.user.accountType ?? null,
           companyName: me.user.companyName ?? null,
+          slug: me.user.slug ?? null,
+          avatarUrl: me.user.avatarUrl ?? null,
         };
         setAuth(tok, nextUser);
         setUser(nextUser);
@@ -100,13 +102,21 @@ export default function DashboardPage() {
               </h1>
               <p className="text-sm text-muted mt-1">{user.email}</p>
             </div>
-            <button
-              type="button"
-              onClick={handleLogout}
-              className="self-start lg:self-auto px-4 py-2 rounded-full text-sm font-semibold border border-borderC text-heading hover:bg-white"
-            >
-              Log out
-            </button>
+            <div className="flex flex-col sm:flex-row gap-2 self-start lg:self-auto">
+              <Link
+                href="/dashboard/profile"
+                className="px-4 py-2 rounded-full text-sm font-semibold border border-borderC text-heading hover:bg-white"
+              >
+                Profile
+              </Link>
+              <button
+                type="button"
+                onClick={handleLogout}
+                className="px-4 py-2 rounded-full text-sm font-semibold border border-borderC text-heading hover:bg-white"
+              >
+                Log out
+              </button>
+            </div>
           </div>
 
           <div className="flex gap-1 border-b border-borderC mb-7 overflow-x-auto -mx-1 px-1 scrollbar-none">
@@ -195,6 +205,16 @@ export default function DashboardPage() {
               )}
 
               <div className="grid sm:grid-cols-2 gap-3">
+                <Link
+                  href="/dashboard/profile"
+                  className="rounded-2xl border border-borderC bg-white p-5 hover:border-primary/40 hover:shadow-sm transition"
+                >
+                  <p className="text-xs font-semibold text-primary mb-1">Profile</p>
+                  <h2 className="font-extrabold text-heading mb-1">Edit your maker page</h2>
+                  <p className="text-sm text-muted">
+                    Personal info, bio, socials, and public profile URL.
+                  </p>
+                </Link>
                 <button
                   type="button"
                   onClick={() => setTab('submissions')}
@@ -208,7 +228,7 @@ export default function DashboardPage() {
                 </button>
                 <Link
                   href="/dashboard/add-product"
-                  className="rounded-2xl border border-primary/25 bg-bgAlt p-5 hover:border-primary transition"
+                  className="sm:col-span-2 rounded-2xl border border-primary/25 bg-bgAlt p-5 hover:border-primary transition"
                 >
                   <p className="text-xs font-semibold text-primary mb-1">Create</p>
                   <h2 className="font-extrabold text-heading mb-1">Add a product</h2>

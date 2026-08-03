@@ -83,6 +83,31 @@ export interface AuthUser {
   accountVerifiedAt?: string | null;
   accountType?: 'personal' | 'company' | null;
   companyName?: string | null;
+  slug?: string | null;
+  bio?: string | null;
+  website?: string | null;
+  country?: string | null;
+  avatarUrl?: string | null;
+  linkedinUrl?: string | null;
+  twitterUrl?: string | null;
+  joinedAt?: string | null;
+}
+
+export interface PublicMaker {
+  id: string | null;
+  slug: string | null;
+  name: string;
+  bio?: string | null;
+  website?: string | null;
+  country?: string | null;
+  avatarUrl?: string | null;
+  linkedinUrl?: string | null;
+  twitterUrl?: string | null;
+  isAccountVerified?: boolean;
+  accountVerifiedAt?: string | null;
+  accountType?: 'personal' | 'company' | null;
+  companyName?: string | null;
+  joinedAt?: string | null;
 }
 
 export interface AuthResponse {

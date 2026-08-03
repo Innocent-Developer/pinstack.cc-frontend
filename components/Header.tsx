@@ -71,7 +71,7 @@ export default function Header() {
         <div className="flex items-center gap-3">
           {user && (
             <Link
-              href="/dashboard"
+              href="/dashboard/profile"
               className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-heading hover:text-primary max-w-[140px]"
             >
               <span className="truncate">{user.name.split(' ')[0]}</span>
@@ -125,6 +125,9 @@ export default function Header() {
             <>
               <Link href="/dashboard" onClick={() => setMenuOpen(false)} className="hover:text-primary font-semibold">
                 Dashboard
+              </Link>
+              <Link href="/dashboard/profile" onClick={() => setMenuOpen(false)} className="hover:text-primary font-semibold">
+                Profile
               </Link>
               <button type="button" onClick={handleLogout} className="text-left hover:text-primary">
                 Log out

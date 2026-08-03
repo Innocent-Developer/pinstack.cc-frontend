@@ -8,6 +8,8 @@ export type StoredUser = {
   isAccountVerified?: boolean;
   accountType?: 'personal' | 'company' | null;
   companyName?: string | null;
+  slug?: string | null;
+  avatarUrl?: string | null;
 };
 
 export function getToken(): string | null {

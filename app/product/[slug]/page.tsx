@@ -18,7 +18,8 @@ import { isProductLive } from '../../../lib/listingStatus';
 import { buildBreadcrumbSchema, buildProductSchema } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
 import { visitWebsiteUrl } from '../../../lib/utm';
-import type { Product } from '../../../types';
+import AccountVerifiedTick from '../../../components/AccountVerifiedTick';
+import type { Product, PublicMaker } from '../../../types';
 
 // Always fetch fresh - isVerified / isFeatured change without a redeploy
 export const revalidate = 0;
@@ -97,11 +98,13 @@ export default async function ProductDetailPage({ params }: Props) {
   let related: Product[] = [];
   let moreToExplore: Product[] = [];
   let directoryCategories: { _id: string; name: string; slug: string; icon: string }[] = [];
+  let maker: PublicMaker | null = null;
   let live = false;
 
   try {
     const res = await loadProductPage(params.slug);
     product = res.data.product;
+    maker = res.data.maker || null;
     related = res.data.related || [];
     moreToExplore = res.data.moreToExplore || [];
     directoryCategories = (res.data.categories || []).slice(0, 8);
@@ -229,6 +232,37 @@ export default async function ProductDetailPage({ params }: Props) {
                   <p className="text-body text-[15px] mt-2 leading-relaxed max-w-2xl">
                     {product.tagline}
                   </p>
+                  {maker?.name ? (
+                    <p className="mt-3 text-sm text-muted">
+                      By{' '}
+                      {maker.slug ? (
+                        <Link
+                          href={`/makers/${maker.slug}`}
+                          className="inline-flex items-center gap-1.5 font-semibold text-heading hover:text-primary"
+                        >
+                          {maker.avatarUrl ? (
+                            <span className="relative w-5 h-5 rounded-full overflow-hidden bg-bgAlt inline-block align-middle">
+                              <Image
+                                src={maker.avatarUrl}
+                                alt=""
+                                fill
+                                className="object-cover"
+                                sizes="20px"
+                                unoptimized
+                              />
+                            </span>
+                          ) : null}
+                          {maker.name}
+                          {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
+                        </Link>
+                      ) : (
+                        <span className="inline-flex items-center gap-1.5 font-semibold text-heading">
+                          {maker.name}
+                          {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
+                        </span>
+                      )}
+                    </p>
+                  ) : null}
                   <div className="flex gap-2 mt-3 flex-wrap">
                     {cats.map((c) => (
                       <Link
@@ -319,6 +353,56 @@ export default async function ProductDetailPage({ params }: Props) {
                   {live ? `Listed ${listedOn}` : `Submitted ${listedOn}`}
                 </p>
               )}
+
+              {maker?.name ? (
+                <div className="mt-5 pt-5 border-t border-borderC">
+                  <p className="text-xs font-bold text-muted uppercase tracking-wide mb-3">
+                    Maker
+                  </p>
+                  {maker.slug ? (
+                    <Link
+                      href={`/makers/${maker.slug}`}
+                      className="flex items-center gap-3 group"
+                    >
+                      <span className="relative w-11 h-11 rounded-xl overflow-hidden bg-bgAlt border border-borderC shrink-0">
+                        {maker.avatarUrl ? (
+                          <Image
+                            src={maker.avatarUrl}
+                            alt=""
+                            fill
+                            className="object-cover"
+                            sizes="44px"
+                            unoptimized
+                          />
+                        ) : (
+                          <span className="absolute inset-0 flex items-center justify-center text-sm font-extrabold text-muted">
+                            {maker.name.charAt(0).toUpperCase()}
+                          </span>
+                        )}
+                      </span>
+                      <span className="min-w-0">
+                        <span className="font-bold text-heading group-hover:text-primary inline-flex items-center gap-1.5">
+                          {maker.name}
+                          {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
+                        </span>
+                        <span className="block text-xs text-muted truncate">
+                          View profile →
+                        </span>
+                      </span>
+                    </Link>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <span className="w-11 h-11 rounded-xl bg-bgAlt border border-borderC flex items-center justify-center text-sm font-extrabold text-muted">
+                        {maker.name.charAt(0).toUpperCase()}
+                      </span>
+                      <span className="font-bold text-heading inline-flex items-center gap-1.5">
+                        {maker.name}
+                        {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
+                      </span>
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </aside>
           </div>
         </section>
