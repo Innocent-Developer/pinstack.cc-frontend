@@ -8,6 +8,8 @@ import { Product, Category } from '../types';
 import ProductCard from './ProductCard';
 import EmptyState from './EmptyState';
 
+const PAGE_SIZE = 50;
+
 interface ExploreResultsProps {
   categories: Category[];
 }
@@ -23,28 +25,46 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  const loadingMoreRef = useRef(false);
+  const pageRef = useRef(1);
+  const hasMoreRef = useRef(true);
+
+  pageRef.current = page;
+  hasMoreRef.current = hasMore;
 
   const fetchProducts = useCallback(
     async (pageToLoad: number, reset: boolean) => {
-      setLoading(true);
+      if (reset) {
+        setLoading(true);
+      } else {
+        setLoadingMore(true);
+        loadingMoreRef.current = true;
+      }
       try {
         const params: Record<string, string> = {
           sort,
           page: String(pageToLoad),
-          limit: '12',
+          limit: String(PAGE_SIZE),
         };
         if (search) params.search = search;
         if (category) params.category = category;
 
         const res = await api.getProducts(params);
         setProducts((prev) => (reset ? res.data : [...prev, ...res.data]));
-        setHasMore(pageToLoad < res.pagination.pages);
+        const more = pageToLoad < res.pagination.pages;
+        setHasMore(more);
+        hasMoreRef.current = more;
       } catch {
         setHasMore(false);
+        hasMoreRef.current = false;
       } finally {
         setLoading(false);
+        setLoadingMore(false);
+        loadingMoreRef.current = false;
       }
     },
     [search, category, sort]
@@ -55,6 +75,7 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
     if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
       setPage(1);
+      pageRef.current = 1;
       fetchProducts(1, true);
 
       const params = new URLSearchParams();
@@ -70,11 +91,26 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [search, category, sort]);
 
-  const loadMore = () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    fetchProducts(nextPage, false);
-  };
+  // Infinite scroll — load next 50 when sentinel enters viewport
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el) return;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        const hit = entries[0]?.isIntersecting;
+        if (!hit || loadingMoreRef.current || !hasMoreRef.current) return;
+        const nextPage = pageRef.current + 1;
+        pageRef.current = nextPage;
+        setPage(nextPage);
+        void fetchProducts(nextPage, false);
+      },
+      { root: null, rootMargin: '400px 0px', threshold: 0 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [fetchProducts, products.length, hasMore]);
 
   return (
     <div>
@@ -100,10 +136,9 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
           </div>
 
           <p className="text-[11px] text-muted">
-            Pending listings appear with a badge — voting unlocks after approval.
+            Pending listings appear with a badge — voting unlocks after approval. Scroll for more.
           </p>
 
-          {/* Category chips  click to filter, not a dropdown */}
           <div className="flex flex-wrap gap-2" role="group" aria-label="Filter by category">
             <button
               type="button"
@@ -153,22 +188,20 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
           {products.map((p) => (
             <ProductCard key={p._id} product={p} />
           ))}
-          {loading &&
-            Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="border border-borderC rounded-card h-[180px] animate-pulse bg-bgAlt" />
+          {(loading || loadingMore) &&
+            Array.from({ length: loading ? 6 : 3 }).map((_, i) => (
+              <div key={`sk-${i}`} className="border border-borderC rounded-card h-[180px] animate-pulse bg-bgAlt" />
             ))}
         </div>
       )}
 
-      {hasMore && !loading && products.length > 0 && (
-        <div className="text-center mt-8">
-          <button
-            onClick={loadMore}
-            className="px-6 py-2.5 rounded-btn text-sm font-semibold border border-borderC hover:bg-bgAlt"
-          >
-            Load more
-          </button>
-        </div>
+      {/* Sentinel for infinite scroll */}
+      <div ref={sentinelRef} className="h-8 w-full" aria-hidden />
+
+      {!hasMore && products.length > 0 && !loading && (
+        <p className="text-center text-xs text-muted mt-4 mb-2">
+          Showing all {products.length} products
+        </p>
       )}
     </div>
   );
