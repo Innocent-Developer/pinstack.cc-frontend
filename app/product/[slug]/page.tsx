@@ -167,8 +167,8 @@ export default async function ProductDetailPage({ params }: Props) {
           productName={product.name}
         />
 
-        {/* Hero */}
-        <section className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-8">
+        {/* Hero + About (left) | Sidebar (right) — single grid avoids empty hero gap */}
+        <section className="max-w-[1100px] mx-auto px-4 sm:px-6 pt-8 sm:pt-10 pb-12">
           <nav className="text-xs text-muted mb-6 flex flex-wrap items-center gap-1.5">
             <Link href="/explore" className="hover:text-primary">
               Explore
@@ -185,204 +185,190 @@ export default async function ProductDetailPage({ params }: Props) {
             <span className="text-heading font-medium truncate">{product.name}</span>
           </nav>
 
-          <div className="grid lg:grid-cols-[1fr_280px] gap-6 lg:gap-8 items-start">
-            <div>
-              <div className="flex items-start gap-4 sm:gap-5">
-                <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-white border border-borderC shrink-0 shadow-sm">
-                  <Image
-                    src={product.logoUrl}
-                    alt={`${product.name} logo`}
-                    fill
-                    className="object-cover"
-                    sizes="96px"
-                    priority
-                  />
-                  {product.isVerified && (
-                    <span
-                      className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-success text-white flex items-center justify-center ring-2 ring-white shadow-sm"
-                      title="Verified on Pinstack"
-                    >
-                      <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-                        <path
-                          fillRule="evenodd"
-                          d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    </span>
-                  )}
-                </div>
-                <div className="min-w-0 flex-1">
-                  <div className="flex flex-wrap items-center gap-2 mb-2">
-                    {!live && product.status === 'pending' && (
-                      <span className="text-[11px] bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full font-bold">
-                        Pending review
-                      </span>
-                    )}
-                    {!live && product.status === 'approved' && (
-                      <span className="text-[11px] bg-sky-100 text-sky-900 px-2.5 py-0.5 rounded-full font-bold">
-                        Scheduled
-                      </span>
-                    )}
-                    {product.isVerified && <VerifiedBadge size="md" />}
-                    {product.isFeatured && (
-                      <span className="text-[11px] bg-amber-50 text-featured px-2.5 py-0.5 rounded-full font-bold">
-                        Featured
+          <div className="grid lg:grid-cols-[minmax(0,1fr)_300px] gap-6 lg:gap-8 items-start">
+            <div className="min-w-0 space-y-6">
+              <div>
+                <div className="flex items-start gap-4 sm:gap-5">
+                  <div className="relative w-20 h-20 sm:w-24 sm:h-24 rounded-2xl overflow-hidden bg-white border border-borderC shrink-0 shadow-sm">
+                    <Image
+                      src={product.logoUrl}
+                      alt={`${product.name} logo`}
+                      fill
+                      className="object-cover"
+                      sizes="96px"
+                      priority
+                    />
+                    {product.isVerified && (
+                      <span
+                        className="absolute bottom-1 right-1 w-6 h-6 rounded-full bg-success text-white flex items-center justify-center ring-2 ring-white shadow-sm"
+                        title="Verified on Pinstack"
+                      >
+                        <svg className="w-3.5 h-3.5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
                       </span>
                     )}
                   </div>
-                  <AchievementPills product={product} className="mb-2" />
-                  <h1 className="text-3xl sm:text-4xl font-extrabold text-heading tracking-tight">
-                    {product.name}
-                  </h1>
-                  <p className="text-body text-[15px] mt-2 leading-relaxed max-w-2xl">
-                    {product.tagline}
-                  </p>
-                  {maker?.name ? (
-                    <p className="mt-3 text-sm text-muted">
-                      By{' '}
-                      {maker.slug ? (
-                        <Link
-                          href={`/makers/${maker.slug}`}
-                          className="inline-flex items-center gap-1.5 font-semibold text-heading hover:text-primary"
-                        >
-                          {maker.avatarUrl ? (
-                            <span className="relative w-5 h-5 rounded-full overflow-hidden bg-bgAlt inline-block align-middle">
-                              <Image
-                                src={maker.avatarUrl}
-                                alt=""
-                                fill
-                                className="object-cover"
-                                sizes="20px"
-                                unoptimized
-                              />
-                            </span>
-                          ) : null}
-                          {maker.name}
-                          {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
-                        </Link>
-                      ) : (
-                        <span className="inline-flex items-center gap-1.5 font-semibold text-heading">
-                          {maker.name}
-                          {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
+                  <div className="min-w-0 flex-1">
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      {!live && product.status === 'pending' && (
+                        <span className="text-[11px] bg-amber-100 text-amber-900 px-2.5 py-0.5 rounded-full font-bold">
+                          Pending review
                         </span>
                       )}
+                      {!live && product.status === 'approved' && (
+                        <span className="text-[11px] bg-sky-100 text-sky-900 px-2.5 py-0.5 rounded-full font-bold">
+                          Scheduled
+                        </span>
+                      )}
+                      {product.isVerified && <VerifiedBadge size="md" />}
+                      {product.isFeatured && (
+                        <span className="text-[11px] bg-amber-50 text-featured px-2.5 py-0.5 rounded-full font-bold">
+                          Featured
+                        </span>
+                      )}
+                    </div>
+                    <AchievementPills product={product} className="mb-2" />
+                    <h1 className="text-3xl sm:text-4xl font-extrabold text-heading tracking-tight">
+                      {product.name}
+                    </h1>
+                    <p className="text-body text-[15px] mt-2 leading-relaxed max-w-2xl">
+                      {product.tagline}
                     </p>
-                  ) : null}
-                  <div className="flex gap-2 mt-3 flex-wrap">
-                    {cats.map((c) => (
-                      <Link
-                        key={c._id}
-                        href={`/category/${c.slug}`}
-                        className="text-[11px] bg-white border border-borderC text-heading px-2.5 py-1 rounded-full font-semibold hover:border-primary hover:text-primary"
-                      >
-                        {c.icon ? `${c.icon} ` : ''}
-                        {c.name}
-                      </Link>
-                    ))}
-                    {product.tags?.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-[11px] bg-bgAlt text-muted px-2.5 py-1 rounded-full"
-                      >
-                        {tag}
-                      </span>
-                    ))}
+                    {maker?.name ? (
+                      <p className="mt-3 text-sm text-muted">
+                        By{' '}
+                        {maker.slug ? (
+                          <Link
+                            href={`/makers/${maker.slug}`}
+                            className="inline-flex items-center gap-1.5 font-semibold text-heading hover:text-primary"
+                          >
+                            {maker.avatarUrl ? (
+                              <span className="relative w-5 h-5 rounded-full overflow-hidden bg-bgAlt inline-block align-middle">
+                                <Image
+                                  src={maker.avatarUrl}
+                                  alt=""
+                                  fill
+                                  className="object-cover"
+                                  sizes="20px"
+                                  unoptimized
+                                />
+                              </span>
+                            ) : null}
+                            {maker.name}
+                            {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
+                          </Link>
+                        ) : (
+                          <span className="inline-flex items-center gap-1.5 font-semibold text-heading">
+                            {maker.name}
+                            {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
+                          </span>
+                        )}
+                      </p>
+                    ) : null}
+                    <div className="flex gap-2 mt-3 flex-wrap">
+                      {cats.map((c) => (
+                        <Link
+                          key={c._id}
+                          href={`/category/${c.slug}`}
+                          className="text-[11px] bg-white border border-borderC text-heading px-2.5 py-1 rounded-full font-semibold hover:border-primary hover:text-primary"
+                        >
+                          {c.icon ? `${c.icon} ` : ''}
+                          {c.name}
+                        </Link>
+                      ))}
+                      {product.tags?.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-[11px] bg-bgAlt text-muted px-2.5 py-1 rounded-full"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
-              </div>
 
-              <ProductSocialLinks
-                links={product.socialLinks}
-                size="md"
-                label=""
-                className="mt-4"
-              />
-
-              <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-3">
-                <VisitWebsiteButton
-                  productId={product._id}
-                  websiteUrl={product.websiteUrl}
-                  slug={product.slug}
-                  className="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-3 rounded-full text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-sm"
+                <ProductSocialLinks
+                  links={product.socialLinks}
+                  size="md"
+                  label=""
+                  className="mt-4"
                 />
-                <Link
-                  href="/dashboard/add-product"
-                  className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-semibold border border-borderC text-heading hover:bg-white"
-                >
-                  List your product
-                </Link>
+
+                <div className="mt-6 flex flex-col sm:flex-row flex-wrap gap-3">
+                  <VisitWebsiteButton
+                    productId={product._id}
+                    websiteUrl={product.websiteUrl}
+                    slug={product.slug}
+                    className="w-full sm:w-auto inline-flex items-center justify-center px-4 sm:px-6 py-3 rounded-full text-sm font-semibold bg-primary text-white hover:bg-primary-hover shadow-sm"
+                  />
+                  <Link
+                    href="/dashboard/add-product"
+                    className="w-full sm:w-auto inline-flex items-center justify-center px-5 py-3 rounded-full text-sm font-semibold border border-borderC text-heading hover:bg-white"
+                  >
+                    List your product
+                  </Link>
+                </div>
               </div>
-            </div>
 
-            {/* Sidebar: Snapshot / Contact / DR / Follow */}
-            <ProductSidebar
-              product={product}
-              maker={maker}
-              live={live}
-              snapshot={snapshot}
-              domainRating={domainRating}
-            />
-          </div>
-        </section>
+              <div className="rounded-2xl border border-borderC bg-white p-6 sm:p-8">
+                <h2 className="text-lg font-extrabold text-heading mb-3">About {product.name}</h2>
+                <p className="text-body leading-relaxed whitespace-pre-wrap">{product.description}</p>
 
-        {/* About + AI */}
-        <section className="max-w-[1100px] mx-auto px-4 sm:px-6 pb-12">
-          <div className="grid lg:grid-cols-[1.4fr_0.8fr] gap-6">
-            <div className="rounded-2xl border border-borderC bg-white p-6 sm:p-8">
-              <h2 className="text-lg font-extrabold text-heading mb-3">About {product.name}</h2>
-              <p className="text-body leading-relaxed whitespace-pre-wrap">{product.description}</p>
-
-              {product.screenshotUrls?.length > 0 && (
-                <div className="mt-8 pt-6 border-t border-borderC">
-                  <p className="text-xs font-bold text-muted uppercase tracking-wide mb-4">
-                    Screenshots
-                  </p>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {product.screenshotUrls.map((src, i) => (
-                      <div
-                        key={`${src}-${i}`}
-                        className="relative aspect-[16/10] rounded-xl overflow-hidden border border-borderC bg-bgAlt shadow-sm"
-                      >
-                        <Image
-                          src={src}
-                          alt={`${product.name} screenshot ${i + 1}`}
-                          fill
-                          className="object-cover"
-                          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
-                        />
-                      </div>
-                    ))}
+                {product.screenshotUrls?.length > 0 && (
+                  <div className="mt-8 pt-6 border-t border-borderC">
+                    <p className="text-xs font-bold text-muted uppercase tracking-wide mb-4">
+                      Screenshots
+                    </p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {product.screenshotUrls.map((src, i) => (
+                        <div
+                          key={`${src}-${i}`}
+                          className="relative aspect-[16/10] rounded-xl overflow-hidden border border-borderC bg-bgAlt shadow-sm"
+                        >
+                          <Image
+                            src={src}
+                            alt={`${product.name} screenshot ${i + 1}`}
+                            fill
+                            className="object-cover"
+                            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 400px"
+                          />
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
 
-              {product.tags?.length > 0 && (
-                <div className="mt-6 pt-5 border-t border-borderC">
-                  <p className="text-xs font-bold text-muted uppercase tracking-wide mb-2">Tags</p>
-                  <div className="flex flex-wrap gap-2">
-                    {product.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="text-xs px-3 py-1 rounded-full bg-bgAlt text-heading font-medium"
-                      >
-                        #{tag}
-                      </span>
-                    ))}
+                {product.tags?.length > 0 && (
+                  <div className="mt-6 pt-5 border-t border-borderC">
+                    <p className="text-xs font-bold text-muted uppercase tracking-wide mb-2">Tags</p>
+                    <div className="flex flex-wrap gap-2">
+                      {product.tags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="text-xs px-3 py-1 rounded-full bg-bgAlt text-heading font-medium"
+                        >
+                          #{tag}
+                        </span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              )}
-            </div>
+                )}
+              </div>
 
-            <div className="space-y-4">
-              {product.aiDescription && (
+              {product.aiDescription ? (
                 <div className="rounded-2xl border border-borderC bg-bgAlt p-5 sm:p-6">
                   <p className="text-xs font-bold text-primary uppercase tracking-wide mb-2">
                     AI overview
                   </p>
                   <p className="text-sm text-body leading-relaxed">{product.aiDescription}</p>
                 </div>
-              )}
+              ) : null}
 
               <div className="rounded-2xl border border-borderC bg-white p-5 sm:p-6">
                 <p className="text-xs font-bold text-muted uppercase tracking-wide mb-3">Details</p>
@@ -394,7 +380,7 @@ export default async function ProductDetailPage({ params }: Props) {
                         href={visitWebsiteUrl(product.websiteUrl, product.slug)}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-borderC bg-white hover:border-primary hover:bg-bgAlt text-xs font-semibold text-heading transition group max-w-[180px]"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-borderC bg-white hover:border-primary hover:bg-bgAlt text-xs font-semibold text-heading transition group max-w-[220px]"
                       >
                         {/* eslint-disable-next-line @next/next/no-img-element */}
                         <img
@@ -434,12 +420,6 @@ export default async function ProductDetailPage({ params }: Props) {
                     </div>
                   )}
                 </dl>
-                <ProductSocialLinks
-                  links={product.socialLinks}
-                  size="sm"
-                  label="Social"
-                  className="mt-4 pt-4 border-t border-borderC"
-                />
                 <VisitWebsiteButton
                   productId={product._id}
                   websiteUrl={product.websiteUrl}
@@ -449,6 +429,16 @@ export default async function ProductDetailPage({ params }: Props) {
                   Open website
                 </VisitWebsiteButton>
               </div>
+            </div>
+
+            <div className="lg:sticky lg:top-24 self-start">
+              <ProductSidebar
+                product={product}
+                maker={maker}
+                live={live}
+                snapshot={snapshot}
+                domainRating={domainRating}
+              />
             </div>
           </div>
         </section>
