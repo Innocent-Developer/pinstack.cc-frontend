@@ -239,6 +239,11 @@ export const api = {
 
     return categoriesInflight;
   },
+  /** Slug → live product count (static catalog on client). */
+  getCategoryCounts: () =>
+    apiFetch<{ success: boolean; data: Record<string, number> }>('/categories/counts', {
+      cacheMode: 'force-cache',
+    }),
   /** Landing page: trending + categories + stats in ONE request (server-cached hourly). */
   getHome: () =>
     apiFetch<{
@@ -257,12 +262,26 @@ export const api = {
       data: {
         product: import('../types').Product;
         maker?: import('../types').PublicMaker | null;
+        snapshot?: import('../types').ProductPageSnapshot | null;
+        domainRating?: import('../types').ProductDomainRatingInfo | null;
         related: import('../types').Product[];
         moreToExplore: import('../types').Product[];
         categories: import('../types').Category[];
       };
       meta: { isLive: boolean };
     }>(`/products/page/${encodeURIComponent(slug)}`, { cacheMode: 'no-store' }),
+  sendProductInquiry: (
+    productId: string,
+    payload: { fromName: string; fromEmail: string; message: string }
+  ) =>
+    apiFetch<{ success: boolean; message?: string; data?: { id: string } }>(
+      `/products/${encodeURIComponent(productId)}/inquiries`,
+      {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        timeoutMs: 20_000,
+      }
+    ),
   getMaker: (slugOrId: string) =>
     apiFetch<{
       success: boolean;

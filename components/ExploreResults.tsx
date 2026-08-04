@@ -153,11 +153,11 @@ export default function ExploreResults({ categories }: ExploreResultsProps) {
             </button>
             {categories.map((c) => (
               <button
-                key={c._id}
+                key={c.slug || c._id}
                 type="button"
-                onClick={() => setCategory(c._id)}
+                onClick={() => setCategory(c.slug || c._id)}
                 className={`px-3 py-1.5 rounded-btn text-xs font-semibold border transition ${
-                  category === c._id
+                  category === (c.slug || c._id)
                     ? 'bg-primary text-white border-primary'
                     : 'bg-white text-heading border-borderC hover:border-primary'
                 }`}

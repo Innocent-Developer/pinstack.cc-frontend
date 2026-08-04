@@ -15,6 +15,7 @@ import {
   socialLinksFromForm,
   type SocialPlatform,
 } from '../lib/socialLinks';
+import { STATIC_CATEGORIES } from '../lib/staticCategories';
 
 const MAX_BYTES = 1 * 1024 * 1024;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -30,7 +31,7 @@ function validateImage(file: File): string | null {
 export default function AddProductWizard() {
   const router = useRouter();
   const [user, setUser] = useState<StoredUser | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const categories = STATIC_CATEGORIES as unknown as Category[];
   const [step, setStep] = useState<Step>(1);
   const [error, setError] = useState<string | null>(null);
   const { success: toastSuccess, error: toastError } = useToast();
@@ -91,7 +92,6 @@ export default function AddProductWizard() {
       return;
     }
     setUser(u);
-    api.getCategories().then((res) => setCategories(res.data)).catch(() => setCategories([]));
   }, [router]);
 
   const steps = useMemo(
@@ -760,19 +760,20 @@ export default function AddProductWizard() {
             </p>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {categories.map((c) => {
-                const active = form.categories.includes(c._id);
+                const key = c.slug || c._id;
+                const active = form.categories.includes(key);
                 return (
                   <button
-                    key={c._id}
+                    key={key}
                     type="button"
                     onClick={() => {
                       setForm((f) => {
-                        const has = f.categories.includes(c._id);
+                        const has = f.categories.includes(key);
                         if (has) {
-                          return { ...f, categories: f.categories.filter((id) => id !== c._id) };
+                          return { ...f, categories: f.categories.filter((id) => id !== key) };
                         }
                         if (f.categories.length >= 5) return f;
-                        return { ...f, categories: [...f.categories, c._id] };
+                        return { ...f, categories: [...f.categories, key] };
                       });
                     }}
                     className={`text-left px-3 py-2.5 rounded-btn border text-sm transition ${
@@ -790,9 +791,6 @@ export default function AddProductWizard() {
                 );
               })}
             </div>
-            {categories.length === 0 && (
-              <p className="text-xs text-muted mt-2">Loading categories…</p>
-            )}
           </div>
           <div>
             <label className="block text-xs font-semibold text-heading mb-1">Tags (comma separated)</label>

@@ -8,6 +8,7 @@ import { isProductLive, listingStatusLabel } from '../lib/listingStatus';
 import VerifiedBadge from './VerifiedBadge';
 import AccountVerifiedTick from './AccountVerifiedTick';
 import ProductVoteButtons from './ProductVoteButtons';
+import AchievementPills from './AchievementPills';
 
 interface ProductCardProps {
   product: Product;
@@ -79,6 +80,8 @@ export default function ProductCard({ product }: ProductCardProps) {
         </div>
         <p className="text-[13px] text-muted mb-3 line-clamp-2">{product.tagline}</p>
       </Link>
+
+      <AchievementPills product={product} className="mb-3" />
 
       <div className="flex gap-1.5 flex-wrap items-center">
         {statusLabel && (

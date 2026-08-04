@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
+import { notFound } from 'next/navigation';
 import PageShell from '../../../components/PageShell';
 import ProductCard from '../../../components/ProductCard';
 import EmptyState from '../../../components/EmptyState';
@@ -8,6 +9,7 @@ import { api } from '../../../lib/api';
 import { categoryGuides, categoryIntro } from '../../../lib/categoryIntros';
 import { pageMetadata } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
+import { getStaticCategoryBySlug } from '../../../lib/staticCategories';
 
 export const revalidate = 0;
 
@@ -16,9 +18,11 @@ interface Props {
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const categoriesRes = await api.getCategories().catch(() => ({ data: [] as import('../../../types').Category[] }));
-  const category = categoriesRes.data.find((c) => c.slug === params.slug);
-  const name = category?.name || params.slug;
+  const category = getStaticCategoryBySlug(params.slug);
+  if (!category) {
+    return { title: { absolute: 'Category Not Found' } };
+  }
+  const name = category.name;
 
   return pageMetadata({
     title: `Best ${name} Tools - Pinstack Directory`,
@@ -28,14 +32,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function CategoryPage({ params }: Props) {
-  const categoriesRes = await api.getCategories().catch(() => ({ data: [] as import('../../../types').Category[] }));
-  const category = categoriesRes.data.find((c) => c.slug === params.slug);
+  const category = getStaticCategoryBySlug(params.slug);
+  if (!category) notFound();
 
-  const productsRes = category
-    ? await api.getProducts({ category: category._id, sort: 'ranked', limit: '24' })
-    : { data: [] as import('../../../types').Product[] };
+  const [productsRes, countsRes] = await Promise.all([
+    api.getProducts({ category: category.slug, sort: 'ranked', limit: '24' }),
+    api.getCategoryCounts().catch(() => ({ data: {} as Record<string, number> })),
+  ]);
 
-  const categoryName = category?.name || params.slug;
+  const categoryName = category.name;
+  const productCount = countsRes.data?.[category.slug] ?? productsRes.data.length;
   const guides = categoryGuides(params.slug);
 
   return (
@@ -55,7 +61,7 @@ export default async function CategoryPage({ params }: Props) {
             {categoryIntro(params.slug, categoryName)}
           </p>
           <p className="text-sm text-muted">
-            {category?.productCount || 0} tools on {siteConfig.name}, ranked by community upvotes.
+            {productCount} tools on {siteConfig.name}, ranked by community upvotes.
           </p>
           {guides.length > 0 && (
             <p className="text-sm text-body mt-3 max-w-2xl">
@@ -78,12 +84,12 @@ export default async function CategoryPage({ params }: Props) {
         {productsRes.data.length === 0 ? (
           <EmptyState
             title="No products in this category yet"
-            description="Be the first to list a product here  free submissions are reviewed within a few days."
-            actionHref="/login?next=/dashboard/add-product"
-            actionLabel="Add your product"
+            description="Be the first to list a product here."
+            actionHref="/dashboard/add-product"
+            actionLabel="Add a product"
           />
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {productsRes.data.map((p) => (
               <ProductCard key={p._id} product={p} />
             ))}

@@ -8,7 +8,6 @@ import ProductCard from '../../../components/ProductCard';
 import VisitWebsiteButton from '../../../components/VisitWebsiteButton';
 import ProductChatBot from '../../../components/ProductChatBot';
 import ProductReviews from '../../../components/ProductReviews';
-import ProductVoteButtons from '../../../components/ProductVoteButtons';
 import VerifiedBadge from '../../../components/VerifiedBadge';
 import ProductSocialLinks from '../../../components/ProductSocialLinks';
 import ProductListingStatusBanner from '../../../components/ProductListingStatusBanner';
@@ -19,7 +18,9 @@ import { buildBreadcrumbSchema, buildProductSchema } from '../../../lib/seo';
 import { siteConfig } from '../../../config/site';
 import { visitWebsiteUrl } from '../../../lib/utm';
 import AccountVerifiedTick from '../../../components/AccountVerifiedTick';
-import type { Product, PublicMaker } from '../../../types';
+import ProductSidebar from '../../../components/product/ProductSidebar';
+import AchievementPills from '../../../components/AchievementPills';
+import type { Product, ProductDomainRatingInfo, ProductPageSnapshot, PublicMaker } from '../../../types';
 
 // Always fetch fresh - isVerified / isFeatured change without a redeploy
 export const revalidate = 0;
@@ -99,12 +100,16 @@ export default async function ProductDetailPage({ params }: Props) {
   let moreToExplore: Product[] = [];
   let directoryCategories: { _id: string; name: string; slug: string; icon: string }[] = [];
   let maker: PublicMaker | null = null;
+  let snapshot: ProductPageSnapshot | null = null;
+  let domainRating: ProductDomainRatingInfo | null = null;
   let live = false;
 
   try {
     const res = await loadProductPage(params.slug);
     product = res.data.product;
     maker = res.data.maker || null;
+    snapshot = res.data.snapshot || null;
+    domainRating = res.data.domainRating || null;
     related = res.data.related || [];
     moreToExplore = res.data.moreToExplore || [];
     directoryCategories = (res.data.categories || []).slice(0, 8);
@@ -226,6 +231,7 @@ export default async function ProductDetailPage({ params }: Props) {
                       </span>
                     )}
                   </div>
+                  <AchievementPills product={product} className="mb-2" />
                   <h1 className="text-3xl sm:text-4xl font-extrabold text-heading tracking-tight">
                     {product.name}
                   </h1>
@@ -309,101 +315,14 @@ export default async function ProductDetailPage({ params }: Props) {
               </div>
             </div>
 
-            {/* Stats card */}
-            <aside className="rounded-2xl border border-borderC bg-white p-5 shadow-[0_1px_2px_rgba(15,23,42,0.04)]">
-              <p className="text-xs font-bold text-muted uppercase tracking-wide mb-3">At a glance</p>
-
-              {live ? (
-                <div className="flex justify-center mb-4 pb-4 border-b border-borderC">
-                  <ProductVoteButtons
-                    productId={product._id}
-                    productName={product.name}
-                    initialScore={product.score ?? 0}
-                    initialUpvotes={product.upvoteCount ?? 0}
-                    initialDownvotes={product.downvoteCount ?? 0}
-                    variant="compact"
-                  />
-                </div>
-              ) : (
-                <div className="mb-4 pb-4 border-b border-borderC text-center">
-                  <p className="text-sm font-semibold text-heading">Voting paused</p>
-                  <p className="text-xs text-muted mt-1">
-                    Votes open once this listing is live in the directory.
-                  </p>
-                </div>
-              )}
-
-              <dl className="grid grid-cols-2 gap-3">
-                {[
-                  { label: 'Upvotes', value: product.upvoteCount ?? 0 },
-                  { label: 'Downvotes', value: product.downvoteCount ?? 0 },
-                  { label: 'Views', value: product.viewCount ?? 0 },
-                  { label: 'Clicks', value: product.websiteClickCount ?? 0 },
-                ].map((s) => (
-                  <div key={s.label} className="rounded-xl bg-bgAlt px-3 py-2.5 text-center">
-                    <dd className="text-xl font-extrabold text-heading tabular-nums">{s.value}</dd>
-                    <dt className="text-[10px] font-semibold text-muted uppercase tracking-wide mt-0.5">
-                      {s.label}
-                    </dt>
-                  </div>
-                ))}
-              </dl>
-              {listedOn && (
-                <p className="text-xs text-muted mt-4 text-center">
-                  {live ? `Listed ${listedOn}` : `Submitted ${listedOn}`}
-                </p>
-              )}
-
-              {maker?.name ? (
-                <div className="mt-5 pt-5 border-t border-borderC">
-                  <p className="text-xs font-bold text-muted uppercase tracking-wide mb-3">
-                    Maker
-                  </p>
-                  {maker.slug ? (
-                    <Link
-                      href={`/makers/${maker.slug}`}
-                      className="flex items-center gap-3 group"
-                    >
-                      <span className="relative w-11 h-11 rounded-xl overflow-hidden bg-bgAlt border border-borderC shrink-0">
-                        {maker.avatarUrl ? (
-                          <Image
-                            src={maker.avatarUrl}
-                            alt=""
-                            fill
-                            className="object-cover"
-                            sizes="44px"
-                            unoptimized
-                          />
-                        ) : (
-                          <span className="absolute inset-0 flex items-center justify-center text-sm font-extrabold text-muted">
-                            {maker.name.charAt(0).toUpperCase()}
-                          </span>
-                        )}
-                      </span>
-                      <span className="min-w-0">
-                        <span className="font-bold text-heading group-hover:text-primary inline-flex items-center gap-1.5">
-                          {maker.name}
-                          {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
-                        </span>
-                        <span className="block text-xs text-muted truncate">
-                          View profile →
-                        </span>
-                      </span>
-                    </Link>
-                  ) : (
-                    <div className="flex items-center gap-3">
-                      <span className="w-11 h-11 rounded-xl bg-bgAlt border border-borderC flex items-center justify-center text-sm font-extrabold text-muted">
-                        {maker.name.charAt(0).toUpperCase()}
-                      </span>
-                      <span className="font-bold text-heading inline-flex items-center gap-1.5">
-                        {maker.name}
-                        {maker.isAccountVerified ? <AccountVerifiedTick size={14} /> : null}
-                      </span>
-                    </div>
-                  )}
-                </div>
-              ) : null}
-            </aside>
+            {/* Sidebar: Snapshot / Contact / DR / Follow */}
+            <ProductSidebar
+              product={product}
+              maker={maker}
+              live={live}
+              snapshot={snapshot}
+              domainRating={domainRating}
+            />
           </div>
         </section>
 

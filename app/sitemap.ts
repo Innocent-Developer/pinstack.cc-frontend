@@ -83,15 +83,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   ];
 
   try {
-    const [productsRes, categoriesRes] = await Promise.all([
-          fetchJson<{ data?: Array<{ slug?: string; updatedAt?: string; createdAt?: string }> }>(
-            '/products?limit=1000&sort=ranked&live=1'
-          ),
-      fetchJson<{ data?: Array<{ slug?: string }> }>('/categories'),
-    ]);
+    const productsRes = await fetchJson<{
+      data?: Array<{ slug?: string; updatedAt?: string; createdAt?: string }>;
+    }>('/products?limit=1000&sort=ranked&live=1');
 
     const products = Array.isArray(productsRes?.data) ? productsRes!.data : [];
-    const categories = Array.isArray(categoriesRes?.data) ? categoriesRes!.data : [];
+    const { STATIC_CATEGORIES } = await import('../lib/staticCategories');
 
     const productPages = products
       .filter((p) => typeof p?.slug === 'string' && p.slug.length > 0)
@@ -103,14 +100,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         })
       );
 
-    const categoryPages = categories
-      .filter((c) => typeof c?.slug === 'string' && c.slug.length > 0)
-      .map((c) =>
-        entry(`/category/${encodeURIComponent(c.slug!)}`, {
-          changeFrequency: 'daily',
-          priority: 0.7,
-        })
-      );
+    const categoryPages = STATIC_CATEGORIES.map((c) =>
+      entry(`/category/${encodeURIComponent(c.slug)}`, {
+        changeFrequency: 'daily',
+        priority: 0.7,
+      })
+    );
 
     return [...staticPages, ...safeBlogEntries(), ...productPages, ...categoryPages];
   } catch {

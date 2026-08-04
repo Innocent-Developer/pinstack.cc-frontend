@@ -33,11 +33,42 @@ export interface Product {
   publishAt?: string | null;
   viewCount: number;
   websiteClickCount?: number;
+  domainHost?: string | null;
+  domainRating?: number | null;
+  domainRatingUpdatedAt?: string | null;
+  achievements?: Array<{
+    _id?: string;
+    type: 'top_of_month' | 'rising_star' | 'editors_pick' | 'launch_of_week';
+    label: string;
+    monthKey?: string | null;
+    awardedAt?: string;
+    active?: boolean;
+  }>;
   socialLinks?: ProductSocialLinks;
   status?: 'pending' | 'approved' | 'rejected';
   rejectionReason?: string;
   createdAt: string;
   updatedAt?: string;
+}
+
+export interface ProductPageSnapshot {
+  upvotes: number;
+  categoryRank: number | null;
+  categoryName: string | null;
+  categorySlug: string | null;
+  domain: string | null;
+  listedAt?: string | null;
+}
+
+export interface ProductDomainRatingInfo {
+  value: number | null;
+  updatedAt: string | null;
+  host: string | null;
+  trend: 'rising' | 'falling' | 'flat' | null;
+  source: 'ahrefs';
+  attribution: string;
+  attributionUrl: string;
+  checkerUrl: string | null;
 }
 
 export interface Pagination {

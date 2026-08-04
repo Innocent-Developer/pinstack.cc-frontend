@@ -14,6 +14,7 @@ import {
   socialLinksToForm,
   type SocialPlatform,
 } from '../lib/socialLinks';
+import { STATIC_CATEGORIES } from '../lib/staticCategories';
 
 const MAX_BYTES = 1 * 1024 * 1024;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -36,7 +37,7 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [product, setProduct] = useState<Product | null>(null);
-  const [categories, setCategories] = useState<Category[]>([]);
+  const categories = STATIC_CATEGORIES as unknown as Category[];
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -65,10 +66,7 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
         return;
       }
       try {
-        const [mine, cats] = await Promise.all([
-          api.getMyProduct(token, productId),
-          api.getCategories(),
-        ]);
+        const mine = await api.getMyProduct(token, productId);
         const p = mine.data;
         setProduct(p);
         setForm({
@@ -82,13 +80,18 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
               : p.category
                 ? [p.category]
                 : []
-          ).map((c) => (typeof c === 'object' && c && '_id' in c ? c._id : String(c))),
+          ).map((c) =>
+            typeof c === 'object' && c && 'slug' in c && c.slug
+              ? String(c.slug)
+              : typeof c === 'object' && c && '_id' in c
+                ? String(c._id)
+                : String(c)
+          ),
           tags: (p.tags || []).join(', '),
         });
         setSocialLinks(socialLinksToForm(p.socialLinks));
         setLogoPreview(p.logoUrl || null);
         setExistingShots(p.screenshotUrls || []);
-        setCategories(cats.data || []);
       } catch {
         setError('Could not load this listing');
       } finally {
@@ -346,19 +349,20 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
           <p className="text-[11px] text-muted mb-2">{form.categories.length}/5 selected</p>
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
             {categories.map((c) => {
-              const active = form.categories.includes(c._id);
+              const key = c.slug || c._id;
+              const active = form.categories.includes(key);
               return (
                 <button
-                  key={c._id}
+                  key={key}
                   type="button"
                   onClick={() => {
                     setForm((f) => {
-                      const has = f.categories.includes(c._id);
+                      const has = f.categories.includes(key);
                       if (has) {
-                        return { ...f, categories: f.categories.filter((id) => id !== c._id) };
+                        return { ...f, categories: f.categories.filter((id) => id !== key) };
                       }
                       if (f.categories.length >= 5) return f;
-                      return { ...f, categories: [...f.categories, c._id] };
+                      return { ...f, categories: [...f.categories, key] };
                     });
                   }}
                   className={`text-left px-3 py-2.5 rounded-xl border text-sm transition ${
