@@ -90,7 +90,7 @@ export default function GetInTouchForm({ productId, productName }: Props) {
         <button
           type="submit"
           disabled={sending || !productId}
-          className="shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-60"
+          className="shrink-0 px-4 py-2 rounded-full text-sm font-semibold bg-primary text-white hover:bg-primary-hover disabled:opacity-60"
         >
           {sending ? 'Sending…' : 'Send message'}
         </button>
