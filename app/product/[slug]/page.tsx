@@ -20,6 +20,8 @@ import { visitWebsiteUrl } from '../../../lib/utm';
 import AccountVerifiedTick from '../../../components/AccountVerifiedTick';
 import ProductSidebar from '../../../components/product/ProductSidebar';
 import AchievementPills from '../../../components/AchievementPills';
+import VoteStarRating from '../../../components/VoteStarRating';
+import TechStackPills from '../../../components/TechStackPills';
 import type { Product, ProductDomainRatingInfo, ProductPageSnapshot, PublicMaker } from '../../../types';
 
 // Always fetch fresh - isVerified / isFeatured change without a redeploy
@@ -239,6 +241,13 @@ export default async function ProductDetailPage({ params }: Props) {
                     <p className="text-body text-[15px] mt-2 leading-relaxed max-w-2xl">
                       {product.tagline}
                     </p>
+                    <VoteStarRating
+                      upvoteCount={product.upvoteCount}
+                      downvoteCount={product.downvoteCount}
+                      size="md"
+                      showEmpty
+                      className="mt-3"
+                    />
                     {maker?.name ? (
                       <p className="mt-3 text-sm text-muted">
                         By{' '}
@@ -290,6 +299,7 @@ export default async function ProductDetailPage({ params }: Props) {
                         </span>
                       ))}
                     </div>
+                    <TechStackPills items={product.techStack} className="mt-3" />
                   </div>
                 </div>
 

@@ -9,6 +9,8 @@ import VerifiedBadge from './VerifiedBadge';
 import AccountVerifiedTick from './AccountVerifiedTick';
 import ProductVoteButtons from './ProductVoteButtons';
 import AchievementPills from './AchievementPills';
+import VoteStarRating from './VoteStarRating';
+import TechStackPills from './TechStackPills';
 
 interface ProductCardProps {
   product: Product;
@@ -78,10 +80,18 @@ export default function ProductCard({ product }: ProductCardProps) {
             </span>
           )}
         </div>
-        <p className="text-[13px] text-muted mb-3 line-clamp-2">{product.tagline}</p>
+        <p className="text-[13px] text-muted mb-2 line-clamp-2">{product.tagline}</p>
       </Link>
 
-      <AchievementPills product={product} className="mb-3" />
+      <VoteStarRating
+        upvoteCount={product.upvoteCount}
+        downvoteCount={product.downvoteCount}
+        size="sm"
+        className="mb-2"
+      />
+
+      <AchievementPills product={product} className="mb-2" />
+      <TechStackPills items={product.techStack} className="mb-3" />
 
       <div className="flex gap-1.5 flex-wrap items-center">
         {statusLabel && (

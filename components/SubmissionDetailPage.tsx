@@ -12,6 +12,8 @@ import ProductSocialLinks from './ProductSocialLinks';
 import ProductReviews from './ProductReviews';
 import ProductCard from './ProductCard';
 import BadgeCopyWidget from './BadgeCopyWidget';
+import VoteStarRating from './VoteStarRating';
+import TechStackPills from './TechStackPills';
 import { useToast } from './ToastProvider';
 
 function formatDate(iso?: string) {
@@ -132,6 +134,13 @@ export default function SubmissionDetailPage({ productId }: Props) {
                 </span>
               </div>
               <p className="text-sm text-body leading-relaxed">{product.tagline}</p>
+              <VoteStarRating
+                upvoteCount={product.upvoteCount}
+                downvoteCount={product.downvoteCount}
+                size="sm"
+                showEmpty
+                className="mt-2"
+              />
             </div>
           </div>
         </div>
@@ -294,6 +303,7 @@ export default function SubmissionDetailPage({ productId }: Props) {
             ))}
           </div>
         )}
+        <TechStackPills items={product.techStack} />
       </section>
 
       <section className="rounded-2xl border border-borderC bg-white p-5 sm:p-6 space-y-4">

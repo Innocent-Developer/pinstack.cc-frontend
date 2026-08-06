@@ -16,6 +16,7 @@ import {
   type SocialPlatform,
 } from '../lib/socialLinks';
 import { STATIC_CATEGORIES } from '../lib/staticCategories';
+import TechStackPicker from './TechStackPicker';
 
 const MAX_BYTES = 1 * 1024 * 1024;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -80,6 +81,7 @@ export default function AddProductWizard() {
     websiteUrl: '',
     categories: [] as string[],
     tags: '',
+    techStack: [] as string[],
     submissionMethod: 'manual' as 'auto' | 'manual',
   });
   const [socialLinks, setSocialLinks] = useState({ ...EMPTY_SOCIAL_LINKS });
@@ -311,6 +313,7 @@ export default function AddProductWizard() {
           .split(',')
           .map((t) => t.trim())
           .filter(Boolean),
+        techStack: form.techStack,
         submitterName: user.name,
         submitterEmail: user.email,
         submissionMethod: form.submissionMethod,
@@ -801,6 +804,11 @@ export default function AddProductWizard() {
               className="w-full px-3 py-2.5 border border-borderC rounded-btn text-sm"
             />
           </div>
+
+          <TechStackPicker
+            value={form.techStack}
+            onChange={(techStack) => setForm((f) => ({ ...f, techStack }))}
+          />
 
         </div>
       )}

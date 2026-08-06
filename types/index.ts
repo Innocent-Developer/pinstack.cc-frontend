@@ -20,6 +20,8 @@ export interface Product {
   /** All selected categories (preferred); falls back to `category` */
   categories?: Category[];
   tags: string[];
+  /** Languages, frameworks, databases */
+  techStack?: string[];
   upvoteCount: number;
   downvoteCount: number;
   score: number;

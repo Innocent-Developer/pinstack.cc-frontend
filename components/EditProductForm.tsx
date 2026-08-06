@@ -15,6 +15,7 @@ import {
   type SocialPlatform,
 } from '../lib/socialLinks';
 import { STATIC_CATEGORIES } from '../lib/staticCategories';
+import TechStackPicker from './TechStackPicker';
 
 const MAX_BYTES = 1 * 1024 * 1024;
 const ALLOWED = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
@@ -55,6 +56,7 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
     websiteUrl: '',
     categories: [] as string[],
     tags: '',
+    techStack: [] as string[],
   });
   const [socialLinks, setSocialLinks] = useState({ ...EMPTY_SOCIAL_LINKS });
 
@@ -88,6 +90,7 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
                 : String(c)
           ),
           tags: (p.tags || []).join(', '),
+          techStack: Array.isArray(p.techStack) ? [...p.techStack] : [],
         });
         setSocialLinks(socialLinksToForm(p.socialLinks));
         setLogoPreview(p.logoUrl || null);
@@ -177,6 +180,7 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
           .split(',')
           .map((t) => t.trim())
           .filter(Boolean),
+        techStack: form.techStack,
         socialLinks: socialLinksFromForm(socialLinks),
       });
 
@@ -391,6 +395,11 @@ export default function EditProductForm({ productId, embedded, onCancel, onSaved
             className="w-full px-3 py-2.5 border border-borderC rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary"
           />
         </div>
+
+        <TechStackPicker
+          value={form.techStack}
+          onChange={(techStack) => setForm((f) => ({ ...f, techStack }))}
+        />
 
         <div className="pt-2 border-t border-borderC">
           <SocialLinkFields
